@@ -73,7 +73,9 @@ Ana Kaynak Dokümanlar (Hızlı Erişim)
 2.1 Kurulum
 - Sistem gereksinimi: Windows 10+, macOS 12+, Linux (Ubuntu LTS). 4GB RAM, 500MB disk.
 - İndirme ve kurulum: dağıtım dosyası ile kurulumu tamamlayın.
-- İlk açılışta lisans/seri aktivasyonu (ayarlar → serial).
+- İlk açılış ve lisans/seri aktivasyonu:
+  - Geliştirme/Test: aktivasyon BYPASS (VITE_LICENSE_BYPASS=true) — aktivasyon ekranı gösterilmez.
+  - Üretim/Staging: aktivasyon zorunlu (VITE_LICENSE_BYPASS=false), Serial/Lisans sekmesi görünür (VITE_SERIAL_FEATURE=true).
 
 2.2 İlk Kurulum ve Ayarlar
 - İşletme bilgileri, fiş başlığı/logosu (Ayarlar → Fiş/İşletme).
@@ -157,6 +159,16 @@ Ana Kaynak Dokümanlar (Hızlı Erişim)
 3.10 Performans
 - Listelerde react-window sanallaştırma; lazy loading/code splitting.
 - Bütçeler: FCP/TTI/TBT ve chunk boyutları; profil önerileri.
+
+3.11 Özellik Bayrakları (Lisans BYPASS ve Serial UI)
+- Amaç: Geliştirme/testte sürtünmeyi azaltırken üretimde güvenlik ve kontrolü korumak.
+- Bayraklar ve önerilen değerler:
+  - VITE_LICENSE_BYPASS → dev/test: true; staging/prod: false.
+  - VITE_SERIAL_FEATURE → dev/test: false; staging/prod: true.
+- Davranış:
+  - BYPASS (true) ise App.tsx aktivasyon ekranını atlar; doğrudan uygulama açılır.
+  - Serial sekmesi, VITE_SERIAL_FEATURE=false iken Settings’te gizlidir (lazy load ile bundle’a girmez).
+- Ayrıntı ve örnek .env dosyaları için bkz: docs/FEATURE-FLAGS.md.
 
 4. IPC/API Referansı (Özet)
 - Güncelleme: check-for-updates, update-available/progress/downloaded/status, quit-and-install.

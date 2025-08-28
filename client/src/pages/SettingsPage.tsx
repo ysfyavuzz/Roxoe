@@ -2,6 +2,7 @@
 import React, { useState, useEffect, lazy, Suspense } from "react";
 import { Printer, Barcode, Building, Key, Check, RefreshCw, Database, Info } from "lucide-react";
 import useSettingsPage from "./settings/hooks/useSettingsPage";
+import { isSerialFeatureEnabled } from "../utils/feature-flags";
 
 // Lazy load components for better performance
 const POSSettingsTab = lazy(() => import("../components/settings/POSSettingsTab"));
@@ -92,14 +93,14 @@ const SettingsPage: React.FC = () => {
     } catch {}
   }, [activeTab]);
   
-  // Settings tabs
+  // Settings tabs (Serial sekmesi feature flag ile koşullu)
   const tabs: SettingsTab[] = [
     { id: "pos", title: "POS Cihazı", icon: <Printer size={20} /> },
     { id: "barcode", title: "Barkod Okuyucu", icon: <Barcode size={20} /> },
     { id: "receipt", title: "Fiş ve İşletme", icon: <Building size={20} /> },
     { id: "backup", title: "Yedekleme", icon: <Database size={20} /> },
     { id: "hotkeys", title: "Kısayollar", icon: <Key size={20} /> },
-    { id: "serial", title: "Serial No", icon: <Check size={20} /> },
+    ...(isSerialFeatureEnabled() ? [{ id: "serial", title: "Serial No", icon: <Check size={20} /> }] : []),
     { id: "about", title: "Hakkında", icon: <Info size={20} /> },
   ];
 
