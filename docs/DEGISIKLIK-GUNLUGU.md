@@ -105,4 +105,7 @@ Tarih: 2025-08-28
 - Özellik bayrakları eklendi: `VITE_LICENSE_BYPASS`, `VITE_SERIAL_FEATURE` (docs/FEATURE-FLAGS.md)
 - App.tsx: dev/test’te lisans kontrolü BYPASS edildi; Settings: Serial sekmesi feature flag ile koşullu.
 - README.md: “Özellik Bayrakları” bölümü eklendi.
+- PR şablonu eklendi: .github/pull_request_template.md
+- PR kalite kontrol iş akışı eklendi: .github/workflows/pr-quality.yml (zorunlu başlık kontrolü)
+- BILESENLER_TOPLU_1/5: BYPASS ve serial flag notları işlendi.
 
