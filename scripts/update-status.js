@@ -35,10 +35,10 @@ function readJSON(p) {
 
 (function main() {
   const repoRoot = process.cwd();
-const statusPath = path.join(repoRoot, 'docs', 'DURUM.md');
+const statusPath = path.join(repoRoot, 'docs', 'status.md');
   const clientPkgPath = path.join(repoRoot, 'client', 'package.json');
   if (!fs.existsSync(statusPath)) {
-console.error('[update-status] docs/DURUM.md bulunamadı');
+console.error('[update-status] docs/status.md bulunamadı');
     process.exit(1);
   }
   const version = fs.existsSync(clientPkgPath) ? readJSON(clientPkgPath).version : '0.0.0';
@@ -96,6 +96,6 @@ console.error('[update-status] docs/DURUM.md bulunamadı');
   }
 
   fs.writeFileSync(statusPath, content, 'utf-8');
-console.log('[update-status] DURUM.md güncellendi');
+console.log('[update-status] status.md güncellendi');
 })();
 

@@ -27,7 +27,7 @@ function readJSON(p){ return JSON.parse(fs.readFileSync(p,'utf-8')); }
 (function main(){
   const root = process.cwd();
   const version = readJSON(path.join(root, 'client', 'package.json')).version || '0.0.0';
-const targets = ['docs/DURUM.md','docs/MODULLER.md','docs/TEST-KAPSAMI.md','docs/BILESENLER.md','docs/API.md','docs/PERFORMANS.md'];
+const targets = ['docs/status.md','docs/modules.md','docs/test-coverage.md','docs/components.md','docs/api.md','docs/performance-overview.md'];
   for (const rel of targets){
     const p = path.join(root, rel);
     if (!fs.existsSync(p)) continue;

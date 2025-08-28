@@ -1,6 +1,6 @@
 # 🧩 COMPONENTS – Bileşen Envanteri
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Son Güncelleme: 2025-08-27
 Sürüm: 0.5.3
@@ -8,26 +8,26 @@ Sürüm: 0.5.3
 Bu dosya, ana bileşen gruplarını ve önemli notları özetler. Ayrıntılı props arayüzleri için dosya içinde TypeScript interfaceleri takip edin.
 
 Durum: Batch 1–7, 8, 9, 10, 11 ve 12 detay dokümantasyonu tamamlandı. Batch 13 beklemede. Ayrıntılar için aşağıdaki toplu belgeleri inceleyin:
-- docs/BILESENLER_TOPLU_1.md
-- docs/BILESENLER_TOPLU_2.md
-- docs/BILESENLER_TOPLU_3.md (prop tabloları ve kısa kullanım örnekleri eklendi)
-- docs/BILESENLER_TOPLU_4.md
-- docs/BILESENLER_TOPLU_5.md (prop tabloları ve kısa kullanım örnekleri eklendi)
+- docs/components-batch-1.md
+- docs/components-batch-2.md
+- docs/components-batch-3.md (prop tabloları ve kısa kullanım örnekleri eklendi)
+- docs/components-batch-4.md
+- docs/components-batch-5.md (prop tabloları ve kısa kullanım örnekleri eklendi)
 
 Performans referansları:
-- docs/PERFORMANS.md
-- docs/performance/PERFORMANS-KONTROL-LISTESI.md
-- docs/performance/OLCUM-REHBERI.md
-- docs/performance/PERFORMANS-PLAYBOOK.md
+- docs/performance-overview.md
+- docs/performance/performance-checklist.md
+- docs/performance/measurement-guide.md
+- docs/performance/performance-playbook.md
 
 Ek Referanslar:
-- Onboarding: docs/ONBOARDING-10-DAKIKADA-ROXOEPOS.md
-- Operasyon/Monitoring: docs/OPERASYON-IZLEME.md
-- Sütun Eşleştirme Worker Planı: docs/SUTUN-ESLESTIRME-WORKER-PLANI.md
-- Props Özetleri: docs/components/PROPS.md
-- Donanım: docs/hardware/ESC-POS-EKI.md, docs/hardware/TEST-KONTROL-LISTESI.md
-- Runbook’lar: docs/runbooks/CALISMA-KILAVUZLARI.md
-- Dosya Grupları: docs/DOSYA-PAKETLERI.md
+- Onboarding: docs/onboarding-10-minutes-roxoepos.md
+- Operasyon/Monitoring: docs/operations-monitoring.md
+- Sütun Eşleştirme Worker Planı: docs/column-mapping-worker-plan.md
+- Props Özetleri: docs/components/props.md
+- Donanım: docs/hardware/esc-pos-appendix.md, docs/hardware/test-checklist.md
+- Runbook’lar: docs/runbooks/operation-guides.md
+- Dosya Grupları: docs/file-packages.md
 
 ## 1) UI (src/components/ui)
 - Button.tsx, Input.tsx, Select.tsx, Switch.tsx, Dialog.tsx, Table.tsx, Tabs.tsx, Card.tsx, Badge.tsx, Pagination.tsx, DatePicker.tsx
@@ -86,17 +86,17 @@ interface ButtonProps {
 - Düzen: Layout → Spacing → Typography → Colors → Effects (bkz. proje kuralı)
 
 ## 10) Batch Dökümanları
-- Batch 1 — Çekirdek Uygulama ve Altyapı: docs/BILESENLER_TOPLU_1.md
-- Batch 2 — Servisler ve Veritabanı Katmanı: docs/BILESENLER_TOPLU_2.md
-- Batch 3 — Ortak UI Bileşenleri ve Hook’lar: docs/BILESENLER_TOPLU_3.md
-- Batch 4 — Dashboard (Sales, Products): docs/BILESENLER_TOPLU_4.md
-- Batch 5 — POS, Settings ve Modals: docs/BILESENLER_TOPLU_5.md
-- Batch 6 — Uygulama Sayfaları (Diğer): docs/BILESENLER_TOPLU_6.md
-- Batch 7 — Tür Tanımları (Types): docs/BILESENLER_TOPLU_7.md
-- Batch 8 — Yardımcı Araçlar (Utils): docs/BILESENLER_TOPLU_8.md
-- Batch 9 — Testler: docs/BILESENLER_TOPLU_9.md
-- Batch 10 — Electron (Ana, Preload, Lisans): docs/BILESENLER_TOPLU_10.md
-- Batch 11 — Yapı ve Konfigürasyon (Build & Config): docs/BILESENLER_TOPLU_11.md
-- Batch 12 — Statik Varlıklar (Public, Assets): docs/BILESENLER_TOPLU_12.md
-- Batch 13 — Dokümantasyon ve Süreç Altyapısı: docs/BILESENLER_TOPLU_13.md
+- Batch 1 — Çekirdek Uygulama ve Altyapı: docs/components-batch-1.md
+- Batch 2 — Servisler ve Veritabanı Katmanı: docs/components-batch-2.md
+- Batch 3 — Ortak UI Bileşenleri ve Hook’lar: docs/components-batch-3.md
+- Batch 4 — Dashboard (Sales, Products): docs/components-batch-4.md
+- Batch 5 — POS, Settings ve Modals: docs/components-batch-5.md
+- Batch 6 — Uygulama Sayfaları (Diğer): docs/components-batch-6.md
+- Batch 7 — Tür Tanımları (Types): docs/components-batch-7.md
+- Batch 8 — Yardımcı Araçlar (Utils): docs/components-batch-8.md
+- Batch 9 — Testler: docs/components-batch-9.md
+- Batch 10 — Electron (Ana, Preload, Lisans): docs/components-batch-10.md
+- Batch 11 — Yapı ve Konfigürasyon (Build & Config): docs/components-batch-11.md
+- Batch 12 — Statik Varlıklar (Public, Assets): docs/components-batch-12.md
+- Batch 13 — Dokümantasyon ve Süreç Altyapısı: docs/components-batch-13.md
 

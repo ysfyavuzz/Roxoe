@@ -1,7 +1,7 @@
 # PR Şablonu (RoxoePOS)
 
 Lütfen aşağıdaki bölümleri doldurun. Ekran görüntüsü/video ve doküman notları,
-ileride kitabı (docs/BOOK/ROXOEPOS-KITAP.md) eksiksiz hazırlarken kritik önem taşır.
+ileride kitabı (docs/BOOK/roxoepos-book.md) eksiksiz hazırlarken kritik önem taşır.
 
 ## 🎯 Amaç
 Kısa ve net: Bu değişiklik neyi çözüyor / hangi değeri katıyor?
@@ -36,8 +36,8 @@ Kısa ve net: Bu değişiklik neyi çözüyor / hangi değeri katıyor?
 
 ## 📝 Dokümantasyon
 - [ ] README / kitap
-- [ ] BILESENLER_TOPLU_**
-- [ ] CHANGELOG (docs/DEGISIKLIK-GUNLUGU.md)
+- [ ] components-batch-**
+- [ ] CHANGELOG (docs/changelog.md)
 - Notlar:
 
 ## 🧾 PR Türü

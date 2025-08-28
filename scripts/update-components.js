@@ -25,13 +25,13 @@ function readJSON(p){ return JSON.parse(fs.readFileSync(p,'utf-8')); }
 
 (function main(){
   const root = process.cwd();
-const p = path.join(root, 'docs', 'BILESENLER.md');
-if (!fs.existsSync(p)) { console.error('[update-components] BILESENLER.md yok'); process.exit(1); }
+const p = path.join(root, 'docs', 'components.md');
+if (!fs.existsSync(p)) { console.error('[update-components] components.md yok'); process.exit(1); }
   const version = readJSON(path.join(root, 'client', 'package.json')).version || '0.0.0';
   let c = fs.readFileSync(p,'utf-8');
   c = replaceLine(c, 'Son Güncelleme:', `Son Güncelleme: ${today()}`);
   c = replaceLine(c, 'Sürüm:', `Sürüm: ${version}`);
   fs.writeFileSync(p, c, 'utf-8');
-console.log('[update-components] BILESENLER.md güncellendi');
+console.log('[update-components] components.md güncellendi');
 })();
 

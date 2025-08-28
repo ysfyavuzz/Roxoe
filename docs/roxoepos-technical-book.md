@@ -25,18 +25,18 @@ Sürüm Bağlamı: 0.5.3 (client/package.json)
 
 Dokümantasyon Ana İndeksi (Hızlı Bağlantılar)
 - Proje Karşılama ve Kullanım Rehberi: ../README.md
-- Terminal/Komut Rehberi: ../KOMUT-REHBERI.md
-- Proje Durumu: DURUM.md
-- Modül Durumları: MODULLER.md
-- API Referansı: API.md
-- Bileşen Envanteri: BILESENLER.md (ve ayrıntılar için BILESENLER_TOPLU_1..12)
-- Performans Rehberi: PERFORMANS.md (ayrıca performance/PERFORMANS-KONTROL-LISTESI.md, performance/OLCUM-REHBERI.md, performance/PERFORMANS-PLAYBOOK.md)
-- Test Kapsam Politikası: TEST-KAPSAMI.md
-- Diyagramlar: DIYAGRAMLAR.md
-- Operasyon & Monitoring: OPERASYON-IZLEME.md
-- Runbook’lar: runbooks/CALISMA-KILAVUZLARI.md
-- Genel Kitap (Yatırımcı + Kullanıcı + Geliştirici): BOOK/ROXOEPOS-KITAP.md
-- İyileştirme/Temizlik Raporu: ../TEMIZLIK-RAPORU.md
+- Terminal/Komut Rehberi: ../command-guide.md
+- Proje Durumu: status.md
+- Modül Durumları: modules.md
+- API Referansı: api.md
+- Bileşen Envanteri: components.md (ve ayrıntılar için components-batch-1..12)
+- Performans Rehberi: performance-overview.md (ayrıca performance/performance-checklist.md, performance/measurement-guide.md, performance/performance-playbook.md)
+- Test Kapsam Politikası: test-coverage.md
+- Diyagramlar: diagrams.md
+- Operasyon & Monitoring: operations-monitoring.md
+- Runbook’lar: runbooks/operation-guides.md
+- Genel Kitap (Yatırımcı + Kullanıcı + Geliştirici): BOOK/roxoepos-book.md
+- İyileştirme/Temizlik Raporu: ../cleanup-report.md
 
 ---
 
@@ -310,23 +310,23 @@ Komutlar:
 14. Dosya Rehberi (Önemli Dosyalar ve Amaçları)
 Kök:
 - README.md: Ürün özellikleri, kurulum, kullanım, mimari, sorun giderme
-- KOMUT-REHBERI.md: Komut rehberi (tamamen Türkçe)
-- TEMIZLIK-RAPORU.md: Temizlik ve iyileştirme raporu
-- BILESEN-BOLME-PLANI.md: Büyük bileşenleri bölme planı
-- DURUM.md: Genel proje durumu, metrikler ve son değişiklikler
-- MODULLER.md: Modül bazlı durum ve tamamlanma yüzdeleri
-- API.md: IPC ve servis özet referansı
-- BILESENLER.md: Bileşen envanteri ve notlar
-- PERFORMANS.md: Performans bütçeleri ve ölçüm rehberi
-- TEST-KAPSAMI.md: Test kapsam politikası ve komutlar
+- command-guide.md: Komut rehberi (tamamen Türkçe)
+- cleanup-report.md: Temizlik ve iyileştirme raporu
+- component-splitting-plan.md: Büyük bileşenleri bölme planı
+- status.md: Genel proje durumu, metrikler ve son değişiklikler
+- modules.md: Modül bazlı durum ve tamamlanma yüzdeleri
+- api.md: IPC ve servis özet referansı
+- components.md: Bileşen envanteri ve notlar
+- performance-overview.md: Performans bütçeleri ve ölçüm rehberi
+- test-coverage.md: Test kapsam politikası ve komutlar
 - schemas/README.md: IPC ve Servis JSON Şemaları
-- runbooks/CALISMA-KILAVUZLARI.md: Operasyonel runbook’lar
-- performance/PERFORMANS-PLAYBOOK.md: Performans ölçüm playbook’u
-- hardware/TEST-KONTROL-LISTESI.md ve hardware/ESC-POS-EKI.md: Donanım testleri ve ESC/POS eki
+- runbooks/operation-guides.md: Operasyonel runbook’lar
+- performance/performance-playbook.md: Performans ölçüm playbook’u
+- hardware/test-checklist.md ve hardware/esc-pos-appendix.md: Donanım testleri ve ESC/POS eki
 - adr/README.md: Mimari karar kayıtları (ADR)
-- samples/ORNEKLER.md: Örnek veriler ve şablonlar
-- components/PROPS.md: Kritik bileşen prop tabloları
-- DOSYA-BAZLI-REFERANS.md: Ayrıntılı dosya bazlı inceleme (her dosya için amaç/sorumluluk/bağımlılıklar)
+- samples/examples.md: Örnek veriler ve şablonlar
+- components/props.md: Kritik bileşen prop tabloları
+- file-based-reference.md: Ayrıntılı dosya bazlı inceleme (her dosya için amaç/sorumluluk/bağımlılıklar)
 
 14.1 Dosya Metrikleri (Satır/Boyut) – Otomasyon
 - Amaç: Depodaki tüm metin dosyaları için satır ve boyut metriklerini otomatik üretmek.
@@ -1695,34 +1695,34 @@ if (!result.success) {
 ---
 
 71. Görsel Diyagramlar (Mermaid)
-- Dosya: docs/DIYAGRAMLAR.md
+- Dosya: docs/diagrams.md
 - İçerik: Component diyagramı, Satış ve Yedekleme sequence’ları, Geri yükleme flowchart’ı.
 - Not: GitHub ve birçok Markdown görüntüleyicide mermaid blokları otomatik render edilir.
 
 ---
 
 72. Onboarding Tutorial (10 Dakika)
-- Dosya: docs/ONBOARDING-10-DAKIKADA-ROXOEPOS.md
+- Dosya: docs/onboarding-10-minutes-roxoepos.md
 - İçerik: Windows/PowerShell için 8 adımda kurulum, kalite kontrolleri ve paketleme.
 
 ---
 
 73. Gerçek Senaryolar (Case Studies)
-- Kurulum: docs/case-studies/kurulum.md — Derleme, ilk ayarlar, ilk satış, paketleme.
-- Yedekleme/Geri Yükleme Testi: docs/case-studies/yedekleme-geri-yukleme-testi.md — UI ve programatik örneklerle test.
-- Cihaz Değişimi/Migrasyon: docs/case-studies/cihaz-degisimi-migrasyon.md — Eski cihazdan yeni cihaza veri taşıma.
-- İlk Ürün Yükleme (Excel/CSV): docs/case-studies/ilk-urun-yukleme-excel.md — Şablon, içe aktarma ve doğrulama ipuçları.
+- Kurulum: docs/case-studies/setup.md — Derleme, ilk ayarlar, ilk satış, paketleme.
+- Yedekleme/Geri Yükleme Testi: docs/case-studies/backup-restore-test.md — UI ve programatik örneklerle test.
+- Cihaz Değişimi/Migrasyon: docs/case-studies/device-migration.md — Eski cihazdan yeni cihaza veri taşıma.
+- İlk Ürün Yükleme (Excel/CSV): docs/case-studies/initial-product-import-excel.md — Şablon, içe aktarma ve doğrulama ipuçları.
 
 ---
 
 74. Operasyon & Monitoring
-- Dosya: docs/OPERASYON-IZLEME.md
+- Dosya: docs/operations-monitoring.md
 - İçerik: Log toplama, performans dashboard, merkezi hata yönetimi, Sentry entegrasyon planı, alarm kuralları.
 
 ---
 
 75. Future Vision
-- Dosya: docs/GELECEK-VIZYONU.md
+- Dosya: docs/roadmap.md
 - İçerik: Cloud sync, mobil entegrasyon, AI öneri sistemi, eklenti mimarisi ve SLO’lar.
 
 ---

@@ -1,6 +1,6 @@
 # 📊 STATUS – Proje Durumu
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Son Güncelleme: 2025-08-27
 Sürüm: 0.5.3
@@ -9,8 +9,8 @@ Sürüm: 0.5.3
 - Durum: Aktif geliştirme
 - Tamamlanma (yaklaşık): %80
 - Kod Kalitesi: Yüksek (TS strict, ESLint, Prettier)
-- Performans Bütçeleri: Hedefler tanımlı (bkz. PERFORMANS.md ve performance/PERFORMANS-KONTROL-LISTESI.md)
-- Dokümantasyon: Batch 1–7, 8, 9, 10, 11 ve 12 tamamlandı; Batch 13 beklemede (bkz. BILESENLER_TOPLU_1..7, 8, 9, 10, 11, 12)
+- Performans Bütçeleri: Hedefler tanımlı (bkz. performance-overview.md ve performance/performance-checklist.md)
+- Dokümantasyon: Batch 1–7, 8, 9, 10, 11 ve 12 tamamlandı; Batch 13 beklemede (bkz. components-batch-1..12)
 
 ## 🧪 Test ve Kapsam Özeti
 - Politika: Global ≥ %80, kritik dosyalar ≥ %95 (satır)
@@ -29,22 +29,22 @@ Sürüm: 0.5.3
 - POS listeleri için react-window sanallaştırma
 - Onboarding/Diagram/Monitoring dokümanları genişletildi
 
-Ayrıntı: docs/DEGISIKLIK-GUNLUGU.md
+Ayrıntı: docs/changelog.md
 
 ## 🧱 Modül Durumu
-Modül detayları için: docs/MODULLER.md
+Modül detayları için: docs/modules.md
 
 ## 📈 Performans
-- Hedefler ve ölçüm rehberi: docs/PERFORMANS.md
+- Hedefler ve ölçüm rehberi: docs/performance-overview.md
 - Sanallaştırma eşikleri: Teknik Kitap Bölüm 8.1
 
 ## 🔗 Referanslar
-- API Referansı: docs/API.md
-- Bileşen Envanteri: docs/BILESENLER.md
-- Test Politikası: docs/TEST-KAPSAMI.md
-- Performans: docs/performance/PERFORMANS-KONTROL-LISTESI.md, docs/performance/OLCUM-REHBERI.md, docs/performance/PERFORMANS-PLAYBOOK.md
-- Runbook’lar: docs/runbooks/CALISMA-KILAVUZLARI.md
-- Onboarding: docs/ONBOARDING-10-DAKIKADA-ROXOEPOS.md
-- Operasyon/Monitoring: docs/OPERASYON-IZLEME.md
-- Teknik Kitap: docs/ROXOEPOS-TEKNIK-KITAP.md
+- API Referansı: docs/api.md
+- Bileşen Envanteri: docs/components.md
+- Test Politikası: docs/test-coverage.md
+- Performans: docs/performance/performance-checklist.md, docs/performance/measurement-guide.md, docs/performance/performance-playbook.md
+- Runbook’lar: docs/runbooks/operation-guides.md
+- Onboarding: docs/onboarding-10-minutes-roxoepos.md
+- Operasyon/Monitoring: docs/operations-monitoring.md
+- Teknik Kitap: docs/roxoepos-technical-book.md
 

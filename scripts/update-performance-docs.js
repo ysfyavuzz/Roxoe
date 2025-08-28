@@ -24,13 +24,13 @@ function readJSON(p){ return JSON.parse(fs.readFileSync(p,'utf-8')); }
 
 (function main(){
   const root = process.cwd();
-const p = path.join(root, 'docs', 'PERFORMANS.md');
-if (!fs.existsSync(p)) { console.error('[update-performance-docs] PERFORMANS.md yok'); process.exit(1); }
+const p = path.join(root, 'docs', 'performance-overview.md');
+if (!fs.existsSync(p)) { console.error('[update-performance-docs] performance-overview.md yok'); process.exit(1); }
   const version = readJSON(path.join(root, 'client', 'package.json')).version || '0.0.0';
   let c = fs.readFileSync(p,'utf-8');
   c = replaceLine(c, 'Son Güncelleme:', `Son Güncelleme: ${today()}`);
   c = replaceLine(c, 'Sürüm:', `Sürüm: ${version}`);
   fs.writeFileSync(p, c, 'utf-8');
-console.log('[update-performance-docs] PERFORMANS.md güncellendi');
+console.log('[update-performance-docs] performance-overview.md güncellendi');
 })();
 

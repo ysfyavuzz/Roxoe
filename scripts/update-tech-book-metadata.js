@@ -38,8 +38,8 @@ function replaceLine(content, prefix, newLine) {
 (function main() {
   const repoRoot = process.cwd();
   const clientPkgPath = path.join(repoRoot, 'client', 'package.json');
-  const techBookPath = path.join(repoRoot, 'docs', 'ROXOEPOS-TEKNIK-KITAP.md');
-  const bookPath = path.join(repoRoot, 'docs', 'BOOK', 'ROXOEPOS-KITAP.md');
+const techBookPath = path.join(repoRoot, 'docs', 'roxoepos-technical-book.md');
+const bookPath = path.join(repoRoot, 'docs', 'BOOK', 'roxoepos-book.md');
 
   if (!fs.existsSync(clientPkgPath) || !fs.existsSync(techBookPath)) {
     console.error('[update-tech-book-metadata] Gerekli dosyalar bulunamadı');

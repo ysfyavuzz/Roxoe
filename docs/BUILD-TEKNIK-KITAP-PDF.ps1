@@ -1,6 +1,6 @@
 param(
-  [string]$Input = "docs/ROXOEPOS-TEKNIK-KITAP.md",
-  [string]$PdfOut = "docs/ROXOEPOS-TEKNIK-KITAP.pdf",
+  [string]$Input = "docs/roxoepos-technical-book.md",
+  [string]$PdfOut = "docs/roxoepos-technical-book.pdf",
   [switch]$Open
 )
 
@@ -26,7 +26,7 @@ try {
 catch {
   Write-Warning $_
   Write-Host "⚠️  PDF üretimi başarısız oldu. Alternatif olarak HTML üretmeyi deneyin:"
-  Write-Host "    pandoc -s -f gfm -t html5 -o docs/ROXOEPOS-TEKNIK-KITAP.html $Input"
+  Write-Host "    pandoc -s -f gfm -t html5 -o docs/roxoepos-technical-book.html $Input"
   exit 2
 }
 

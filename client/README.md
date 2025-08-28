@@ -11,7 +11,7 @@ Hızlı komutlar:
 
 Notlar:
 
-- Tam dokümantasyon ve mimari detaylar için proje kökündeki README.md ve docs/ klasörünü inceleyin (özellikle docs/ROXOEPOS-TEKNIK-KITAP.md).
+- Tam dokümantasyon ve mimari detaylar için proje kökündeki README.md ve docs/ klasörünü inceleyin (özellikle docs/roxoepos-technical-book.md).
 - Ürün/sepet listeleri için list sanallaştırma (react-window) devrede; büyük listelerde performans artışı sağlar.
 
 Önemli Hook’lar:

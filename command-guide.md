@@ -104,14 +104,14 @@ Test Altyapısı
 Önemli Belgeler
 
 - `README.md`: Kurulum, özellikler, mimari, sorun giderme
-- `docs/ROXOEPOS-TEKNIK-KITAP.md`: Kapsamlı teknik kitap
-- `docs/DEGISIKLIK-GUNLUGU.md`: Değişiklik günlüğü
-- `docs/DIYAGRAMLAR.md`: Mermaid diyagramlar
-- `docs/ONBOARDING-10-DAKIKADA-ROXOEPOS.md`: 10 dakikada başlangıç
-- `docs/OPERASYON-IZLEME.md`: Operasyon ve monitoring
-- `BILESEN-BOLME-PLANI.md`: Büyük bileşenleri bölme planı
-- `TEMIZLIK-RAPORU.md`: Temizlik/iyileştirme raporları (İyileştirme Özeti entegre)
-- Yeni eklenenler: `docs/DURUM.md`, `docs/MODULLER.md`, `docs/API.md`, `docs/BILESENLER.md`, `docs/PERFORMANS.md`, `docs/TEST-KAPSAMI.md`
+- `docs/roxoepos-technical-book.md`: Kapsamlı teknik kitap
+- `docs/changelog.md`: Değişiklik günlüğü
+- `docs/diagrams.md`: Mermaid diyagramlar
+- `docs/onboarding-10-minutes-roxoepos.md`: 10 dakikada başlangıç
+- `docs/operations-monitoring.md`: Operasyon ve monitoring
+- `component-splitting-plan.md`: Büyük bileşenleri bölme planı
+- `cleanup-report.md`: Temizlik/iyileştirme raporları (İyileştirme Özeti entegre)
+- Yeni eklenenler: `docs/status.md`, `docs/modules.md`, `docs/api.md`, `docs/components.md`, `docs/performance-overview.md`, `docs/test-coverage.md`
 
 Operasyonel İpuçları
 

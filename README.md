@@ -197,25 +197,25 @@ npm --prefix client run build
 ## 📚 Dokümantasyon
 
 ### Detaylı Kılavuzlar
-- 📖 **[RoxoePOS Teknik Kitap](docs/ROXOEPOS-TEKNIK-KITAP.md)** - Mimari, modüller, IPC ve test rehberi
-- 📘 **[RoxoePOS Kitabı (Genel)](docs/BOOK/ROXOEPOS-KITAP.md)** - Yatırımcı + Kullanıcı + Geliştirici perspektifli genel kitap
-- 🧹 **[Temizlik Raporu](TEMIZLIK-RAPORU.md)** - Kod kalitesi ve optimizasyon önerileri
-- 🛠️ **[KOMUT REHBERİ](KOMUT-REHBERI.md)** - Terminal/komut rehberi
-- 🗓️ **[DEĞİŞİKLİK GÜNLÜĞÜ](docs/DEGISIKLIK-GUNLUGU.md)** - Değişiklik günlüğü
-- 📊 **[DURUM](docs/DURUM.md)** - Genel proje durumu ve metrikler
-- 🧱 **[MODÜLLER](docs/MODULLER.md)** - Modül bazlı durum ve tamamlanma yüzdeleri
-- 🔌 **[API](docs/API.md)** - IPC ve servis referansı
-- 🧩 **[BİLEŞENLER](docs/BILESENLER.md)** - Bileşen envanteri ve notlar
-- 🗺️ Dosya Haritası: docs/DOSYA-HARITASI.md
-- 🚀 **[PERFORMANS](docs/PERFORMANS.md)** - Bütçeler ve ölçüm rehberi
-- 🧪 **[TEST KAPSAMI](docs/TEST-KAPSAMI.md)** - Kapsam politikası ve komutlar
+- 📖 **[RoxoePOS Teknik Kitap](docs/roxoepos-technical-book.md)** - Mimari, modüller, IPC ve test rehberi
+- 📘 **[RoxoePOS Kitabı (Genel)](docs/BOOK/roxoepos-book.md)** - Yatırımcı + Kullanıcı + Geliştirici perspektifli genel kitap
+- 🧹 **[Temizlik Raporu](cleanup-report.md)** - Kod kalitesi ve optimizasyon önerileri
+- 🛠️ **[Komut Rehberi](command-guide.md)** - Terminal/komut rehberi
+- 🗓️ **[Değişiklik Günlüğü](docs/changelog.md)** - Değişiklik günlüğü
+- 📊 **[Durum](docs/status.md)** - Genel proje durumu ve metrikler
+- 🧱 **[Modüller](docs/modules.md)** - Modül bazlı durum ve tamamlanma yüzdeleri
+- 🔌 **[API](docs/api.md)** - IPC ve servis referansı
+- 🧩 **[Bileşenler](docs/components.md)** - Bileşen envanteri ve notlar
+- 🗺️ Dosya Haritası: docs/file-map.md
+- 🚀 **[Performans](docs/performance-overview.md)** - Bütçeler ve ölçüm rehberi
+- 🧪 **[Test Kapsamı](docs/test-coverage.md)** - Kapsam politikası ve komutlar
 - 🧾 **[Şemalar (JSON Schema)](docs/schemas/README.md)**
-- 🧰 **[Runbook’lar](docs/runbooks/CALISMA-KILAVUZLARI.md)**
-- ⚙️ **[Performans Playbook](docs/performance/PERFORMANS-PLAYBOOK.md)**
-- 🖨️ Donanım / ESC-POS: docs/hardware/TEST-KONTROL-LISTESI.md ve docs/hardware/ESC-POS-EKI.md
+- 🧰 **[Runbook’lar](docs/runbooks/operation-guides.md)**
+- ⚙️ **[Performans Playbook](docs/performance/performance-playbook.md)**
+- 🖨️ Donanım / ESC-POS: docs/hardware/test-checklist.md ve docs/hardware/esc-pos-appendix.md
 - 🧭 **[ADR – Mimari Kararlar](docs/adr/README.md)**
-- 📦 Örnekler: docs/samples/ORNEKLER.md
-- 🧩 Bileşen Props Tablosu: docs/components/PROPS.md
+- 📦 Örnekler: docs/samples/examples.md
+- 🧩 Bileşen Props Tablosu: docs/components/props.md
 
 ### API Dokümantasyonu (özet)
 ```typescript
