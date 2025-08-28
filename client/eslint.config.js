@@ -5,6 +5,9 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import react from 'eslint-plugin-react';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
+import importPlugin from 'eslint-plugin-import';
+import tailwindcss from 'eslint-plugin-tailwindcss';
+import jsdoc from 'eslint-plugin-jsdoc';
 
 export default [
   {
@@ -29,10 +32,16 @@ export default [
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       '@typescript-eslint': tseslint,
+      import: importPlugin,
+      tailwindcss,
+      jsdoc,
     },
     settings: {
       react: {
         version: 'detect',
+      },
+      'import/resolver': {
+        typescript: true,
       },
     },
     rules: {
@@ -73,7 +82,31 @@ export default [
       
       // Import/Export Rules
       'no-duplicate-imports': 'error',
-      
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
+
+      // Tailwind class order
+      'tailwindcss/classnames-order': 'warn',
+
+      // JSDoc (public fonksiyonlar için öneri)
+      'jsdoc/require-jsdoc': [
+        'warn',
+        {
+          publicOnly: true,
+          require: {
+            ArrowFunctionExpression: true,
+            FunctionDeclaration: true,
+            MethodDefinition: true,
+          },
+        },
+      ],
+
       // Performance Rules
       'no-await-in-loop': 'warn',
       'prefer-template': 'warn',
