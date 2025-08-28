@@ -1,0 +1,49 @@
+name: ci
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install
+        run: |
+          cd client
+          npm ci
+      - name: Lint
+        run: |
+          cd client
+          npm run lint
+      - name: Type Check
+        run: |
+          cd client
+          npm run type-check
+      - name: Test (Coverage)
+        run: |
+          cd client
+          npm run test:coverage
+      - name: Critical Coverage Gate (≥95%)
+        run: |
+          cd client
+          npm run test:critical
+      - name: Build
+        run: |
+          cd client
+          npm run build
+      - name: Install Playwright (browsers)
+        run: |
+          cd client
+          npx playwright install --with-deps chromium
+      - name: E2E (Preview)
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+        run: |
+          cd client
+          npm run e2e:ci
+

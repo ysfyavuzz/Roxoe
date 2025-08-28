@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/icon.ico" />
+    <link rel="apple-touch-icon" href="/icon.png" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roxoe</title>
+</head>
+  <body>
+    <div id="root"></div>
+    <!-- Preview/E2E ortamı için güvenli IPC mock (Electron preload yoksa) -->
+    <script>
+      (function(){
+        if (!window.ipcRenderer) {
+          const listeners = new Map();
+          window.ipcRenderer = {
+            on: (channel, listener) => {
+              if (!listeners.has(channel)) listeners.set(channel, new Set());
+              listeners.get(channel).add(listener);
+            },
+            off: (channel, listener) => {
+              if (listeners.has(channel)) listeners.get(channel).delete(listener);
+            },
+            send: (channel, ...args) => {
+              // no-op for preview
+            },
+            invoke: async (channel, ...args) => {
+              if (channel === 'check-serial') return { isValid: true };
+              if (channel === 'create-backup-bridge') {
+                // Simüle progress
+                const stages = ['export', 'serialize', 'compress', 'write'];
+                let p = 0;
+                let i = 0;
+                const iv = setInterval(() => {
+                  p = Math.min(100, p + 25);
+                  const stage = stages[i] || 'write';
+                  i++;
+                  const set = listeners.get('backup-progress');
+                  if (set) set.forEach(fn => fn({}, { stage, progress: p }));
+                  if (p >= 100) clearInterval(iv);
+                }, 200);
+                return {
+                  success: true,
+                  backupId: 'mock-backup',
+                  metadata: { description: 'Mock', backupType: 'full', createdAt: new Date().toISOString() },
+                  size: 1024 * 1024,
+                  recordCount: 42,
+                  error: null
+                };
+              }
+              if (channel === 'get-backup-history') {
+                return [];
+              }
+              return null;
+            }
+          };
+        }
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

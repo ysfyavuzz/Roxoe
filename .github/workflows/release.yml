@@ -1,0 +1,51 @@
+name: release
+on:
+  workflow_dispatch:
+jobs:
+  publish-win:
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      # Optional Sentry (set in repo secrets)
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install
+        run: |
+          cd client
+          npm ci
+      - name: Build Windows
+        run: |
+          cd client
+          npm run build:win
+      - name: Publish Windows
+        run: |
+          cd client
+          npm run publish:win
+      - name: Sentry sourcemaps upload (optional)
+        shell: pwsh
+        run: |
+          if ($env:SENTRY_AUTH_TOKEN -and $env:SENTRY_ORG -and $env:SENTRY_PROJECT -and $env:SENTRY_DSN) {
+            Write-Host "Uploading sourcemaps to Sentry..."
+            cd client
+            npx sentry-cli releases new $env:GITHUB_SHA
+            npx sentry-cli releases set-commits --auto $env:GITHUB_SHA
+            # Renderer build maps
+            if (Test-Path dist) {
+              npx sentry-cli releases files $env:GITHUB_SHA upload-sourcemaps dist --url-prefix "~/" --rewrite
+            }
+            # Main process maps (if any)
+            if (Test-Path dist-electron) {
+              npx sentry-cli releases files $env:GITHUB_SHA upload-sourcemaps dist-electron --url-prefix "app:///" --rewrite
+            }
+            npx sentry-cli releases finalize $env:GITHUB_SHA
+          } else {
+            Write-Host "Sentry variables not set. Skipping sourcemap upload."
+          }
+

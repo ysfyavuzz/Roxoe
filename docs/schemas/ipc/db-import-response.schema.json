@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DbImportResponse",
+  "type": "object",
+  "properties": {
+    "success": { "type": "boolean" },
+    "error": { "type": ["string", "null"] }
+  },
+  "required": ["success"],
+  "additionalProperties": false
+}
+

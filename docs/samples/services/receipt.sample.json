@@ -1,0 +1,12 @@
+{
+  "receiptNo": "F20250827-0001",
+  "businessName": "Roxoe Market",
+  "address": "İstiklal Cad. No: 34, İstanbul",
+  "phone": "+90 212 000 00 00",
+  "lines": [
+    { "name": "Çikolata 80g", "qty": 2, "price": 12.96, "total": 25.92 },
+    { "name": "Kola 330ml", "qty": 1, "price": 15.00, "total": 15.00 }
+  ],
+  "totals": { "subtotal": 40.92, "tax": 0, "grandTotal": 40.92 }
+}
+

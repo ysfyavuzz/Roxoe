@@ -1,0 +1,7 @@
+{
+  "products": [
+    { "id": 1, "name": "Ürün 1", "barcode": "8690000000001", "salePrice": 12.5, "vatRate": 10, "stock": 100 },
+    { "id": 2, "name": "Ürün 2", "barcode": "8690000000002", "salePrice": 25.0, "vatRate": 10, "stock": 50 }
+  ]
+}
+

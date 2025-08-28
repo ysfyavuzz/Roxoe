@@ -1,0 +1,105 @@
+// src/App.tsx
+import {
+  HashRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useState, useEffect } from "react";
+import MainLayout from "./layouts/MainLayout";
+import POSPage from "./pages/POSPage";
+import SalesHistoryPage from "./pages/SalesHistoryPage";
+import SaleDetailPage from "./pages/SaleDetailPage";
+import DashboardPage from "./pages/DashboardPage";
+import ProductsPage from "./pages/ProductsPage";
+import CreditPage from "./pages/CreditPage";
+import SettingsPage from "./pages/SettingsPage";
+import AlertProvider from "./components/AlertProvider";
+import { NotificationProvider } from "./contexts/NotificationContext";
+import SerialActivation from "./components/SerialActivation";
+import UpdateNotification from "./components/UpdateNotification";
+import CashRegisterPage from "./pages/CashRegisterPage";
+import DynamicWindowTitle from "./components/DynamicWindowTitle";
+import { initBackupBridge } from "./utils/backup-bridge";
+// Yedekleme dialog manager bileşenini import et
+import BackupDialogManager from "./components/BackupDialogManager";
+
+function App() {
+  const [isActivated, setIsActivated] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+
+  useEffect(() => {
+    checkSerial();
+    
+    // YENİ: Backup köprüsünü başlat
+    initBackupBridge();
+  }, []);
+
+  const checkSerial = async () => {
+    try {
+      const result = await window.ipcRenderer.invoke("check-serial");
+      setIsActivated(result.isValid);
+    } catch (error) {
+      console.error("Serial kontrol hatası:", error);
+      setIsActivated(false);
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  if (isChecking) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-gray-600">Serial numarası kontrol ediliyor...</div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <Router>
+        <NotificationProvider>
+          {!isActivated ? (
+            <AlertProvider>
+              <div className="h-screen">
+                <SerialActivation onSuccess={() => setIsActivated(true)} />
+              </div>
+            </AlertProvider>
+          ) : (
+            <MainLayout>
+              <AlertProvider>
+                <Routes>
+                  <Route path="/" element={<POSPage />} />
+                  <Route path="/pos" element={<POSPage />} />
+                  <Route path="/products" element={<ProductsPage />} />
+                  <Route path="/credit" element={<CreditPage />} />
+                  <Route path="/history" element={<SalesHistoryPage />} />
+                  <Route path="/cash" element={<CashRegisterPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/sales/:id" element={<SaleDetailPage />} />
+                  {/* Dashboard ana rotası - overview'a yönlendir */}
+                  <Route
+                    path="/dashboard"
+                    element={<Navigate to="/dashboard/overview" replace />}
+                  />
+
+                  {/* Dashboard alt rotaları */}
+                  <Route
+                    path="/dashboard/:tabKey"
+                    element={<DashboardPage />}
+                  />
+                </Routes>
+              </AlertProvider>
+            </MainLayout>
+          )}
+        </NotificationProvider>
+      </Router>
+      <UpdateNotification />
+      <DynamicWindowTitle />
+      {/* Kapatma öncesi yedekleme yöneticisi */}
+      <BackupDialogManager />
+    </>
+  );
+}
+
+export default App;

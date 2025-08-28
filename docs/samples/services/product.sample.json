@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "name": "Çikolata 80g",
+  "category": "Atıştırmalık",
+  "purchasePrice": 8.5,
+  "salePrice": 12.0,
+  "vatRate": 8,
+  "priceWithVat": 12.96,
+  "stock": 120,
+  "barcode": "8690000000012"
+}
+

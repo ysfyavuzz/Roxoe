@@ -1,0 +1,72 @@
+# Günlükler ve geçici dosyalar
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# İşletim sistemi dosyaları
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Node bağımlılıkları
+node_modules/
+client/node_modules/
+
+# Derleme/çıktı klasörleri
+/dist/
+/build/
+/out/
+/release/
+/tmp/
+/temp/
+
+# TypeScript
+*.tsbuildinfo
+
+# Test & coverage çıktıları
+coverage/
+.nyc_output/
+
+# Playwright raporları
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache
+
+# Client altındaki rapor/çıktılar
+client/dist/
+client/coverage/
+client/playwright-report/
+client/test-results/
+client/blob-report/
+client/playwright/.cache
+client/electron/dist/
+client/electron/out/
+
+# Ortam değişkenleri (gizli bilgiler)
+.env
+.env.*
+!.env.example
+
+# Lint/araç cache'leri
+.eslintcache
+
+# IDE ayarları (isteğe bağlı)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.iml
+
+# Electron paketleme
+*.asar
+*.asar.unpacked
+
+dist-electron/
+

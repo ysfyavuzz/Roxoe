@@ -1,0 +1,12 @@
+{
+  "name": "roxoepos-root",
+  "private": true,
+  "scripts": {
+    "prepare": "cd client && npm run prepare",
+    "docs:meta:sync": "node scripts/update-tech-book-metadata.js",
+    "docs:update": "node scripts/update-tech-book-metadata.js && node scripts/update-api-docs.js && node scripts/update-components.js && node scripts/update-performance-docs.js",
+    "status:update": "node scripts/update-status.js",
+    "analyze:project": "node scripts/analyze-project.js",
+    "docs:all": "npm run analyze:project && npm run docs:update && npm run status:update"
+  }
+}

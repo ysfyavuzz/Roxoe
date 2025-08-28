@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UpdateStatusEvent",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["checking", "available", "downloading", "downloaded", "error"] },
+    "version": { "type": "string" },
+    "progress": {
+      "type": "object",
+      "properties": {
+        "percent": { "type": "number" },
+        "transferred": { "type": "number" },
+        "total": { "type": "number" },
+        "speed": { "type": ["string", "number"] },
+        "remaining": { "type": "number" },
+        "isDelta": { "type": "boolean" }
+      },
+      "required": ["percent", "transferred", "total"],
+      "additionalProperties": true
+    },
+    "error": { "type": ["null", "string", "object"] }
+  },
+  "required": ["status"],
+  "additionalProperties": true
+}
+

@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ScheduleBackupRequest",
+  "type": "object",
+  "properties": {
+    "frequency": { "type": "string", "enum": ["hourly", "daily", "weekly"] },
+    "time": {
+      "type": ["object", "null"],
+      "properties": {
+        "hour": { "type": "integer", "minimum": 0, "maximum": 23 },
+        "minute": { "type": "integer", "minimum": 0, "maximum": 59 }
+      },
+      "required": ["hour", "minute"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["frequency"],
+  "additionalProperties": false
+}
+

@@ -1,0 +1,14 @@
+{
+  "id": "SALE-20250827-0001",
+  "items": [
+    { "id": 1, "name": "Çikolata 80g", "qty": 2, "priceWithVat": 12.96 },
+    { "id": 2, "name": "Kola 330ml", "qty": 1, "priceWithVat": 15.00 }
+  ],
+  "originalTotal": 40.92,
+  "discount": { "type": "percentage", "value": 10, "discountedTotal": 36.83 },
+  "total": 36.83,
+  "date": "2025-08-27T08:00:00.000Z",
+  "paymentMethod": "cash",
+  "receiptNo": "F20250827-0001"
+}
+

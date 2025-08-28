@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DbImportBase64Event",
+  "type": "object",
+  "properties": {
+    "data": { "type": "string", "minLength": 1 }
+  },
+  "required": ["data"],
+  "additionalProperties": false
+}
+

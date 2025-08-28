@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CreateBackupResult",
+  "type": "object",
+  "properties": {
+    "success": { "type": "boolean" },
+    "backupId": { "type": ["string", "null"] },
+    "metadata": {
+      "type": ["object", "null"],
+      "properties": {
+        "description": { "type": ["string", "null"] },
+        "backupType": { "type": ["string", "null"], "enum": ["full", "incremental", null] },
+        "createdAt": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "additionalProperties": true
+    },
+    "size": { "type": ["number", "null"] },
+    "recordCount": { "type": ["number", "null"] },
+    "error": { "type": ["string", "null"] }
+  },
+  "required": ["success"],
+  "additionalProperties": true
+}
+

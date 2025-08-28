@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "backupId": "2025-08-27T00-45-10Z-full",
+  "metadata": {
+    "description": "Manuel Yedekleme - Optimize",
+    "backupType": "full",
+    "createdAt": "2025-08-27T00:45:10.123Z"
+  },
+  "size": 10485760,
+  "recordCount": 15234,
+  "error": null
+}
+

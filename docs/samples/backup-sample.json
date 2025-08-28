@@ -1,0 +1,27 @@
+{
+  "version": "0.5.3",
+  "app": "RoxoePOS",
+  "createdAt": "2025-08-27T00:45:10.123Z",
+  "backupType": "full",
+  "export": {
+    "databases": {
+      "posDB": {
+        "stores": {
+          "products": [
+            { "id": 1, "name": "Çikolata", "barcode": "8690000000011", "salePrice": 7.5, "vatRate": 10 },
+            { "id": 2, "name": "Soda", "barcode": "8690000000028", "salePrice": 3.5, "vatRate": 10 }
+          ]
+        }
+      },
+      "salesDB": {
+        "stores": {
+          "sales": [
+            { "id": "SALE-1699999999-ABCD", "items": [{ "id": 1, "qty": 2, "priceWithVat": 8.25 }], "total": 16.5, "paymentMethod": "cash" }
+          ]
+        }
+      }
+    }
+  },
+  "integrity": { "algorithm": "sha256", "checksum": "..." }
+}
+
