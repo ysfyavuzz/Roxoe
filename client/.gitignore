@@ -14,7 +14,6 @@ dist-ssr
 *.local
 release
 electron-builder.json5
-package-lock.json
 key.pem
 cert.pem
 certificate.pfx
