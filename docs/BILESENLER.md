@@ -98,4 +98,5 @@ interface ButtonProps {
 - Batch 10 — Electron (Ana, Preload, Lisans): docs/BILESENLER_TOPLU_10.md
 - Batch 11 — Yapı ve Konfigürasyon (Build & Config): docs/BILESENLER_TOPLU_11.md
 - Batch 12 — Statik Varlıklar (Public, Assets): docs/BILESENLER_TOPLU_12.md
+- Batch 13 — Dokümantasyon ve Süreç Altyapısı: docs/BILESENLER_TOPLU_13.md
 

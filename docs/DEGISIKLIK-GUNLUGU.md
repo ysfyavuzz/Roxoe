@@ -108,4 +108,5 @@ Tarih: 2025-08-28
 - PR şablonu eklendi: .github/pull_request_template.md
 - PR kalite kontrol iş akışı eklendi: .github/workflows/pr-quality.yml (zorunlu başlık kontrolü)
 - BILESENLER_TOPLU_1/5: BYPASS ve serial flag notları işlendi.
+- BILESENLER_TOPLU_13: Dokümantasyon/PR/Kitap/Media/Feature Flags referansları oluşturuldu.
 
