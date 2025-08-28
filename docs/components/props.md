@@ -1,6 +1,6 @@
 # Kritik Bileşen Props Tabloları
 
-[← Teknik Kitap’a Dön](../ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](../BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](../roxoepos-technical-book.md) · [Genel Kitap](../BOOK/roxoepos-book.md)
 
 Aşağıdaki tablolar, sık kullanılan kritik bileşenler için özet props bilgisini sunar. Detaylı imzalar için kaynak dosyalara bakınız.
 

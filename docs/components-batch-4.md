@@ -5,7 +5,7 @@ Hedef Metrikler (Özet, P95)
 - ProductsTab ağır filtre/sıralama (10k) ≤ 350 ms
 - ProductsTab sayfa başı render ≤ 120 ms
 
-Tam liste: docs/performance/OLCUM-REHBERI.md
+Tam liste: docs/performance/measurement-guide.md
 
 Bu belge, RoxoePOS projesindeki Dashboard sayfası ve alt sekmelerine (Sales, Products) ilişkin özetleri içerir.
 

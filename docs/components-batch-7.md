@@ -5,7 +5,7 @@ Hedef Metrikler (Özet, P95)
 - Ortak tiplerin tek kaynaktan yeniden ihracı (re-export) ile duplikasyon oranı ≈ 0
 - any ve geniş tiplerin azaltılması; domain tiplerinde birliktelik (DiscountInfo gibi)
 
-Tam liste hedefler: docs/performance/OLCUM-REHBERI.md
+Tam liste hedefler: docs/performance/measurement-guide.md
 
 ---
 
@@ -85,7 +85,7 @@ Entegrasyon Notları
 - d.ts kapsamı: global.d.ts içinde sadece zorunlu ambient bildirimleri tutun; modüler hale getirme olanağı varsa ayırın.
 
 İlgili Belgeler
-- Batch 2: Servisler ve Veritabanı Katmanı — docs/BILESENLER_TOPLU_2.md
-- Batch 3: Ortak UI ve Hook’lar — docs/BILESENLER_TOPLU_3.md
-- Performans ve Ölçüm — docs/performance/PERFORMANS-KONTROL-LISTESI.md, docs/performance/OLCUM-REHBERI.md
+- Batch 2: Servisler ve Veritabanı Katmanı — docs/components-batch-2.md
+- Batch 3: Ortak UI ve Hook’lar — docs/components-batch-3.md
+- Performans ve Ölçüm — docs/performance/performance-checklist.md, docs/performance/measurement-guide.md
 

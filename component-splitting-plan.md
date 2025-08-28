@@ -1,6 +1,6 @@
 # 🔧 Bileşen Bölme Planı
 
-[← Teknik Kitap’a Dön](docs/ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](docs/BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](docs/roxoepos-technical-book.md) · [Genel Kitap](docs/BOOK/roxoepos-book.md)
 
 ## İlerleme Güncellemesi (2025-08-27)
 - [x] POS: PaymentModal iki bileşene bölündü (ProductSplitSection, EqualSplitSection)

@@ -1,6 +1,6 @@
 # ColumnMappingModal için Web Worker Planı
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Amaç
 - Büyük Excel/CSV dosyalarının başlık eşleştirme ve satır işleme (parse/normalize/validate) yükünü ana UI iş parçacığından ayırmak.

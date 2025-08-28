@@ -336,6 +336,6 @@ Bu inceleme ve temizlik süreci boyunca:
 
 <div align="center">
 
-**[📚 Ana Dokümantasyon](DOKÜMANTASYON.md)** • **[🧹 Temizlik Raporu](TEMIZLIK-RAPORU.md)** • **[📖 README](README.md)**
+**[📚 Ana Dokümantasyon](documentation.md)** • **[🧹 Temizlik Raporu](cleanup-report.md)** • **[📖 README](README.md)**
 
 </div>

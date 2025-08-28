@@ -1,6 +1,6 @@
 # Performans Ölçüm Playbook’u
 
-[← Teknik Kitap’a Dön](../ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](../BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](../roxoepos-technical-book.md) · [Genel Kitap](../BOOK/roxoepos-book.md)
 
 Amaç: Bütçelere uyumu doğrulamak ve regresyonları yakalamak
 

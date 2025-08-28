@@ -1,6 +1,6 @@
 # 🚀 Performans Kontrol Listesi
 
-[← Teknik Kitap’a Dön](../ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](../BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](../roxoepos-technical-book.md) · [Genel Kitap](../BOOK/roxoepos-book.md)
 
 Bu kontrol listesi, RoxoePOS içinde performans ve akıcılığı iyileştirmek için hızlı doğrulama adımlarını sunar. Her yeni özellik veya sayfa için aşağıdaki maddeleri gözden geçirin.
 

@@ -1,6 +1,6 @@
 # 🔌 API – IPC ve Servis Referansı
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Son Güncelleme: 2025-08-27
 Sürüm: 0.5.3
@@ -105,6 +105,6 @@ import/export
 - Loglama: electron-log
 
 ## 6) Referanslar
-- Teknik Kitap – IPC Bölümü: docs/ROXOEPOS-TEKNIK-KITAP.md (Bölüm 18, 41)
+- Teknik Kitap – IPC Bölümü: docs/roxoepos-technical-book.md (Bölüm 18, 41)
 - Tipler: client/src/types
 

@@ -1,6 +1,6 @@
 # Runbook’lar
 
-[← Teknik Kitap’a Dön](../ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](../BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](../roxoepos-technical-book.md) · [Genel Kitap](../BOOK/roxoepos-book.md)
 
 Bu klasör, sık karşılaşılan operasyonel sorunlar için adım adım çözüm rehberlerini içerir.
 

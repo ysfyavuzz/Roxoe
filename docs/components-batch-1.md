@@ -7,7 +7,7 @@ Hedef Metrikler (Özet, P95)
 - BackupDialog açılışı ≤ 120 ms; yedek başlatma ≤ 150 ms
 - Updater UI durum güncellemesi ≤ 50 ms
 
-Tam liste: docs/performance/OLCUM-REHBERI.md
+Tam liste: docs/performance/measurement-guide.md
 
 Bu belge, RoxoePOS’un çekirdek katmanını oluşturan dosya ve bileşenleri açıklar. Amaç, uygulamanın iskeletini oluşturan yönlendirme, yerleşim (layout), global sağlayıcılar, hata yakalama, güncelleme bildirimleri ve yedekleme/geri yükleme köprüsü hakkında konsolide ve pratik bir referans sunmaktır.
 

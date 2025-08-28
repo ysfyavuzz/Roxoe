@@ -22,7 +22,7 @@ Sürüm: 0.5.3
 - 2025-08-27: Temizlik yapıldı (client/node_modules, client/dist). Bağımlılıklar yeniden kurulmalı.
 - Batch 1–5 dokümanları detaylandırıldı: “Ne işe yarar / Nasıl çalışır” ve “Performans & İyileştirme Önerileri” eklendi
 - Batch 3 ve Batch 5 için prop tabloları ve küçük kullanım örnekleri eklendi
-- Performans Checklist ve Ölçüm Rehberi yayınlandı (performance/PERFORMANS-KONTROL-LISTESI.md, performance/OLCUM-REHBERI.md)
+- Performans Checklist ve Ölçüm Rehberi yayınlandı (performance/performance-checklist.md, performance/measurement-guide.md)
 - Test altyapısı güçlendirildi; coverage eşikleri eklendi
 - Yedekleme stratejisi tekilleştirildi (OptimizedBackupManager varsayılan)
 - SettingsPage ve POS akışları için özel hook’lar (useSettingsPage, usePaymentFlow, useRegisterStatus)

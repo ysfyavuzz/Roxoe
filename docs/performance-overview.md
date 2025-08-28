@@ -1,6 +1,6 @@
 # 🚀 PERFORMANCE – Performans Bütçeleri ve Rehber
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Son Güncelleme: 2025-08-27
 Sürüm: 0.5.3
@@ -50,5 +50,5 @@ console.timeEnd('addSale')
 
 ## 5) Referanslar
 - Teknik Kitap: Bölüm 8, 43, 49, 54
-- DIYAGRAMLAR.md (sequence/flowchart)
+- diagrams.md (sequence/flowchart)
 

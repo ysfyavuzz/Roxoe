@@ -47,7 +47,7 @@ RoxoePOS; React + TypeScript + Vite + Electron temelli, masaüstü odaklı bir P
 - client/: Tüm uygulama kodu (React + Electron + Build toolchain)
 - client/src/: React kodu, sayfalar, bileşenler, servisler, tipler, yedekleme altyapısı
 - client/electron/: Electron main ve preload süreçleri, lisans yöneticisi
-- docs içeriği: Bu belge ve diğer raporlar (kökte mevcut raporlar: TEMIZLIK-RAPORU.md (İyileştirme Özeti entegre), BILESEN-BOLME-PLANI.md)
+- docs içeriği: Bu belge ve diğer raporlar (kökte mevcut raporlar: cleanup-report.md (İyileştirme Özeti entegre), component-splitting-plan.md)
 
 ---
 
@@ -72,8 +72,8 @@ Komutlar client/ klasöründe çalıştırılmalıdır. Özet:
 - İsim filtresi: npm run test -- -t "başlık parçası"
 
 Notlar:
-- KOMUT-REHBERI.md kökte ek rehber içerir (komutlar ve mimari özet).
-- KOMUT-REHBERI.md ve kökteki Markdown dosyaları için Prettier’i doğrudan npx prettier -w KOMUT-REHBERI.md gibi çalıştırın.
+- command-guide.md kökte ek rehber içerir (komutlar ve mimari özet).
+- command-guide.md ve kökteki Markdown dosyaları için Prettier’i doğrudan npx prettier -w command-guide.md gibi çalıştırın.
 
 ---
 
@@ -95,7 +95,7 @@ Akışlar (özet):
 - ProductsPage.tsx: Ürün listeleme/arama/filtreleme, toplu işlemler (Excel import/export, barkod üretimi).
 - SalesHistoryPage.tsx & SaleDetailPage.tsx: Geçmiş satışlar, detay görüntüleme ve filtreler.
 - CashRegisterPage.tsx: Kasa aç/kapat, işlem geçmişi, durum ve sayfa içi kontroller.
-- SettingsPage.tsx: POS, Barkod, Fiş/İşletme, Yedekleme, Serial, About sekmeleri. Not: SettingsPage artık useSettingsPage hook’u ile yönetiliyor; sekmeler lazy load ve props ile beslenecek şekilde bağlandı (BILESEN-BOLME-PLANI.md güncellendi).
+- SettingsPage.tsx: POS, Barkod, Fiş/İşletme, Yedekleme, Serial, About sekmeleri. Not: SettingsPage artık useSettingsPage hook’u ile yönetiliyor; sekmeler lazy load ve props ile beslenecek şekilde bağlandı (component-splitting-plan.md güncellendi).
 - DashboardPage.tsx: Özet metrikler, satış grafikleri, stok uyarıları, performans göstergeleri.
 
 Akış örneği (Satış):
@@ -361,9 +361,9 @@ Not: UI dosyaları çok sayıda olduğundan her biri benzer kalıpları izler (T
 ---
 
 15. Bilinen Sorunlar, Eksikler ve İyileştirme Önerileri
-Özet (TEMIZLIK-RAPORU.md ile uyumlu, İyileştirme Özeti entegre):
+Özet (cleanup-report.md ile uyumlu, İyileştirme Özeti entegre):
 1) Büyük Bileşenlerin Bölünmesi
-- SettingsPage.tsx ve POSPage.tsx gibi dosyalar büyük. BILESEN-BOLME-PLANI.md’de detaylı bölme planı mevcut.
+- SettingsPage.tsx ve POSPage.tsx gibi dosyalar büyük. component-splitting-plan.md’de detaylı bölme planı mevcut.
 - Beklenen fayda: Bakım kolaylığı, performans ve test edilebilirlik artışı.
 
 2) Yedekleme Sistemi Tekilleştirme (TAMAMLANDI)
@@ -386,7 +386,7 @@ Not: UI dosyaları çok sayıda olduğundan her biri benzer kalıpları izler (T
 - GH_TOKEN gereksinimi dokümante. CI pipeline’da test/lint/build adımları zorunlu olmalı.
 
 7) Dokümantasyon Sürekliliği
-- KOMUT-REHBERI.md ve bu teknik kitap düzenli güncellenmeli; RELEASE/DEGISIKLIK-GUNLUGU akışı eklenebilir.
+- command-guide.md ve bu teknik kitap düzenli güncellenmeli; RELEASE/DEGISIKLIK-GUNLUGU akışı eklenebilir.
 
 Ek Öneriler (Kurallarla uyumlu):
 - React.memo/useMemo/useCallback kullanımlarını kritik bileşenlerde artırın.
@@ -431,7 +431,7 @@ Bu belge, projenin tamamını yüksek seviyede kapsar ve derinleşmesi gereken a
 - Dokümantasyon sürekliliği: Her işlem/kod değişikliği tamamlandığında ilgili tüm dokümanlar güncellenecektir (README, Teknik Kitap, KOMUT-REHBERI, DIYAGRAMLAR, ONBOARDING, OPERASYON-IZLEME, DEGISIKLIK-GUNLUGU vb.).
 
 Pratik uygulama ipuçları:
-- Büyük bileşenleri böl (BILESEN-BOLME-PLANI.md).
+- Büyük bileşenleri böl (component-splitting-plan.md).
 - Her public fonksiyon için JSDoc (Türkçe) ekle.
 - Tekrarlanan yardımcıları utils ve hooks altında topla.
 - Kritik akışlar için entegrasyon/E2E testleri ekle.
@@ -913,7 +913,7 @@ export class ValidationError extends Error {
 - Raporlama: Vitest coverage html raporunu artifacts olarak saklama (CI yoksa local docs/ içine kopyalanabilir).
 - Dokümantasyon güncelleme komutları (kök package.json):
 - docs:update → Teknik Kitap + API/BILESENLER/PERFORMANS meta güncelleme
-- status:update → DURUM.md meta + coverage özeti (varsa)
+- status:update → status.md meta + coverage özeti (varsa)
 - analyze:project → Birden fazla dokümanda meta tarih/sürüm senkronizasyonu
 - docs:all → analyze:project + docs:update + status:update zinciri
 - Yerel hook örnekleri: scripts/post-commit.example.sh ve scripts/post-commit.example.ps1 (manuel kopyalama ile kullanılabilir).
@@ -1392,9 +1392,9 @@ describe('satış özeti', () => {
 
 59. Ek Kaynaklar ve İzleme
 - Kod içi TODO/FIXME taraması yaparak borçları topla
-- TEMIZLIK-RAPORU.md’deki maddeleri sprint planına al
-- BILESEN-BOLME-PLANI.md hedeflerini parça parça tamamla
-- KOMUT-REHBERI.md’yi süreç içinde güncel tut (komut veya mimari değişirse)
+- cleanup-report.md’deki maddeleri sprint planına al
+- component-splitting-plan.md hedeflerini parça parça tamamla
+- command-guide.md’yi süreç içinde güncel tut (komut veya mimari değişirse)
 
 ---
 

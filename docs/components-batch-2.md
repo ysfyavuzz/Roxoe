@@ -8,7 +8,7 @@ Hedef Metrikler (Özet, P95)
 - receiptService: PDF ≤ 350 ms; exportSevices: 1 günlük Excel ≤ 2 s (arka plan)
 - posServices: manuel ödeme ≤ 100 ms; cihaz handshake ≤ 4000 ms; iptal ≤ 2000 ms
 
-Tam liste: docs/performance/OLCUM-REHBERI.md
+Tam liste: docs/performance/measurement-guide.md
 
 Bu belge, RoxoePOS’un servis ve veri katmanını kapsar. IndexedDB tabanlı depolama, POS/ödeme servisleri, dışa aktarım (Excel/PDF/CSV), kasa/veresiye/satış servisleri, arşiv/performans/optimizasyon alt sistemleri ve ilgili tipler özetlenmiştir.
 

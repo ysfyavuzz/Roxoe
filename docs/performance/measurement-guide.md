@@ -1,6 +1,6 @@
 # 📏 Ölçüm Rehberi
 
-[← Teknik Kitap’a Dön](../ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](../BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](../roxoepos-technical-book.md) · [Genel Kitap](../BOOK/roxoepos-book.md)
 
 Bu rehber, RoxoePOS için performans ölçümü yaparken izlenebilecek pratik adımları ve araçları özetler.
 

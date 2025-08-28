@@ -11,7 +11,7 @@ Hedef Metrikler (Özet, P95)
 - Prod build: ≤ 30 s; paket boyutu kontrollü (tree-shaking, code-splitting)
 - Pre-commit hook süresi: ≤ 5 s (yalnızca staged dosyalar)
 
-Tam liste hedefler: docs/performance/OLCUM-REHBERI.md
+Tam liste hedefler: docs/performance/measurement-guide.md
 
 ---
 
@@ -95,6 +95,6 @@ Performans & İyileştirme Önerileri (Genel)
 - Pre-commit ergonomisi: Uzun süren görevleri CI’a taşıyın; pre-commit sadece hızlı kontroller.
 
 İlgili Belgeler
-- Batch 10 — Electron (Ana, Preload, Lisans): docs/BILESENLER_TOPLU_10.md
-- Batch 12 — Statik Varlıklar (Public, Assets): docs/BILESENLER_TOPLU_12.md
-- Performans ve Ölçüm: docs/performance/PERFORMANS-KONTROL-LISTESI.md, docs/performance/OLCUM-REHBERI.md
+- Batch 10 — Electron (Ana, Preload, Lisans): docs/components-batch-10.md
+- Batch 12 — Statik Varlıklar (Public, Assets): docs/components-batch-12.md
+- Performans ve Ölçüm: docs/performance/performance-checklist.md, docs/performance/measurement-guide.md

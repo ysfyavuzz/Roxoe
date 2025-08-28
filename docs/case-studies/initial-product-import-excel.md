@@ -1,6 +1,6 @@
 # Case Study: İlk Ürün Yükleme (Excel/CSV)
 
-[← Teknik Kitap’a Dön](../ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](../BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](../roxoepos-technical-book.md) · [Genel Kitap](../BOOK/roxoepos-book.md)
 
 Amaç: İlk kurulumda ürünleri Excel/CSV dosyasından hızlıca içe aktarmak.
 

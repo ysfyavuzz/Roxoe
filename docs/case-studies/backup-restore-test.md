@@ -1,6 +1,6 @@
 # Case Study: Yedekleme ve Geri Yükleme Testi
 
-[← Teknik Kitap’a Dön](../ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](../BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](../roxoepos-technical-book.md) · [Genel Kitap](../BOOK/roxoepos-book.md)
 
 Hedef: Yedek oluşturma, ilerlemeyi izleme ve geri yükleme iş akışını doğrulamak.
 

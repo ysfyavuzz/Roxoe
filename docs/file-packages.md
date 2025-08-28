@@ -1,6 +1,6 @@
 # FILE-BATCHES — Dosyaların Batch Bazlı Sınıflandırması
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Son güncelleme: 2025-08-27
 Toplam izlenen dosya: 160
@@ -25,7 +25,7 @@ Durum: İlk 5 batch sabit tutuldu ve yeni dosyalar bu ilk beş batch’e eklenme
 
 ## Batch 1 — Çekirdek Uygulama ve Altyapı
 
-Detay için bkz. docs/BILESENLER_TOPLU_1.md
+Detay için bkz. docs/components-batch-1.md
 
 - [x] client/src/App.tsx
 - [x] client/src/components/AlertProvider.tsx
@@ -46,7 +46,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_1.md
 
 ## Batch 2 — Servisler, Veritabanı ve Yedekleme
 
-Detay için bkz. docs/BILESENLER_TOPLU_2.md
+Detay için bkz. docs/components-batch-2.md
 
 - [x] client/src/backup/core/BackupDeserializer.ts
 - [x] client/src/backup/core/BackupManager.ts
@@ -81,7 +81,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_2.md
 
 ## Batch 3 — Ortak UI Bileşenleri ve Hook’lar
 
-Detay için bkz. docs/BILESENLER_TOPLU_3.md
+Detay için bkz. docs/components-batch-3.md
 
 - [x] client/src/components/AddProductToGroupCard.tsx
 - [x] client/src/components/BarcodeGenerator.tsx
@@ -128,7 +128,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_3.md
 
 ## Batch 4 — Dashboard
 
-Detay için bkz. docs/BILESENLER_TOPLU_4.md
+Detay için bkz. docs/components-batch-4.md
 
 - [x] client/src/components/dashboard/CashTab.tsx
 - [x] client/src/components/dashboard/OverviewTab.tsx
@@ -140,7 +140,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_4.md
 
 ## Batch 5 — POS, Settings ve Modals
 
-Detay için bkz. docs/BILESENLER_TOPLU_5.md
+Detay için bkz. docs/components-batch-5.md
 
 - [x] client/src/pages/CashRegisterPage.tsx
 - [x] client/src/pages/POSPage.tsx
@@ -160,7 +160,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_5.md
 
 ## Batch 6 — Uygulama Sayfaları (Diğer)
 
-Detay için bkz. docs/BILESENLER_TOPLU_6.md
+Detay için bkz. docs/components-batch-6.md
 
 - [x] client/src/pages/CreditPage.tsx
 - [x] client/src/pages/ProductsPage.tsx
@@ -171,7 +171,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_6.md
 
 ## Batch 7 — Tür Tanımları (Types)
 
-Detay için bkz. docs/BILESENLER_TOPLU_7.md
+Detay için bkz. docs/components-batch-7.md
 
 - [x] client/src/types/backup.ts
 - [x] client/src/types/barcode.ts
@@ -191,7 +191,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_7.md
 
 ## Batch 8 — Yardımcı Araçlar (Utils)
 
-Detay için bkz. docs/BILESENLER_TOPLU_8.md
+Detay için bkz. docs/components-batch-8.md
 
 - [x] client/src/utils/FocusManager.ts
 - [x] client/src/utils/backup-bridge.ts
@@ -205,7 +205,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_8.md
 
 ## Batch 9 — Testler
 
-Detay için bkz. docs/BILESENLER_TOPLU_9.md
+Detay için bkz. docs/components-batch-9.md
 
 - [x] client/src/test/Button.test.tsx
 - [x] client/src/test/formatters.test.ts
@@ -215,7 +215,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_9.md
 
 ## Batch 10 — Electron
 
-Detay için bkz. docs/BILESENLER_TOPLU_10.md
+Detay için bkz. docs/components-batch-10.md
 
 - [x] client/electron/electron-env.d.ts
 - [x] client/electron/license.ts
@@ -226,7 +226,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_10.md
 
 ## Batch 11 — Yapı ve Konfigürasyon
 
-Detay için bkz. docs/BILESENLER_TOPLU_11.md
+Detay için bkz. docs/components-batch-11.md
 
 - [ ] client/.gitignore
 - [ ] client/.husky/pre-commit
@@ -248,7 +248,7 @@ Detay için bkz. docs/BILESENLER_TOPLU_11.md
 
 ## Batch 12 — Statik Varlıklar (Public, Assets)
 
-Detay için bkz. docs/BILESENLER_TOPLU_12.md
+Detay için bkz. docs/components-batch-12.md
 
 - [x] client/public/electron-vite.animate.svg
 - [x] client/public/electron-vite.svg
@@ -264,10 +264,10 @@ Detay için bkz. docs/BILESENLER_TOPLU_12.md
 ## Batch 13 — Dokümantasyon ve Kurallar
 
 - [ ] .qoder/rules/Turkish.md
-- [ ] DOKÜMANTASYON.md
-- [ ] PROJE-ÖZET-RAPORU.md
+- [ ] documentation.md
+- [ ] project-summary-report.md
 - [ ] README.md
-- [ ] TEMIZLIK-RAPORU.md
+- [ ] cleanup-report.md
 - [ ] client/README.md
 
 ---

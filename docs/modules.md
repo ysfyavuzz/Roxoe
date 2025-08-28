@@ -1,6 +1,6 @@
 # 📦 MODULES – Modül Durumu
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Son Güncelleme: 2025-08-27
 Sürüm: 0.5.3
@@ -15,7 +15,7 @@ Sürüm: 0.5.3
 | Dashboard      | 🚧 Geliştiriliyor| %70        | Unit planlı                         | 2025-08-27     |
 
 Notlar:
-- Test kapsam politikası: Global ≥ %80, kritik yollar ≥ %95 (bkz. TEST-KAPSAMI.md)
-- Büyük bileşenlerin bölünmesi: BILESEN-BOLME-PLANI.md
-- İyileştirme alanları: TEMIZLIK-RAPORU.md (İyileştirme Özeti entegre)
+- Test kapsam politikası: Global ≥ %80, kritik yollar ≥ %95 (bkz. test-coverage.md)
+- Büyük bileşenlerin bölünmesi: component-splitting-plan.md
+- İyileştirme alanları: cleanup-report.md (İyileştirme Özeti entegre)
 

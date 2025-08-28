@@ -8,7 +8,7 @@ Hedef Metrikler (Özet, P95)
 - useProducts normalize arama ≤ 5 ms; useCart toplam hesap ≤ 8 ms
 - usePaymentFlow cihazsız işlem boru hattı ≤ 300 ms
 
-Tam liste: docs/performance/OLCUM-REHBERI.md
+Tam liste: docs/performance/measurement-guide.md
 
 Bu belge, RoxoePOS’un yeniden kullanılabilir UI bileşenleri ve uygulama geneline yayılmış hook’larını açıklar. Amaç, ortak arayüz parçaları ve durum mantığının nasıl kurgulandığını, dış bağımlılıklarını ve entegrasyon noktalarını netleştirmektir.
 

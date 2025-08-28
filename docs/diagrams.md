@@ -1,6 +1,6 @@
 # Görsel Diyagramlar (Mermaid)
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Bu dosya, RoxoePOS mimarisi ve akışları için Mermaid tabanlı görsel diyagramları içerir. GitHub ve birçok Markdown görüntüleyici mermaid bloklarını doğrudan render eder.
 

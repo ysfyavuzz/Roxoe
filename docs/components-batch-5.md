@@ -7,7 +7,7 @@ Hedef Metrikler (Özet, P95)
 - CustomerModal kaydet ≤ 250 ms; CustomerDetailModal iskelet ≤ 100 ms, tam veri ≤ 600 ms
 - TransactionModal kaydet ≤ 250 ms; ReceiptModal yazdırma başlatma ≤ 500 ms
 
-Tam liste: docs/performance/OLCUM-REHBERI.md
+Tam liste: docs/performance/measurement-guide.md
 
 Bu belge, RoxoePOS projesindeki POS bileşenleri ve Ayarlar sayfasına ilişkin detaylı özetleri içerir. Ayrıca yapılan küçük temizlikler listelenmiştir.
 

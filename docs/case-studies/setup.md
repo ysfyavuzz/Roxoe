@@ -1,6 +1,6 @@
 # Case Study: RoxoePOS Kurulumu (Adım Adım)
 
-[← Teknik Kitap’a Dön](../ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](../BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](../roxoepos-technical-book.md) · [Genel Kitap](../BOOK/roxoepos-book.md)
 
 Amaç: RoxoePOS’u geliştirici makinesinde derlemek, paketlemek ve ilk yapılandırmayı tamamlamak.
 

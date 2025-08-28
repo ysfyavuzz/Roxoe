@@ -111,4 +111,4 @@ Opsiyonel: LCOV raporu gerekiyorsa `vitest` coverage reporter’a `'lcov'` eklen
 - client/src/test/formatters.test.ts
 - client/src/test/setup.ts
 
-İlgili belgeler: `docs/TEST-KAPSAMI.md`, `docs/PERFORMANS.md`, `docs/performance/PERFORMANS-KONTROL-LISTESI.md`
+İlgili belgeler: `docs/test-coverage.md`, `docs/performance-overview.md`, `docs/performance/performance-checklist.md`

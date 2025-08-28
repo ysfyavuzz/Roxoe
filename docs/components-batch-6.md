@@ -6,7 +6,7 @@ Hedef Metrikler (Özet, P95)
 - SaleDetailPage açılış ≤ 200 ms; makbuz modalı açılışı ≤ 150 ms
 - CreditPage filtre/arama uygulama ≤ 180 ms; sayfalama geçişi ≤ 120 ms
 
-Tam liste: docs/performance/OLCUM-REHBERI.md
+Tam liste: docs/performance/measurement-guide.md
 
 Bu belge, RoxoePOS uygulamasındaki ürün/satış/veresiye sayfalarını açıklar. Amaç; dosya başına teknoloji, satır sayısı, önemli importlar, ne işe yaradığı ve performans/iyileştirme önerileri ile pratik bir referans sunmaktır.
 

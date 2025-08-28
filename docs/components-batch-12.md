@@ -6,7 +6,7 @@ Hedef Metrikler (Özet, P95)
 - SVG ikonları inline veya küçük boyutlarda; raster görseller sıkıştırılmış (lossless/uygun kalite)
 - Electron paketleme sonrası ikonların OS’e uygun formatlarda bulunduğunun doğrulanması
 
-Tam liste hedefler: docs/performance/OLCUM-REHBERI.md
+Tam liste hedefler: docs/performance/measurement-guide.md
 
 ---
 
@@ -58,7 +58,7 @@ Paketleme ve Önbellekleme Notları
 Performans & İyileştirme Önerileri
 - SVG > PNG: Basit ikonlarda SVG tercih edin (daha küçük ve ölçeklenebilir).
 - Sıkıştırma: pngquant/oxipng gibi araçlarla PNG boyutlarını küçültün.
-- Kullanılmayan varlıklar: Temizlik raporu (docs/TEMIZLIK-RAPORU.md) ile takip edin ve kaldırın.
+- Kullanılmayan varlıklar: Temizlik raporu (docs/cleanup-report.md) ile takip edin ve kaldırın.
 - Lazy-load: Büyük görselleri ilk yüklemede istemiyorsanız dinamik/koşullu yükleyin.
 
 Dosya Haritası (Batch 12)

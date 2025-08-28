@@ -186,10 +186,10 @@ npm run build             # Production build
 ```
 
 ### **Dokümantasyon Referansları**
-- 📋 **Temizlik Raporu**: `TEMIZLIK-RAPORU.md`
-- 🗂️ **Component Splitting**: `BILESEN-BOLME-PLANI.md`  
-- 📊 **İyileştirme Özeti**: `TEMIZLIK-RAPORU.md#iyilestirme-ozeti`
-- 📘 **Ana Dokümantasyon**: `DOKÜMANTASYON.md`
+- 📋 **Temizlik Raporu**: `cleanup-report.md`
+- 🗂️ **Component Splitting**: `component-splitting-plan.md`  
+- 📊 **İyileştirme Özeti**: `cleanup-report.md#iyilestirme-ozeti`
+- 📘 **Ana Dokümantasyon**: `documentation.md`
 
 ---
 

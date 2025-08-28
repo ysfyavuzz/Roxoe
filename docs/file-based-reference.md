@@ -1,6 +1,6 @@
 # Dosya Bazlı İnceleme (Batch 1)
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Bu belge, seçilmiş kritik dosyaların (ilk parti) ayrıntılı incelemesini içerir. Her dosya için: Amaç, Önemli İhracatlar/Props, Bağımlılıklar, Kullanım Noktaları, Riskler/Notlar ve İyileştirme Önerileri yer alır. Devam eden partilerle tüm proje kapsanacaktır.
 

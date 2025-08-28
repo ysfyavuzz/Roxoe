@@ -1,6 +1,6 @@
 # 10 Dakikada RoxoePOS Geliştirme Ortamı (Windows / PowerShell)
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Hedef: 10 dakikada projeyi çalıştırın, testleri ve temel kalite kontrollerini geçirin.
 
@@ -62,8 +62,8 @@ npm run publish:win
 - client/src/components: UI ve modal bileşenleri
 - client/src/services: Veritabanı, dışa aktarım, şifreleme, yedekleme yardımcıları
 - client/electron: main ve preload süreçleri
-- docs/ROXOEPOS-TEKNIK-KITAP.md: Kapsamlı geliştirici kitabı
-- docs/DIYAGRAMLAR.md: Görsel diyagramlar (Mermaid)
+- docs/roxoepos-technical-book.md: Kapsamlı geliştirici kitabı
+- docs/diagrams.md: Görsel diyagramlar (Mermaid)
 
 9) POS Ekranı Hızlı Rehber (Kasa Durumu ve Ödeme Akışı)
 - Kasa Açık/Kapalı Koşulu: Kasa kapalıyken ödeme ekranı ve hızlı ödeme butonları devre dışıdır. Önce CashRegister sayfasından "Kasayı Aç" ile günlük kasa oturumu başlatın.

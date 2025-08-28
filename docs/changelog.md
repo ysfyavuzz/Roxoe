@@ -1,12 +1,12 @@
 # Değişiklik Günlüğü (Changelog)
 
-[← Teknik Kitap’a Dön](ROXOEPOS-TEKNIK-KITAP.md) · [Genel Kitap](BOOK/ROXOEPOS-KITAP.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
 Tarih: 2025-08-27
 Sürüm: 0.5.3 (dokümantasyon ve test altyapısı güncellemeleri)
 
 Ek: RoxoePOS Kitabı (Yatırımcı + Kullanıcı + Geliştirici)
-- docs/BOOK/ROXOEPOS-KITAP.md eklendi.
+- docs/BOOK/roxoepos-book.md eklendi.
 - PDF üretimi için docs/BOOK/BUILD-PDF.ps1 sağlandı (Pandoc ile).
 
 Öne çıkanlar
@@ -36,13 +36,13 @@ Ayrıntılar
 - Yedekleme
   - client/src/backup/index.ts: createSmartBackup → OptimizedBackupManager’a yönlendirildi; BackupManager deprecated notu eklendi.
 - Dokümantasyon
-  - docs/ROXOEPOS-TEKNIK-KITAP.md: test komutları, kapsam politikası, error-handler ve yedekleme tekilleştirmesi işlendi.
-- docs/OPERASYON-IZLEME.md: Sentry entegrasyonu etkin kullanım olarak güncellendi.
-  - docs/ONBOARDING-10-DAKIKADA-ROXOEPOS.md: test:critical ve E2E adımları eklendi.
-- docs/DIYAGRAMLAR.md: Hata Yönetimi sequence diyagramı eklendi.
-- KOMUT-REHBERI.md: test komut listesi genişletildi; tamamı Türkçeleştirildi.
+  - docs/roxoepos-technical-book.md: test komutları, kapsam politikası, error-handler ve yedekleme tekilleştirmesi işlendi.
+- docs/operations-monitoring.md: Sentry entegrasyonu etkin kullanım olarak güncellendi.
+  - docs/onboarding-10-minutes-roxoepos.md: test:critical ve E2E adımları eklendi.
+- docs/diagrams.md: Hata Yönetimi sequence diyagramı eklendi.
+- command-guide.md: test komut listesi genişletildi; tamamı Türkçeleştirildi.
 - README.md: Lisans rozeti ve lisans bölümü kaldırıldı; ekran görüntüleri placeholder .svg olarak eklendi.
-- Yeni dokümanlar eklendi: docs/DURUM.md, docs/MODULLER.md, docs/API.md, docs/BILESENLER.md, docs/PERFORMANS.md, docs/TEST-KAPSAMI.md.
+- Yeni dokümanlar eklendi: docs/status.md, docs/modules.md, docs/api.md, docs/components.md, docs/performance-overview.md, docs/test-coverage.md.
 - Yerel otomasyon scriptleri eklendi: scripts/update-tech-book-metadata.js, update-status.js, update-api-docs.js, update-components.js, update-performance-docs.js, analyze-project.js.
   - Kök package.json’a komutlar eklendi: docs:update, status:update, analyze:project, docs:all.
 
@@ -88,13 +88,13 @@ Settings Güncellemeleri (2025-08-27)
 - SettingsPage durum ve eylemleri özel hook'a taşındı: useSettingsPage (client/src/pages/settings/hooks/useSettingsPage.ts)
 - SettingsPage artık mevcut tab bileşenlerini (AboutTab, BackupSettingsTab, BarcodeSettingsTab, POSSettingsTab, ReceiptSettingsTab, SerialSettingsTab, HotkeySettings) lazy load ederek props ile render ediyor
 - Yeni birim testi: useSettingsPage.test.tsx (client/src/test/hooks/useSettingsPage.test.tsx)
-- BILESEN-BOLME-PLANI.md ve ROXOEPOS-TEKNIK-KITAP.md ilgili bölümler bu değişikliklere göre güncellendi
+- component-splitting-plan.md ve roxoepos-technical-book.md ilgili bölümler bu değişikliklere göre güncellendi
 
 Ek Dokümantasyon Güncellemeleri (2025-08-27)
-- IMPROVEMENT-SUMMARY-REPORT.md arşive taşındı: docs/archive/IMPROVEMENT-SUMMARY-REPORT.en.md (tek kaynak: TEMIZLIK-RAPORU.md)
-- BILESEN-BOLME-PLANI.md içindeki son İngilizce cümle Türkçeleştirildi
+- IMPROVEMENT-SUMMARY-REPORT.md arşive taşındı: docs/archive/IMPROVEMENT-SUMMARY-REPORT.en.md (tek kaynak: cleanup-report.md)
+- component-splitting-plan.md içindeki son İngilizce cümle Türkçeleştirildi
 - README.md içine “RoxoePOS Kitabı (Genel)” bağlantısı eklendi
-- docs/ROXOEPOS-TEKNIK-KITAP.md içine “Dokümantasyon Ana İndeksi (Hızlı Bağlantılar)” bölümü eklendi
+- docs/roxoepos-technical-book.md içine “Dokümantasyon Ana İndeksi (Hızlı Bağlantılar)” bölümü eklendi
 
 ---
 

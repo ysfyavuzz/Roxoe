@@ -30,7 +30,7 @@ Kapsam
   - `parseBoolean`, `isDevOrTestMode`, `isLicenseBypassEnabled`, `isSerialFeatureEnabled`
 
 3) Geliştirici Kitabı (BOOK) ve Media
-- Kitap dosyası: `docs/BOOK/ROXOEPOS-KITAP.md`
+- Kitap dosyası: `docs/BOOK/roxoepos-book.md`
   - “Görsel/Video Medya (yer tutucu)” bölümü eklendi.
   - Kullanıcı bölümlerine görsel ve akış diyagramı referansları yerleştirildi.
 - Media klasörü: `docs/BOOK/media/` (README ile)
@@ -39,8 +39,8 @@ Kapsam
 
 4) Toplu Bileşen Belgeleri — Güncelleme Politikası
 - Kod değişikliği yapılan dosyaya karşılık gelen BATCH belgesi güncellenmelidir.
-  - Ör.: `client/src/App.tsx` → `docs/BILESENLER_TOPLU_1.md`
-  - Ör.: `client/src/pages/SettingsPage.tsx` → `docs/BILESENLER_TOPLU_5.md`
+  - Ör.: `client/src/App.tsx` → `docs/components-batch-1.md`
+  - Ör.: `client/src/pages/SettingsPage.tsx` → `docs/components-batch-5.md`
 - Bu batch (13) dokümantasyon/PR/kitap/feature-flag değişiklikleri için referanstır.
 - Değişiklik içeriği — önerilen alt başlıklar:
   - “Yeni/Değişen” (ne eklendi/çıkarıldı/taşındı)

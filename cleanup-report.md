@@ -432,7 +432,7 @@ node cleanup-script.js
 ```
 
 ### **Component Splitting Rehberi**
-- 📚 **Referans**: `BILESEN-BOLME-PLANI.md`
+- 📚 **Referans**: `component-splitting-plan.md`
 - 🎯 **Öncelik**: SettingsPage.tsx (2,541 satır) → 8 component'e böl
 - 📊 **Beklenen Sonuçlar**: %90 dosya boyutu azalması, daha iyi maintainability
 
