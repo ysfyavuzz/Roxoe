@@ -21,6 +21,7 @@ import UpdateNotification from "./components/UpdateNotification";
 import CashRegisterPage from "./pages/CashRegisterPage";
 import DynamicWindowTitle from "./components/DynamicWindowTitle";
 import { initBackupBridge } from "./utils/backup-bridge";
+import { isLicenseBypassEnabled } from "./utils/feature-flags";
 // Yedekleme dialog manager bileşenini import et
 import BackupDialogManager from "./components/BackupDialogManager";
 
@@ -29,8 +30,19 @@ function App() {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    checkSerial();
-    
+    // Lisans/aktivasyon bypass modu (yalnız dev/test)
+    if (isLicenseBypassEnabled()) {
+      try {
+        if (typeof console !== 'undefined') {
+          console.warn('[Lisans] BYPASS aktif (dev/test). Aktivasyon kontrolü atlandı.');
+        }
+      } catch {}
+      setIsActivated(true);
+      setIsChecking(false);
+    } else {
+      checkSerial();
+    }
+
     // YENİ: Backup köprüsünü başlat
     initBackupBridge();
   }, []);

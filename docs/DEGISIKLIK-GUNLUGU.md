@@ -102,4 +102,7 @@ Tarih: 2025-08-28
 - Lisanslandırma: UNLICENSED (paket lisansı) uygulandı; LICENSE dosyası eklendi.
 - README.md içine “Lisans” bölümü eklendi.
 - package.json ve client/package.json dosyalarına "license": "UNLICENSED" alanı eklendi.
+- Özellik bayrakları eklendi: `VITE_LICENSE_BYPASS`, `VITE_SERIAL_FEATURE` (docs/FEATURE-FLAGS.md)
+- App.tsx: dev/test’te lisans kontrolü BYPASS edildi; Settings: Serial sekmesi feature flag ile koşullu.
+- README.md: “Özellik Bayrakları” bölümü eklendi.
 
