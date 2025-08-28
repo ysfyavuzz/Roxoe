@@ -47,8 +47,8 @@ const githubToken = process.env.GH_TOKEN;
 if (githubToken) {
   autoUpdater.setFeedURL({
     provider: "github",
-    owner: "emirbatin",
-    repo: "RoxoePOS",
+    owner: "ysfyavuzz",
+    repo: "Roxoe",
     token: githubToken,
     private: true,
   } as any); // 'as any' ile geçici olarak type checking
