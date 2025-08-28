@@ -1,6 +1,7 @@
 {
   "name": "roxoepos-root",
   "private": true,
+  "license": "UNLICENSED",
   "scripts": {
     "prepare": "cd client && npm run prepare",
     "docs:meta:sync": "node scripts/update-tech-book-metadata.js",

@@ -1,0 +1,19 @@
+RoxoePOS — All Rights Reserved / Tüm Hakları Saklıdır
+
+Copyright (c) 2025 Roxoe
+
+TR (Özet)
+Bu depo ve içeriği kapalı kaynak olup Roxoe’ya aittir. Kaynak kodunun kopyalanması, dağıtılması,
+modifiye edilmesi, yeniden lisanslanması veya ticari amaçla kullanımı Roxoe’nun açık ve yazılı izni
+olmadan yasaktır. Bu dosya bir açık kaynak lisansı değildir; tüm haklar saklıdır.
+
+EN (Summary)
+This repository and its contents are proprietary to Roxoe. Copying, distribution, modification,
+re-licensing, or commercial use of the source code is prohibited without Roxoe’s prior written consent.
+This is NOT an open-source license; all rights are reserved.
+
+Note on “UNLICENSED”
+The term UNLICENSED in package.json indicates that the package is not granted an open-source license.
+It must not be confused with “The Unlicense” (a public-domain dedication). UNLICENSED means
+no license is granted; all rights are reserved by the owner.
+

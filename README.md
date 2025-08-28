@@ -348,6 +348,19 @@ NODE_ENV=development
 
 ---
 
+## 📝 Lisans
+
+Bu depo şu anda kapalı kaynak olarak yönetilmektedir.
+
+- Lisans durumu: UNLICENSED (paket lisansı)
+- Hukuki durum: Tüm hakları saklıdır (All rights reserved)
+- Kullanım: Kaynak kodunun kopyalanması, dağıtılması, yeniden lisanslanması veya ticari kullanımına Roxoe’nun yazılı izni olmadan izin verilmez.
+- Not: Bu UNLICENSED ifadesi “The Unlicense” adlı açık-kaynak kamu malı lisansıyla karıştırılmamalıdır. UNLICENSED, açık kaynak lisansı değildir; aksine hakların saklı tutulduğunu ifade eder.
+
+İleride proje yayın (public) moduna geçirilecekse, MIT veya Apache-2.0 gibi açık kaynak lisansları değerlendirilecektir.
+
+---
+
 ## 🤝 Katkıda Bulunma
 
 ### Katkı Süreci

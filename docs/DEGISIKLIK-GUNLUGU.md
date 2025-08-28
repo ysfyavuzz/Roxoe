@@ -96,3 +96,10 @@ Ek Dokümantasyon Güncellemeleri (2025-08-27)
 - README.md içine “RoxoePOS Kitabı (Genel)” bağlantısı eklendi
 - docs/ROXOEPOS-TEKNIK-KITAP.md içine “Dokümantasyon Ana İndeksi (Hızlı Bağlantılar)” bölümü eklendi
 
+---
+
+Tarih: 2025-08-28
+- Lisanslandırma: UNLICENSED (paket lisansı) uygulandı; LICENSE dosyası eklendi.
+- README.md içine “Lisans” bölümü eklendi.
+- package.json ve client/package.json dosyalarına "license": "UNLICENSED" alanı eklendi.
+

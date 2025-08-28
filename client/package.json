@@ -1,6 +1,7 @@
 {
   "name": "roxoepos",
   "private": true,
+  "license": "UNLICENSED",
   "version": "0.5.3",
   "type": "module",
   "description": "",
