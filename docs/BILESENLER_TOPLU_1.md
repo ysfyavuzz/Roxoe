@@ -26,6 +26,11 @@ Not: Dashboard ve POS/Modals detayları Batch 4–5 belgelerindedir.
 ## App.tsx — Router ve Başlatma Akışı
 Dosya: `client/src/App.tsx`
 
+Yeni (Lisans BYPASS — dev/test için):
+- `isLicenseBypassEnabled()` (utils/feature-flags) dev/test’te true ise aktivasyon ekranı atlanır ve uygulama doğrudan açılır.
+- Production/Staging’de BYPASS her zaman yok sayılır (güvenlik için). Konsola uyarı yazılır.
+Dosya: `client/src/App.tsx`
+
 - Router: Electron uyumu için HashRouter kullanılır. Rotalar:
   - `/`, `/pos`, `/products`, `/credit`, `/history`, `/cash`, `/settings`, `/sales/:id`
   - `/dashboard` ana rota, `/dashboard/overview`’a yönlendirir; ayrıca `/dashboard/:tabKey` alt rotaları vardır.
@@ -154,6 +159,10 @@ Performans & İyileştirme Önerileri:
 ## SerialActivation.tsx — Lisans Aktivasyonu
 Dosya: `client/src/components/SerialActivation.tsx`
 
+Lisans BYPASS ile ilişki:
+- Dev/Test’te BYPASS aktif ise bu ekran görünmez. Prod/Staging’de lisans/seri aktivasyonu zorunludur.
+Dosya: `client/src/components/SerialActivation.tsx`
+
 - Electron modu: `window.ipcRenderer.invoke('activate-serial', serialNo)` ile main process’e doğrulama.
 - Web modu: Basit bir whitelist kontrolü ve `localStorage` kaydı.
 - Başarılı olduğunda `showSuccess` çağrılır ve `onSuccess()` ile App’te aktivasyon tamamlanır.
@@ -212,6 +221,18 @@ Ne işe yarar / Nasıl çalışır:
 Performans & İyileştirme Önerileri:
 - Tek seferlik dinleme: app-close-requested olayına bir kez abone olup tekrar abone olmayın.
 - Kullanıcı akışı: Uzun süren yedeklemelerde progress + iptal sunmayı değerlendirin.
+
+## Feature Flags Yardımcıları — Lisans BYPASS ve Serial UI
+Dosya: `client/src/utils/feature-flags.ts`
+
+- Fonksiyonlar:
+  - `parseBoolean(value)`: 'true'/'1' → true; diğerleri false.
+  - `isDevOrTestMode()`: Build modu development/test mi?
+  - `isLicenseBypassEnabled()`: dev/test’te BYPASS aktifse true; prod/stage’de daima false (güvenlik).
+  - `isSerialFeatureEnabled()`: Settings’te Serial/Lisans sekmesini göster/gizler.
+- Notlar:
+  - Vite kuralı gereği client’a yalnız `VITE_` ile başlayan değişkenler taşınır.
+  - Üretimde BYPASS asla etkin olmamalıdır; guard buna göre tasarlandı.
 
 ## backup-bridge.ts — Yedekleme/İçe Aktarım Köprüsü (Renderer)
 Dosya: `client/src/utils/backup-bridge.ts`

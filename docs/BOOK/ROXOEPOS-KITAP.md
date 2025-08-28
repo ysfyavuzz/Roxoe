@@ -21,6 +21,18 @@ Tarih: 2025-08-27
 9. Dosya Metrikleri (Satır ve Boyut) [Otomasyon Talimatı]
 10. Sözlük ve Ekler
 
+---
+
+Görsel/Video Medya (yer tutucu)
+- Tüm görseller ve ekran kayıtları: docs/BOOK/media/ altında tutulacaktır.
+- Örnek dosyalar (yer tutucu adlar):
+  - kurulum-windows.png, kurulum-macos.png, kurulum-linux.png
+  - pos-ekran.png, urun-yonetimi.png, dashboard-overview.png, ayarlar-genel.png
+  - yedekleme-akisi.svg (akış diyagramı), pos-satis-akisi.svg
+  - pos-ekran-turu.mp4 (kısa ekran kaydı), yedekleme-demo.mp4
+
+Bu bölüm kitap boyunca görsel referanslarına kaynak olarak kullanılacaktır.
+
 Ana Kaynak Dokümanlar (Hızlı Erişim)
 - Teknik Kitap (Geliştirici): ../ROXOEPOS-TEKNIK-KITAP.md
 - Modüller: ../MODULLER.md
@@ -78,11 +90,15 @@ Ana Kaynak Dokümanlar (Hızlı Erişim)
   - Üretim/Staging: aktivasyon zorunlu (VITE_LICENSE_BYPASS=false), Serial/Lisans sekmesi görünür (VITE_SERIAL_FEATURE=true).
 
 2.2 İlk Kurulum ve Ayarlar
+- Görseller: [Kurulum (Windows)](media/kurulum-windows.png), [Kurulum (macOS)](media/kurulum-macos.png)
+- İlk ekran kaydı: [POS Ekran Turu](media/pos-ekran-turu.mp4)
 - İşletme bilgileri, fiş başlığı/logosu (Ayarlar → Fiş/İşletme).
 - Barkod ayarları (Ayarlar → Barkod). POS cihaz/port ayarları (Ayarlar → POS).
 - Yedek dizini belirleme, otomatik yedekleme planlama (Ayarlar → Yedekleme).
 
 2.3 POS (Satış) Akışı
+- Görseller: [POS Ana Ekran](media/pos-ekran.png), [Ödeme Adımı](media/pos-odeme.png)
+- Akış diyagramı: [Satış Akışı](media/pos-satis-akisi.svg)
 - Ürün arama/filtre/barkod ile ekleme.
 - İndirim uygulama (% veya tutar), ödeme yöntemi (nakit/kart), fiş yazdırma/PDF indirme.
 - Hızlı kısayollar: Hotkeys bileşeni ve POSHeader üzerinden ulaşım.
@@ -101,6 +117,9 @@ Ana Kaynak Dokümanlar (Hızlı Erişim)
 - Excel raporları, sayım farkı analizi.
 
 2.7 Yedekleme ve Geri Yükleme
+- Görseller: [Yedekleme Ayarları](media/yedekleme-ayar.png), [Geri Yükleme](media/geri-yukleme.png)
+- Akış diyagramı: [Yedekleme Akışı](media/yedekleme-akisi.svg)
+- Kısa video: [Yedekleme Demo](media/yedekleme-demo.mp4)
 - Manuel/otomatik yedekleme; geri yükleme akışı.
 - Yedek bütünlüğü, boyut ve kayıt sayısı bilgileri.
 

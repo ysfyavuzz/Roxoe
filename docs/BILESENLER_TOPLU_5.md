@@ -91,6 +91,10 @@ Performans & İyileştirme Önerileri:
 - CSS animasyonlarını transform tabanlı tutun.
 
 5.7 client/src/pages/SettingsPage.tsx
+
+Yeni (Serial sekmesi feature flag):
+- `isSerialFeatureEnabled()` false iken "Serial No" sekmesi menüde görünmez ve bileşen lazy load edilmez (bundle’a girmez).
+- Prod/Staging’de `VITE_SERIAL_FEATURE=true` ile sekme görünür.
 - Teknoloji: TSX
 - Satır sayısı: 236
 - Importlar: React; Printer/Barcode/Building/Key/Check/RefreshCw/Database/Info; useSettingsPage; lazy yüklü sekmeler; HotkeySettings
