@@ -1,13 +1,13 @@
 # 🧩 COMPONENTS – Bileşen Envanteri
 
-[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
+[← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md) · [Batch Endeksi](components-batch-index.md)
 
 Son Güncelleme: 2025-08-27
 Sürüm: 0.5.3
 
 Bu dosya, ana bileşen gruplarını ve önemli notları özetler. Ayrıntılı props arayüzleri için dosya içinde TypeScript interfaceleri takip edin.
 
-Durum: Batch 1–7, 8, 9, 10, 11 ve 12 detay dokümantasyonu tamamlandı. Batch 13 beklemede. Ayrıntılar için aşağıdaki toplu belgeleri inceleyin:
+Durum: Batch 1–7, 8, 9, 10, 11 ve 12 detay dokümantasyonu tamamlandı. Batch 13 tamamlandı. Ayrıntılar için aşağıdaki toplu belgeleri inceleyin (bkz. docs/components-batch-index.md):
 - docs/components-batch-1.md
 - docs/components-batch-2.md
 - docs/components-batch-3.md (prop tabloları ve kısa kullanım örnekleri eklendi)

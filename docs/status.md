@@ -2,7 +2,7 @@
 
 [← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
-Son Güncelleme: 2025-08-27
+Son Güncelleme: 2025-08-28
 Sürüm: 0.5.3
 
 ## 🎯 Genel Durum
@@ -10,7 +10,7 @@ Sürüm: 0.5.3
 - Tamamlanma (yaklaşık): %80
 - Kod Kalitesi: Yüksek (TS strict, ESLint, Prettier)
 - Performans Bütçeleri: Hedefler tanımlı (bkz. performance-overview.md ve performance/performance-checklist.md)
-- Dokümantasyon: Batch 1–7, 8, 9, 10, 11 ve 12 tamamlandı; Batch 13 beklemede (bkz. components-batch-1..12)
+- Dokümantasyon: Batch 1–13 tamamlandı (bkz. components-batch-index.md)
 
 ## 🧪 Test ve Kapsam Özeti
 - Politika: Global ≥ %80, kritik dosyalar ≥ %95 (satır)
@@ -41,6 +41,7 @@ Modül detayları için: docs/modules.md
 ## 🔗 Referanslar
 - API Referansı: docs/api.md
 - Bileşen Envanteri: docs/components.md
+- Bileşen Batch Endeksi: docs/components-batch-index.md
 - Test Politikası: docs/test-coverage.md
 - Performans: docs/performance/performance-checklist.md, docs/performance/measurement-guide.md, docs/performance/performance-playbook.md
 - Runbook’lar: docs/runbooks/operation-guides.md

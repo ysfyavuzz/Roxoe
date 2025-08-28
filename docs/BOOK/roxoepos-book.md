@@ -36,7 +36,7 @@ Bu bölüm kitap boyunca görsel referanslarına kaynak olarak kullanılacaktır
 Ana Kaynak Dokümanlar (Hızlı Erişim)
 - Teknik Kitap (Geliştirici): ../roxoepos-technical-book.md
 - Modüller: ../modules.md
-- Bileşenler: ../components.md (detay: ../components-batch-1.md .. ../components-batch-12.md)
+- Bileşenler: ../components.md (Toplu Endeks: ../components-batch-index.md)
 - API Referansı: ../api.md
 - Performans: ../performance-overview.md, ../performance/measurement-guide.md, ../performance/performance-checklist.md, ../performance/performance-playbook.md
 - Test Kapsamı: ../test-coverage.md

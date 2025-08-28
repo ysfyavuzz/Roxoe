@@ -91,7 +91,7 @@ Settings Güncellemeleri (2025-08-27)
 - component-splitting-plan.md ve roxoepos-technical-book.md ilgili bölümler bu değişikliklere göre güncellendi
 
 Ek Dokümantasyon Güncellemeleri (2025-08-27)
-- IMPROVEMENT-SUMMARY-REPORT.md arşive taşındı: docs/archive/IMPROVEMENT-SUMMARY-REPORT.en.md (tek kaynak: cleanup-report.md)
+- improvement-summary-report.md arşive taşındı: docs/archive/improvement-summary-report.en.md (tek kaynak: cleanup-report.md)
 - component-splitting-plan.md içindeki son İngilizce cümle Türkçeleştirildi
 - README.md içine “RoxoePOS Kitabı (Genel)” bağlantısı eklendi
 - docs/roxoepos-technical-book.md içine “Dokümantasyon Ana İndeksi (Hızlı Bağlantılar)” bölümü eklendi
