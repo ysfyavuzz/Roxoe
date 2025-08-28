@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * BILESENLER.md meta güncelleme
+ * components.md meta güncelleme
  * - Son Güncelleme ve Sürüm satırlarını günceller (mevcut içeriği bozmadan)
  */
 
