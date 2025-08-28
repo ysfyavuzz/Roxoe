@@ -228,8 +228,8 @@ declare module "electron" {
 "publish": [
   {
     "provider": "github",
-    "owner": "emirbatin",
-    "repo": "RoxoePOS",
+    "owner": "ysfyavuzz",
+    "repo": "Roxoe",
     "releaseType": "release",
     "private": true,
     "token": "${env.GH_TOKEN}"

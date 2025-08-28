@@ -401,10 +401,10 @@ Bu projede Git/GitHub kullanılmamaktadır; yerel geliştirme akışı tercih ed
 
 ### 🏢 Geliştirici
 ```
-👨‍💻 Geliştirici: Batin
-📧 Email: batin@cretique.net
-🌐 Website: https://www.cretique.net
-🎫 Destek: https://www.cretique.net/destek
+👨‍💻 Geliştirici: Yusuf Yavuz (Roxoe Team)
+📧 Email: yusuf.yavuz@roxoe.com.tr
+🌐 Website: https://www.roxoepos.com
+📬 Destek: destek@roxoepos.com
 ```
 
 ### 🆘 Destek Kanalları

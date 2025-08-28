@@ -332,7 +332,7 @@ Bu inceleme ve temizlik süreci boyunca:
 
 **Rapor Tarihi**: 26 Ağustos 2025  
 **Rapor Hazırlayan**: Qoder AI Assistant  
-**Proje Sahibi**: Cretique (Batin)
+**Proje Sahibi**: Roxoe Team (Yusuf Yavuz — yusuf.yavuz@roxoe.com.tr)
 
 <div align="center">
 

@@ -266,8 +266,8 @@ RoxoePOS, teknolojik mükemmellik, gelişmiş özellikler ve sağlam planlama il
 
 ## 📞 **İletişim ve Destek**
 
-- **E-posta**: batin@cretique.net
-- **Website**: https://www.cretique.net
-- **Destek**: https://www.cretique.net/destek
+- **E-posta**: yusuf.yavuz@roxoe.com.tr
+- **Website**: https://www.roxoepos.com
+- **Destek**: destek@roxoepos.com
 
-**© 2025 Cretique - Tüm hakları saklıdır.**
+**© 2025 Roxoe - Tüm hakları saklıdır.**

@@ -1,9 +1,9 @@
 # 🛒 RoxoePOS - Kapsamlı Sistem Dokümantasyonu
 
-**Son Güncelleme**: 26 Ocak 2025  
+**Son Güncelleme**: 28 Ağustos 2025  
 **Proje Versiyonu**: 0.5.3  
 **Proje Durumu**: Mükemmel Seviyede (4.5/5 ⭐)  
-**Geliştirici**: Cretique (batin@cretique.net)  
+**Geliştirici**: Roxoe Team — Yusuf Yavuz (yusuf.yavuz@roxoe.com.tr)  
 **Yeni Özellikler**: AI Optimizasyon, Akıllı Arşivleme, Performans Dashboard, Cloud Sync
 
 ## 📋 İçindekiler
@@ -46,8 +46,8 @@
 
 ### 📊 Proje Durumu
 - **Versiyon**: 0.5.3
-- **Son Güncelleme**: 2025 Ocak
-- **Geliştirici**: Cretique (batin@cretique.net)
+- **Son Güncelleme**: 2025 Ağustos
+- **Geliştirici**: Roxoe Team — Yusuf Yavuz (yusuf.yavuz@roxoe.com.tr)
 - **Kod Kalitesi**: Yüksek (ESLint + TypeScript Strict Mode)
 - **Test Coverage**: Geliştiriliyor
 - **Dokumantasyon**: Kapsamlı ve güncel
@@ -1029,9 +1029,9 @@ npm run test:ui           # Görsel test arayüzü
 ## 📞 Destek ve İletişim
 
 ### Geliştirici İletişim
-- **Email**: batin@cretique.net
-- **Website**: https://www.cretique.net
-- **Destek**: https://www.cretique.net/destek
+- **Email**: yusuf.yavuz@roxoe.com.tr
+- **Website**: https://www.roxoepos.com
+- **Destek**: destek@roxoepos.com
 
 ### Katkıda Bulunma
 1. Repository'yi fork edin
@@ -1040,7 +1040,7 @@ npm run test:ui           # Görsel test arayüzü
 4. Pull request açın
 
 ### Lisans
-Copyright © 2025 Cretique, Tüm hakları saklıdır.
+Copyright © 2025 Roxoe, Tüm hakları saklıdır.
 
 ---
 

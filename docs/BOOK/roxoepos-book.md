@@ -1,7 +1,7 @@
 # RoxoePOS Kitabı (Yatırımcı + Kullanıcı + Geliştirici)
 
 Sürüm: 0.5.3
-Tarih: 2025-08-27
+Tarih: 2025-08-29
 
 Özet
 - Bu kitap RoxoePOS’u yatırımcı, son kullanıcı (işletme) ve geliştirici perspektiflerinden eksiksiz anlatır.
