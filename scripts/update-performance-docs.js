@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * PERFORMANS.md meta güncelleme
+ * performance-overview.md meta güncelleme
  */
 
 const fs = require('fs');

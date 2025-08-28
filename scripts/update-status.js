@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * DURUM.md güncelleme scripti (yerel kullanım)
+ * status.md güncelleme scripti (yerel kullanım)
  * - "Son Güncelleme" ve "Sürüm" satırlarını günceller
  * - (Varsa) client/coverage/coverage-summary.json üzerinden özet çıkarır ve
  *   dosya içinde "Test ve Kapsam Özeti" bölümüne kısa bir satır ekler (non-destructive)

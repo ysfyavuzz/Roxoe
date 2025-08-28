@@ -66,7 +66,7 @@
 1. **Component Splitting** - Start with SettingsPage.tsx
    - Break 2,541-line file into separate tab components
    - Implement lazy loading for better performance
-   - Use the detailed plan in `BILESEN-BOLME-PLANI.md`
+- Use the detailed plan in `component-splitting-plan.md`
 
 2. **Performance Optimization**
    - Implement React.memo for heavy components
@@ -112,7 +112,7 @@ node cleanup-script.js
 ```
 
 ### **Component Splitting Guide**
-- 📖 **Reference**: `BILESEN-BOLME-PLANI.md`
+- 📖 **Reference**: `component-splitting-plan.md`
 - 🎯 **Priority**: SettingsPage.tsx (2,541 lines) → Split into 8 components
 - 📊 **Expected Results**: 90% reduction in file size, better maintainability
 

@@ -2,9 +2,9 @@
 /**
  * Doküman meta güncelleme scripti
  * - client/package.json içindeki version alanını okur
- * - docs/ROXOEPOS-TEKNIK-KITAP.md dosyasında
+ * - docs/roxoepos-technical-book.md dosyasında
  *   "Son Güncelleme:" ve "Sürüm Bağlamı:" satırlarını günceller
- * - docs/BOOK/ROXOEPOS-KITAP.md dosyasında (varsa)
+ * - docs/BOOK/roxoepos-book.md dosyasında (varsa)
  *   "Tarih:" ve "Sürüm:" satırlarını günceller
  */
 

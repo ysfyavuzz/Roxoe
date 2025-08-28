@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * analyze-project: Basit analiz ve meta güncelleme
- * - DURUM.md ve MODULLER.md içerisinde yalnızca meta tarih/sürüm günceller
+ * - status.md ve modules.md içerisinde yalnızca meta tarih/sürüm günceller
  * - (Geliştirilebilir) Modül dosya sayıları vb. ile oran üretilebilir
  */
 
