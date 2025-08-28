@@ -291,7 +291,7 @@ NODE_ENV=development
 
 ## ⚙️ Özellik Bayrakları
 
-Bu projede lisans/aktivasyon akışı ve Serial/Lisans ayarlarının görünürlüğü, özellik bayrakları ile yönetilir. Ayrıntı için bkz: docs/FEATURE-FLAGS.md
+Bu projede lisans/aktivasyon akışı ve Serial/Lisans ayarlarının görünürlüğü, özellik bayrakları ile yönetilir. Ayrıntı için bkz: docs/feature-flags.md
 
 Hızlı özet:
 - VITE_LICENSE_BYPASS: development/test’te true → aktivasyon ekranı gösterilmez.

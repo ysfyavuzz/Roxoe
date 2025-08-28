@@ -187,7 +187,7 @@ Ana Kaynak Dokümanlar (Hızlı Erişim)
 - Davranış:
   - BYPASS (true) ise App.tsx aktivasyon ekranını atlar; doğrudan uygulama açılır.
   - Serial sekmesi, VITE_SERIAL_FEATURE=false iken Settings’te gizlidir (lazy load ile bundle’a girmez).
-- Ayrıntı ve örnek .env dosyaları için bkz: docs/FEATURE-FLAGS.md.
+- Ayrıntı ve örnek .env dosyaları için bkz: docs/feature-flags.md.
 
 4. IPC/API Referansı (Özet)
 - Güncelleme: check-for-updates, update-available/progress/downloaded/status, quit-and-install.

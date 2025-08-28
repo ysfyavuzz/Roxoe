@@ -48,7 +48,7 @@ Not: Bu metrikler scripts/generate-docs-metrics.js ile üretildi ve docs/docs-me
 - PR Şablonu: .github/pull_request_template.md
   - Bölümler: Amaç, Kapsam, Ekran/Video, Testler, Performans, Güvenlik, Risk/Rollback, Dokümantasyon, PR Türü, İzlenebilirlik, Checklist.
   - Öneri: Danger JS ile PR’da doküman/görsel/test/coverage gibi zorunlulukları otomatik denetleyin.
-- Özellik Bayrakları (Feature Flags): docs/FEATURE-FLAGS.md
+- Özellik Bayrakları (Feature Flags): docs/feature-flags.md
   - VITE_LICENSE_BYPASS ve VITE_SERIAL_FEATURE ile dev/test’te aktivasyon bypass ve Serial sekmesi görünürlüğü yönetilir.
   - Uygulama tarafı: App.tsx (bypass), SettingsPage/Serial tabs (görünürlük), electron main/license.ts (LICENSE_BYPASS).
 - Kitap (BOOK) ve Media
@@ -131,7 +131,7 @@ Root (17)
 - ColumnMappingModal için Web Worker Planı — satır: 161, boyut: 8196 bytes — yol: docs/column-mapping-worker-plan.md
 - 🧩 COMPONENTS – Bileşen Envanteri — satır: 103, boyut: 4797 bytes — yol: docs/components.md
 - Görsel Diyagramlar (Mermaid) — satır: 127, boyut: 3344 bytes — yol: docs/diagrams.md
-- Özellik Bayrakları (Feature Flags) — satır: 60, boyut: 1950 bytes — yol: docs/FEATURE-FLAGS.md
+- Özellik Bayrakları (Feature Flags) — satır: 60, boyut: 1950 bytes — yol: docs/feature-flags.md
 - Dosya Bazlı İnceleme (Batch 1) — satır: 205, boyut: 12850 bytes — yol: docs/file-based-reference.md
 - Dosya Haritası (Kapsam ve Durum) — satır: 54, boyut: 4679 bytes — yol: docs/file-map.md
 - FILE-BATCHES — Dosyaların Batch Bazlı Sınıflandırması — satır: 295, boyut: 10575 bytes — yol: docs/file-packages.md

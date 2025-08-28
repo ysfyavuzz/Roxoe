@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2025-08-28T09:21:51.790Z",
+  "generatedAt": "2025-08-28T10:51:28.075Z",
   "total": {
-    "count": 55,
-    "lines": 6573,
-    "bytes": 322324
+    "count": 56,
+    "lines": 6708,
+    "bytes": 327736
   },
   "groups": {
     "adr": {
@@ -12,49 +12,49 @@
       "bytes": 2414
     },
     "root": {
-      "count": 17,
-      "lines": 3306,
-      "bytes": 157439
+      "count": 18,
+      "lines": 3339,
+      "bytes": 158573
     },
     "book": {
       "count": 2,
       "lines": 246,
-      "bytes": 12949
+      "bytes": 12931
     },
     "case-studies": {
       "count": 4,
       "lines": 157,
-      "bytes": 6075
+      "bytes": 5922
     },
     "components": {
       "count": 1,
       "lines": 31,
-      "bytes": 996
+      "bytes": 966
     },
     "components-batch": {
       "count": 13,
-      "lines": 2345,
-      "bytes": 126641
+      "lines": 2447,
+      "bytes": 131467
     },
     "hardware": {
       "count": 2,
       "lines": 34,
-      "bytes": 1062
+      "bytes": 1030
     },
     "performance": {
       "count": 3,
       "lines": 192,
-      "bytes": 9929
+      "bytes": 9740
     },
     "runbooks": {
       "count": 5,
       "lines": 100,
-      "bytes": 2820
+      "bytes": 2725
     },
     "samples": {
       "count": 1,
       "lines": 32,
-      "bytes": 932
+      "bytes": 901
     },
     "schemas": {
       "count": 1,
@@ -124,35 +124,35 @@
       "group": "book",
       "title": "RoxoePOS Kitabı (Yatırımcı + Kullanıcı + Geliştirici)",
       "lines": 234,
-      "bytes": 12420
+      "bytes": 12402
     },
     {
       "path": "docs/case-studies/backup-restore-test.md",
       "group": "case-studies",
       "title": "Case Study: Yedekleme ve Geri Yükleme Testi",
       "lines": 46,
-      "bytes": 1805
+      "bytes": 1760
     },
     {
       "path": "docs/case-studies/device-migration.md",
       "group": "case-studies",
       "title": "Case Study: Cihaz Değişimi ve Veri Taşıma (Backup/Restore)",
       "lines": 31,
-      "bytes": 1257
+      "bytes": 1227
     },
     {
       "path": "docs/case-studies/initial-product-import-excel.md",
       "group": "case-studies",
       "title": "Case Study: İlk Ürün Yükleme (Excel/CSV)",
       "lines": 34,
-      "bytes": 1303
+      "bytes": 1270
     },
     {
       "path": "docs/case-studies/setup.md",
       "group": "case-studies",
       "title": "Case Study: RoxoePOS Kurulumu (Adım Adım)",
       "lines": 46,
-      "bytes": 1710
+      "bytes": 1665
     },
     {
       "path": "docs/changelog.md",
@@ -166,122 +166,129 @@
       "group": "root",
       "title": "ColumnMappingModal için Web Worker Planı",
       "lines": 161,
-      "bytes": 8196
+      "bytes": 8036
     },
     {
       "path": "docs/components-batch-1.md",
       "group": "components-batch",
       "title": "Batch 1 — Çekirdek Uygulama ve Altyapı (Router, Layout, Sağlayıcılar, Hata Yönetimi, Güncelleme ve Yedekleme)",
       "lines": 305,
-      "bytes": 18162
+      "bytes": 17858
     },
     {
       "path": "docs/components-batch-10.md",
       "group": "components-batch",
       "title": "Batch 10 — Electron (Ana, Preload, Lisans)",
       "lines": 78,
-      "bytes": 4520
+      "bytes": 4443
     },
     {
       "path": "docs/components-batch-11.md",
       "group": "components-batch",
       "title": "Batch 11 — Yapı ve Konfigürasyon (Build & Config)",
       "lines": 101,
-      "bytes": 4561
+      "bytes": 4461
     },
     {
       "path": "docs/components-batch-12.md",
       "group": "components-batch",
       "title": "Batch 12 — Statik Varlıklar (Public, Assets)",
       "lines": 74,
-      "bytes": 3469
+      "bytes": 3396
     },
     {
       "path": "docs/components-batch-13.md",
       "group": "components-batch",
-      "title": "Batch 13 — Dokümantasyon ve Süreç Altyapısı (PR, Feature Flags, Kitap, Media)",
-      "lines": 57,
-      "bytes": 3493
+      "title": "Batch 13 — Dokümantasyon ve Süreç Altyapısı (Docs, PR, Kitap, Media, Betikler)",
+      "lines": 159,
+      "bytes": 10595
     },
     {
       "path": "docs/components-batch-2.md",
       "group": "components-batch",
       "title": "Batch 2 — Servisler ve Veritabanı Katmanı (IndexedDB, POS/Ödeme, Dışa Aktarım, Arşiv, Performans)",
       "lines": 366,
-      "bytes": 25511
+      "bytes": 25146
     },
     {
       "path": "docs/components-batch-3.md",
       "group": "components-batch",
       "title": "Batch 3 — Ortak UI Bileşenleri ve Hook’lar",
       "lines": 408,
-      "bytes": 19824
+      "bytes": 19417
     },
     {
       "path": "docs/components-batch-4.md",
       "group": "components-batch",
       "title": "Batch 4 — Dashboard (Türkçe)",
       "lines": 77,
-      "bytes": 4481
+      "bytes": 4405
     },
     {
       "path": "docs/components-batch-5.md",
       "group": "components-batch",
       "title": "Batch 5 — POS Bileşenleri ve Ayarlar (Türkçe)",
       "lines": 472,
-      "bytes": 22947
+      "bytes": 22476
     },
     {
       "path": "docs/components-batch-6.md",
       "group": "components-batch",
       "title": "Batch 6 — Uygulama Sayfaları (Diğer)",
       "lines": 84,
-      "bytes": 5048
+      "bytes": 4965
     },
     {
       "path": "docs/components-batch-7.md",
       "group": "components-batch",
       "title": "Batch 7 — Tür Tanımları (Types)",
       "lines": 92,
-      "bytes": 5150
+      "bytes": 5059
     },
     {
       "path": "docs/components-batch-8.md",
       "group": "components-batch",
       "title": "Batch 8 — Yardımcı Araçlar (Utils)",
       "lines": 116,
-      "bytes": 4874
+      "bytes": 4759
     },
     {
       "path": "docs/components-batch-9.md",
       "group": "components-batch",
       "title": "Batch 9 — Testler",
       "lines": 115,
-      "bytes": 4601
+      "bytes": 4487
+    },
+    {
+      "path": "docs/components-batch-index.md",
+      "group": "root",
+      "title": "Components Batch Index — Tüm Batch’lerin Özeti",
+      "lines": 32,
+      "bytes": 2041
     },
     {
       "path": "docs/components.md",
       "group": "root",
       "title": "🧩 COMPONENTS – Bileşen Envanteri",
       "lines": 103,
-      "bytes": 4797
+      "bytes": 4883
     },
     {
       "path": "docs/components/props.md",
       "group": "components",
       "title": "Kritik Bileşen Props Tabloları",
       "lines": 31,
-      "bytes": 996
+      "bytes": 966
     },
     {
       "path": "docs/diagrams.md",
       "group": "root",
       "title": "Görsel Diyagramlar (Mermaid)",
       "lines": 127,
-      "bytes": 3344
+      "bytes": 3218
     },
     {
-      "path": "docs/FEATURE-FLAGS.md",
+      "path": "docs/feature-flags.md",
       "group": "root",
       "title": "Özellik Bayrakları (Feature Flags)",
       "lines": 60,
@@ -292,35 +299,35 @@
       "group": "root",
       "title": "Dosya Bazlı İnceleme (Batch 1)",
       "lines": 205,
-      "bytes": 12850
+      "bytes": 12646
     },
     {
       "path": "docs/file-map.md",
       "group": "root",
       "title": "Dosya Haritası (Kapsam ve Durum)",
       "lines": 54,
-      "bytes": 4679
+      "bytes": 4626
     },
     {
       "path": "docs/file-packages.md",
       "group": "root",
       "title": "FILE-BATCHES — Dosyaların Batch Bazlı Sınıflandırması",
       "lines": 295,
-      "bytes": 10575
+      "bytes": 10281
     },
     {
       "path": "docs/hardware/esc-pos-appendix.md",
       "group": "hardware",
       "title": "ESC/POS Eki",
       "lines": 14,
-      "bytes": 505
+      "bytes": 492
     },
     {
       "path": "docs/hardware/test-checklist.md",
       "group": "hardware",
       "title": "Donanım Test Checklist’i",
       "lines": 20,
-      "bytes": 557
+      "bytes": 538
     },
     {
       "path": "docs/modules.md",
@@ -334,14 +341,14 @@
       "group": "root",
       "title": "10 Dakikada RoxoePOS Geliştirme Ortamı (Windows / PowerShell)",
       "lines": 89,
-      "bytes": 3401
+      "bytes": 3313
     },
     {
       "path": "docs/operations-monitoring.md",
       "group": "root",
       "title": "Operasyon & Monitoring Rehberi",
       "lines": 59,
-      "bytes": 2416
+      "bytes": 2358
     },
     {
       "path": "docs/performance-overview.md",
@@ -355,28 +362,28 @@
       "group": "performance",
       "title": "📏 Ölçüm Rehberi",
       "lines": 112,
-      "bytes": 6507
+      "bytes": 6396
     },
     {
       "path": "docs/performance/performance-checklist.md",
       "group": "performance",
       "title": "🚀 Performans Kontrol Listesi",
       "lines": 50,
-      "bytes": 2547
+      "bytes": 2498
     },
     {
       "path": "docs/performance/performance-playbook.md",
       "group": "performance",
       "title": "Performans Ölçüm Playbook’u",
       "lines": 30,
-      "bytes": 875
+      "bytes": 846
     },
     {
       "path": "docs/roadmap.md",
       "group": "root",
       "title": "Future Vision",
       "lines": 32,
-      "bytes": 1405
+      "bytes": 1374
     },
     {
       "path": "docs/roxoepos-technical-book.md",
@@ -390,42 +397,42 @@
       "group": "runbooks",
       "title": "Runbook: Aktivasyon/Serial Sorunu",
       "lines": 21,
-      "bytes": 593
+      "bytes": 573
     },
     {
       "path": "docs/runbooks/backup-failed.md",
       "group": "runbooks",
       "title": "Runbook: Yedekleme Başarısız",
       "lines": 23,
-      "bytes": 717
+      "bytes": 695
     },
     {
       "path": "docs/runbooks/db-inconsistency.md",
       "group": "runbooks",
       "title": "Runbook: Veritabanı Tutarsızlığı",
       "lines": 21,
-      "bytes": 582
+      "bytes": 562
     },
     {
       "path": "docs/runbooks/operation-guides.md",
       "group": "runbooks",
       "title": "Runbook’lar",
       "lines": 13,
-      "bytes": 337
+      "bytes": 325
     },
     {
       "path": "docs/runbooks/update-error.md",
       "group": "runbooks",
       "title": "Runbook: Güncelleme Hatası",
       "lines": 22,
-      "bytes": 591
+      "bytes": 570
     },
     {
       "path": "docs/samples/examples.md",
       "group": "samples",
       "title": "Örnekler (samples)",
       "lines": 32,
-      "bytes": 932
+      "bytes": 901
     },
     {
       "path": "docs/schemas/README.md",
@@ -438,8 +445,8 @@
       "path": "docs/status.md",
       "group": "root",
       "title": "📊 STATUS – Proje Durumu",
-      "lines": 51,
-      "bytes": 2387
+      "lines": 52,
+      "bytes": 2408
     },
     {
       "path": "docs/test-coverage.md",
