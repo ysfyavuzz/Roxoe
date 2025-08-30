@@ -1,8 +1,8 @@
 import { useMemo } from "react";
+
 import { useSales } from "../../../hooks/useSales";
-import { calculateStatsForDashboard } from "../../../utils/dashboardStats";
-import type { DashboardStats } from "../../../utils/dashboardStats";
 import type { Sale } from "../../../types/sales";
+import { calculateStatsForDashboard, type DashboardStats } from "../../../utils/dashboardStats";
 
 export type DashboardPeriod = "day" | "week" | "month" | "year" | "custom";
 

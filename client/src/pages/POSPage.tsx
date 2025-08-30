@@ -1,34 +1,32 @@
 // pages/POSPage.tsx
-import React, { useState, useRef, useEffect, Suspense, lazy, useCallback, useMemo } from "react";
 import { RefreshCw, Tag } from "lucide-react";
-import { useHotkeys } from "../hooks/useHotkeys";
-import { CartTab, PaymentMethod, PaymentResult } from "../types/pos";
-import { ReceiptInfo } from "../types/receipt";
-import { Customer } from "../types/credit";
-import { productService } from "../services/productDB";
-import { creditService } from "../services/creditServices";
-import { salesDB } from "../services/salesDB";
-import { Sale } from "../types/sales";
-import {
-  calculateCartTotals,
-} from "../utils/vatUtils";
-import PaymentModal from "../components/modals/PaymentModal";
-import ReceiptModal from "../components/modals/ReceiptModal";
+import React, { useState, useRef, useEffect, Suspense, lazy, useCallback, useMemo } from "react";
+
 import { useAlert } from "../components/AlertProvider";
 import PageLayout from "../components/layout/PageLayout";
-import { ActiveFilter } from "../components/ui/FilterPanel";
+import PaymentModal from "../components/modals/PaymentModal";
+import ReceiptModal from "../components/modals/ReceiptModal";
 import SelectProductsModal from "../components/modals/SelectProductModal";
-
-import { useProducts } from "../hooks/useProducts";
-import { useCart } from "../hooks/useCart";
-import { useProductGroups } from "../hooks/useProductGroups";
-import { posService } from "../services/posServices";
-import { useBarcodeHandler } from "../hooks/useBarcodeHandler";
-import { usePOSViewPreferences } from "../hooks/usePOSViewPreferences";
-import QuantityModeToast from "../components/pos/QuantityModeToast";
 import POSHeader from "../components/pos/POSHeader";
+import QuantityModeToast from "../components/pos/QuantityModeToast";
+import { ActiveFilter } from "../components/ui/FilterPanel";
+import { useBarcodeHandler } from "../hooks/useBarcodeHandler";
+import { useCart } from "../hooks/useCart";
+import { useHotkeys } from "../hooks/useHotkeys";
 import { usePaymentFlow } from "../hooks/usePaymentFlow";
+import { usePOSViewPreferences } from "../hooks/usePOSViewPreferences";
+import { useProductGroups } from "../hooks/useProductGroups";
+import { useProducts } from "../hooks/useProducts";
 import { useRegisterStatus } from "../hooks/useRegisterStatus";
+import { creditService } from "../services/creditServices";
+import { posService } from "../services/posServices";
+import { productService } from "../services/productDB";
+import { salesDB } from "../services/salesDB";
+import { Customer } from "../types/credit";
+import { CartTab, PaymentMethod, PaymentResult } from "../types/pos";
+import { ReceiptInfo } from "../types/receipt";
+import { Sale } from "../types/sales";
+import { calculateCartTotals } from "../utils/vatUtils";
 
 // Lazy loaded components
 const SearchFilterPanel = lazy(() => import("../components/pos/SearchFilterPanel"));
@@ -295,7 +293,7 @@ const POSPage: React.FC = () => {
             const confirmed = await confirm(
               "Sepeti tamamen temizlemek istediğinize emin misiniz?"
             );
-            if (confirmed) clearCart();
+            if (confirmed) {clearCart();}
           }
         },
       },
@@ -382,7 +380,7 @@ const POSPage: React.FC = () => {
 
   // Çoklu ürün ekleme
   const handleAddMultipleProducts = useCallback(async (productIds: number[]) => {
-    if (activeGroupId === 0) return;
+    if (activeGroupId === 0) {return;}
     try {
       await Promise.all(
         productIds.map((pid) =>
@@ -461,7 +459,7 @@ const POSPage: React.FC = () => {
                 const c = await confirm(
                   "Bu grubu silmek istediğinize emin misiniz?"
                 );
-                if (!c) return;
+                if (!c) {return;}
                 try {
                   await productService.deleteProductGroup(gid);
                   await refreshGroups();

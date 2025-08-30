@@ -1,7 +1,8 @@
 // hooks/useProductGroups.ts
 import { useState, useEffect } from 'react';
-import { ProductGroup } from '../types/product';
+
 import { productService } from '../services/productDB';
+import { ProductGroup } from '../types/product';
 
 export const useProductGroups = () => {
   const [groups, setGroups] = useState<ProductGroup[]>([]);

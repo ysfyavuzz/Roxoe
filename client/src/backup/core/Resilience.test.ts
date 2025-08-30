@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
+
 import { BackupManager } from './BackupManager'
 
 vi.mock('../utils/fileUtils', () => {
@@ -18,7 +19,11 @@ describe('[resilience] BackupManager hata senaryoları', () => {
   it('downloadFile hata verirse createBackupWithData başarısız döner', async () => {
     const mgr = new BackupManager()
     const exportedData = {
-      exportInfo: { databases: [{ name: 'posDB', recordCounts: {} }], totalRecords: 0 },
+      exportInfo: {
+        databases: [{ name: 'posDB', version: 1, stores: [], recordCounts: {} }],
+        totalRecords: 0,
+        timestamp: new Date().toISOString(),
+      },
       databases: {},
     }
     const result = await mgr.createBackupWithData(exportedData, { description: 'Test' })

@@ -37,7 +37,7 @@ export const Tabs: React.FC<TabsProps> = ({
     <div className={className}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child as React.ReactElement<any>, {
+          return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
             activeTab,
             onValueChange: handleValueChange,
           });
@@ -65,7 +65,7 @@ export const TabsList: React.FC<TabsListProps> = ({
     <div className={`flex space-x-1 rounded-lg bg-gray-100 p-1 ${className}`}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child as React.ReactElement<any>, {
+          return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
             activeTab,
             onValueChange,
           });

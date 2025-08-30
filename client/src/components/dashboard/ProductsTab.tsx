@@ -1,3 +1,4 @@
+import { Download, Tag, DollarSign, Package, LineChart, XCircle } from "lucide-react";
 import React, { useState, useMemo, useRef } from "react";
 import {
   BarChart,
@@ -9,16 +10,17 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { Download, Tag, DollarSign, Package, LineChart, XCircle } from "lucide-react";
+
 import { ProductStats } from "../../types/product";
+import { normalizedSearch } from "../../utils/turkishSearch";
 import Card from "../ui/Card";
 import FilterPanel, { ActiveFilter, FilterValue } from "../ui/FilterPanel";
-import { normalizedSearch } from "../../utils/turkishSearch";
+
+import ProductPerformanceTable from "./products/ProductPerformanceTable";
 import ProductsFilterPanelContent from "./products/ProductsFilterPanelContent";
 import ProductSummaryCards from "./products/ProductSummaryCards";
-import ProductPerformanceTable from "./products/ProductPerformanceTable";
-import TopSellingChart from "./products/TopSellingChart";
 import TopProfitableChart from "./products/TopProfitableChart";
+import TopSellingChart from "./products/TopSellingChart";
 
 interface ProductsTabProps {
   productStats: ProductStats[];
@@ -120,7 +122,7 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
 
   // Sıralanmış ürünler
   const sortedProducts = useMemo(() => {
-    let sortableProducts = [...filteredProducts];
+    const sortableProducts = [...filteredProducts];
     if (sortConfig) {
       sortableProducts.sort((a, b) => {
         const key = sortConfig.key;
@@ -135,8 +137,8 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
         // String değerler için karşılaştırma
         aVal = String(aVal).toLowerCase();
         bVal = String(bVal).toLowerCase();
-        if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
-        if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
+        if (aVal < bVal) {return sortConfig.direction === "asc" ? -1 : 1;}
+        if (aVal > bVal) {return sortConfig.direction === "asc" ? 1 : -1;}
         return 0;
       });
     }
@@ -382,7 +384,7 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
           onFilterRemove={(key) => {
             // Kategori filtreleri için özel işlem yapma, çünkü render içinde bizim kendi 
             // butonlarımız olacak ve onlar handleRemoveFilter'ı çağıracak
-            if (key === "category") return;
+            if (key === "category") {return;}
             handleRemoveFilter(key);
           }}
           onReset={handleResetFilters}

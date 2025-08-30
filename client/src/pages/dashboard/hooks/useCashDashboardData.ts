@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   cashRegisterService,
   CashRegisterSession,
@@ -121,9 +122,10 @@ export function useCashDashboardData(
                   ? `${dt.getHours().toString().padStart(2, "0")}:00`
                   : dt.toISOString().split("T")[0];
 
-              if (!transactionsData[dataKey]) {
-                transactionsData[dataKey] = {
-                  date: dataKey,
+              const key = String(dataKey);
+              if (!transactionsData[key]) {
+                transactionsData[key] = {
+                  date: key,
                   deposits: 0,
                   withdrawals: 0,
                   veresiye: 0,
@@ -133,18 +135,18 @@ export function useCashDashboardData(
 
               if (tx.type === "GİRİŞ") {
                 totalDeposits += tx.amount;
-                transactionsData[dataKey].deposits += tx.amount;
-                transactionsData[dataKey].total += tx.amount;
+                transactionsData[key].deposits += tx.amount;
+                transactionsData[key].total += tx.amount;
               } else if (tx.type === "ÇIKIŞ") {
                 totalWithdrawals += tx.amount;
-                transactionsData[dataKey].withdrawals += tx.amount;
-                transactionsData[dataKey].total -= tx.amount;
+                transactionsData[key].withdrawals += tx.amount;
+                transactionsData[key].total -= tx.amount;
               } else if (tx.type === "VERESIYE_TAHSILAT") {
                 totalDeposits += tx.amount;
                 veresiyeCollections += tx.amount;
-                transactionsData[dataKey].veresiye += tx.amount;
-                transactionsData[dataKey].deposits += tx.amount;
-                transactionsData[dataKey].total += tx.amount;
+                transactionsData[key].veresiye += tx.amount;
+                transactionsData[key].deposits += tx.amount;
+                transactionsData[key].total += tx.amount;
               }
             }
           }
@@ -160,7 +162,7 @@ export function useCashDashboardData(
           });
 
         setClosedSessions(closed);
-        setLastClosedSession(closed.length > 0 ? closed[0] : null);
+        setLastClosedSession(closed.length > 0 ? (closed[0] as CashRegisterSession) : null);
 
         // Bakiye ve açılış bakiyesi
         let currBalance = 0;
@@ -179,7 +181,7 @@ export function useCashDashboardData(
             openingBalance = activeSession.openingBalance;
           }
         } else if (closed.length > 0) {
-          const lastSession = closed[0];
+          const lastSession = closed[0] as CashRegisterSession;
           currBalance =
             lastSession.countingAmount !== null &&
             lastSession.countingAmount !== undefined
@@ -194,11 +196,15 @@ export function useCashDashboardData(
           }
         }
 
-        const dailyData = (period === "day"
-          ? Object.values(transactionsData).sort(
-              (a, b) => parseInt(a.date.split(":")[0]) - parseInt(b.date.split(":")[0])
-            )
-          : Object.values(transactionsData).sort((a, b) => a.date.localeCompare(b.date)));
+        const dailyArray = Object.values(transactionsData) as Array<{ date: string; deposits: number; withdrawals: number; veresiye: number; total: number }>;
+        const dailyData = period === "day"
+          ? dailyArray.sort((a, b) => {
+              // Saat formatı "HH:MM" beklenir; noUncheckedIndexedAccess için güvenli dönüşüm yapıyoruz
+              const ah = parseInt((a.date.split(":")[0] ?? '0'), 10);
+              const bh = parseInt((b.date.split(":")[0] ?? '0'), 10);
+              return ah - bh;
+            })
+          : dailyArray.sort((a, b) => a.date.localeCompare(b.date));
 
         setCashData({
           currentBalance: currBalance,

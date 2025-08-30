@@ -1,5 +1,5 @@
-import React from "react";
 import { Calendar, ArrowDown, ArrowUp, DollarSign } from "lucide-react";
+import React from "react";
 
 interface SessionDisplay {
   openingBalance: number;
@@ -20,7 +20,7 @@ interface DailyIncreaseCardProps {
 }
 
 const DailyIncreaseCard: React.FC<DailyIncreaseCardProps> = ({ cashData, session, dailyIncrease }) => {
-  if (!session) return null;
+  if (!session) {return null;}
 
   return (
     <div className="bg-gradient-to-r from-indigo-500 to-blue-600 rounded-lg shadow text-white p-5">

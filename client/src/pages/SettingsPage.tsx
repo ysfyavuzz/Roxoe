@@ -1,8 +1,11 @@
 // pages/SettingsPage.tsx
+import { Printer, Barcode, Building, Key, Check, RefreshCw, Database, Info, Wrench } from "lucide-react";
 import React, { useState, useEffect, lazy, Suspense } from "react";
-import { Printer, Barcode, Building, Key, Check, RefreshCw, Database, Info } from "lucide-react";
+
+import { isSerialFeatureEnabled, isAdminModeEnabled } from "../utils/feature-flags";
+
 import useSettingsPage from "./settings/hooks/useSettingsPage";
-import { isSerialFeatureEnabled } from "../utils/feature-flags";
+
 
 // Lazy load components for better performance
 const POSSettingsTab = lazy(() => import("../components/settings/POSSettingsTab"));
@@ -11,6 +14,7 @@ const ReceiptSettingsTab = lazy(() => import("../components/settings/ReceiptSett
 const BackupSettingsTab = lazy(() => import("../components/settings/BackupSettingsTab"));
 const SerialSettingsTab = lazy(() => import("../components/settings/SerialSettingsTab"));
 const AboutTab = lazy(() => import("../components/settings/AboutTab"));
+const DiagnosticsTab = lazy(() => import("../components/settings/DiagnosticsTab"));
 const HotkeySettings = lazy(() => import("../components/HotkeySettings"));
 
 // Loading component for lazy-loaded tabs
@@ -90,7 +94,7 @@ const SettingsPage: React.FC = () => {
   useEffect(() => {
     try {
       localStorage.setItem("settings.activeTab", activeTab);
-    } catch {}
+    } catch { /* ignore */ void 0; }
   }, [activeTab]);
   
   // Settings tabs (Serial sekmesi feature flag ile koşullu)
@@ -101,6 +105,7 @@ const SettingsPage: React.FC = () => {
     { id: "backup", title: "Yedekleme", icon: <Database size={20} /> },
     { id: "hotkeys", title: "Kısayollar", icon: <Key size={20} /> },
     ...(isSerialFeatureEnabled() ? [{ id: "serial", title: "Serial No", icon: <Check size={20} /> }] : []),
+    { id: "diagnostics", title: "Tanılama", icon: <Wrench size={20} /> },
     { id: "about", title: "Hakkında", icon: <Info size={20} /> },
   ];
 
@@ -185,6 +190,12 @@ const SettingsPage: React.FC = () => {
               onSave={onSaveSerial}
               saveStatus={saveStatus}
             />
+          </Suspense>
+        );
+      case "diagnostics":
+        return (
+          <Suspense fallback={<TabLoading />}>
+            <DiagnosticsTab canApplyIndexes={isAdminModeEnabled()} />
           </Suspense>
         );
       case "about":

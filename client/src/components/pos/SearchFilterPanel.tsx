@@ -1,5 +1,6 @@
 // components/pos/SearchFilterPanel.tsx
 import React from "react";
+
 import FilterPanel, { ActiveFilter } from "../ui/FilterPanel";
 
 interface SearchFilterPanelProps {
@@ -45,7 +46,7 @@ const SearchFilterPanel: React.FC<SearchFilterPanelProps> = React.memo(({
         onSearchTermChange={setSearchTerm}
         onReset={resetFilters}
         showFilter={showFilters}
-        toggleFilter={() => setShowFilters((prev) => !prev)}
+        toggleFilter={() => setShowFilters(!showFilters)}
         inputRef={searchInputRef}
         onBarcodeDetected={onBarcodeDetected}
         onScanModeChange={onScanModeChange}

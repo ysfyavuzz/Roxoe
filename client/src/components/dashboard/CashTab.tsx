@@ -1,11 +1,13 @@
 import React, { useMemo } from "react";
+
 import { CashRegisterSession } from "../../services/cashRegisterDB";
-import CashSummaryCards from "./cash/CashSummaryCards";
-import DailyIncreaseCard from "./cash/DailyIncreaseCard";
+
 import CashFlowCard from "./cash/CashFlowCard";
-import SalesDistributionChart from "./cash/SalesDistributionChart";
 import CashMovementsChart from "./cash/CashMovementsChart";
+import CashSummaryCards from "./cash/CashSummaryCards";
 import ClosedSessionsTable from "./cash/ClosedSessionsTable";
+import DailyIncreaseCard from "./cash/DailyIncreaseCard";
+import SalesDistributionChart from "./cash/SalesDistributionChart";
 
 interface CashTabProps {
   cashData: {
@@ -82,8 +84,8 @@ const CashTab: React.FC<CashTabProps> = ({
       <CashSummaryCards cashData={cashData} />
 
       {/* Günün Artışı Kartı */}
-      {period === "day" && sessionToShow && (
-        <DailyIncreaseCard cashData={cashData} session={sessionToShow as any} dailyIncrease={dailyCashIncrease} />
+{period === "day" && sessionToShow && (
+        <DailyIncreaseCard cashData={cashData} session={sessionToShow} dailyIncrease={dailyCashIncrease} />
       )}
 
       {/* İki sütun düzen: Nakit Akışı ve Gelir-Gider Dağılımı */}

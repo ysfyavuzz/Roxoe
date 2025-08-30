@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   Calendar,
   ChevronDown,
@@ -18,6 +17,7 @@ import {
   Scan,
   Settings,
 } from "lucide-react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 
 import {
   cleanTextForSearch,
@@ -25,7 +25,7 @@ import {
 } from "../../utils/turkishSearch";
 
 const formatDateDisplay = (date: Date | undefined) => {
-  if (!date) return "-";
+  if (!date) {return "-";}
   return new Date(date).toLocaleDateString("tr-TR", {
     day: "numeric",
     month: "short",
@@ -67,7 +67,13 @@ const useClickOutside = (
 
 // Unified interface for all filter types
 export interface FilterValue {
-  [key: string]: any;
+  startDate?: Date;
+  endDate?: Date;
+  status?: string;
+  paymentMethod?: string;
+  hasDiscount?: boolean;
+  minAmount?: number;
+  maxAmount?: number;
 }
 
 // Active filter display interface
@@ -122,51 +128,43 @@ interface FilterPanelProps {
   toggleFilter?: () => void;
 }
 
-const FilterPanel: React.FC<FilterPanelProps> = ({
-  searchTerm,
-  onSearchTermChange,
-  filter = {},
-  onFilterChange,
-  onReset,
-  isLoading = false,
-  onRefresh,
-  inputRef,
+const FilterPanel: React.FC<FilterPanelProps> = (props) => {
+  const {
+    searchTerm,
+    onSearchTermChange,
+    filter = {},
+    onFilterChange,
+    onReset,
+    isLoading = false,
+    onRefresh,
+    inputRef,
+    mode = "basic" as FilterPanelMode,
+    searchPlaceholder,
+    activeFilters = [],
+    onFilterRemove,
+    onBarcodeDetected,
+    onScanModeChange,
+    quantityModeActive = false,
+    inputId = "searchInput",
+    filterPanelContent,
+    renderActiveFilters,
+    startOfDay: startOfDayProp,
+    endOfDay: endOfDayProp,
+    showFilter = false,
+    toggleFilter,
+  } = props;
 
-  // Mode configuration
-  mode = "basic" as FilterPanelMode,
-  searchPlaceholder,
-
-  // Active filters
-  activeFilters = [],
-  onFilterRemove,
-
-  // POS specific props
-  onBarcodeDetected,
-  onScanModeChange,
-  quantityModeActive = false,
-  inputId = "searchInput",
-
-  // Custom filter panel
-  filterPanelContent,
-  renderActiveFilters,
-
-  // Date helper functions
-  startOfDay = (date: Date) => {
+  const startOfDay = startOfDayProp ?? ((date: Date) => {
     const newDate = new Date(date);
     newDate.setHours(0, 0, 0, 0);
     return newDate;
-  },
+  });
 
-  endOfDay = (date: Date) => {
+  const endOfDay = endOfDayProp ?? ((date: Date) => {
     const newDate = new Date(date);
     newDate.setHours(23, 59, 59, 999);
     return newDate;
-  },
-
-  // POS mode specific props
-  showFilter = false,
-  toggleFilter,
-}) => {
+  });
   // İç state değerini sadece mode !== 'pos' durumunda kullan
   const [internalShowFilter, setInternalShowFilter] = useState<boolean>(false);
 
@@ -199,7 +197,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   // Reference for click outside handler - toggle butonunu hariç tut
   const filterRef = useClickOutside(() => {
     if (mode === "pos" && toggleFilter) {
-      if (showFilter) toggleFilter();
+      if (showFilter) {toggleFilter();}
     } else {
       setInternalShowFilter(false);
     }
@@ -233,11 +231,11 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     }
 
     // Count other filters
-    if (filter?.status) count++;
-    if (filter?.paymentMethod) count++;
-    if (filter?.hasDiscount !== undefined) count++;
+    if (filter?.status) {count++;}
+    if (filter?.paymentMethod) {count++;}
+    if (filter?.hasDiscount !== undefined) {count++;}
     if (filter?.minAmount !== undefined || filter?.maxAmount !== undefined)
-      count++;
+      {count++;}
 
     return count;
   }, [mode, filter, activeFilters]);
@@ -262,7 +260,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
 
   // Barkod tarama işlevselliği için etkileşimleri izleme
   useEffect(() => {
-    if (mode !== "pos") return () => {}; // POS modunda değilse çalışmasın
+    if (mode !== "pos") {return () => {};} // POS modunda değilse çalışmasın
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Yıldız modu aktifse hiçbir tuşu işleme
@@ -361,7 +359,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
 
   // Get placeholder text based on mode
   const getPlaceholder = () => {
-    if (searchPlaceholder) return searchPlaceholder;
+    if (searchPlaceholder) {return searchPlaceholder;}
 
     switch (mode) {
       case "sales":
@@ -377,7 +375,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   const applyDatePreset = (
     preset: "today" | "yesterday" | "last7days" | "last30days"
   ) => {
-    if (!onFilterChange || mode !== "sales") return;
+    if (!onFilterChange || mode !== "sales") {return;}
 
     const today = new Date();
     let startDate: Date, endDate: Date;
@@ -387,24 +385,27 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         startDate = startOfDay(today);
         endDate = endOfDay(today);
         break;
-      case "yesterday":
+      case "yesterday": {
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
         startDate = startOfDay(yesterday);
         endDate = endOfDay(yesterday);
         break;
-      case "last7days":
+      }
+      case "last7days": {
         const sevenDaysAgo = new Date(today);
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
         startDate = startOfDay(sevenDaysAgo);
         endDate = endOfDay(today);
         break;
-      case "last30days":
+      }
+      case "last30days": {
         const thirtyDaysAgo = new Date(today);
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
         startDate = startOfDay(thirtyDaysAgo);
         endDate = endOfDay(today);
         break;
+      }
       default:
         return;
     }
@@ -421,7 +422,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     type: "startDate" | "endDate",
     date: Date | null
   ) => {
-    if (!onFilterChange || mode !== "sales") return;
+    if (!onFilterChange || mode !== "sales") {return;}
 
     if (date) {
       let adjustedDate = date;
@@ -444,8 +445,11 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   };
 
   // Handle filter changes (sales mode)
-  const handleFilterChange = (key: string, value: any) => {
-    if (!onFilterChange) return;
+  const handleFilterChange = (
+    key: string,
+    value: string | number | boolean | Date | null | undefined
+  ) => {
+    if (!onFilterChange) {return;}
 
     const newFilter = {
       ...filter,
@@ -536,7 +540,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       },
     };
 
-    const colorClasses = colorMap[color] || colorMap.indigo;
+    const colorClasses = (colorMap[color] ?? colorMap.indigo) as { bg: string; text: string; hoverText: string };
     return `${colorClasses.bg} ${colorClasses.text}`;
   };
 
@@ -778,8 +782,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     // For POS and basic modes, use provided activeFilters
     if ((mode === "pos" || mode === "basic") && activeFilters.length > 0) {
       return activeFilters.map((filter, index) => {
-        const color = filter.color || getFilterTagColor(filter.key);
-        const tagClasses = getFilterTagClasses(color);
+        const color: string = (filter.color || getFilterTagColor(filter.key)) as string;
+        const tagClasses = getFilterTagClasses(color as string);
 
         return (
           <span
@@ -819,13 +823,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
               <CalendarRange size={14} />
               {displayDateRange()}
               <button
-                onClick={() =>
-                  onFilterChange?.({
-                    ...filter,
-                    startDate: undefined,
-                    endDate: undefined,
-                  })
-                }
+                onClick={() => {
+                  const { startDate: _sd, endDate: _ed, ...rest } = filter as FilterValue;
+                  onFilterChange?.(rest);
+                }}
                 className="text-indigo-400 hover:text-indigo-600 ml-1"
               >
                 <XCircle size={14} />
@@ -862,13 +863,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                 ? `≥ ₺${filter.minAmount}`
                 : `≤ ₺${filter.maxAmount}`}
               <button
-                onClick={() =>
-                  onFilterChange?.({
-                    ...filter,
-                    minAmount: undefined,
-                    maxAmount: undefined,
-                  })
-                }
+                onClick={() => {
+                  const { minAmount: _min, maxAmount: _max, ...rest } = filter as FilterValue;
+                  onFilterChange?.(rest);
+                }}
                 className="text-emerald-400 hover:text-emerald-600 ml-1"
               >
                 <XCircle size={14} />
@@ -947,11 +945,12 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
               onSearchTermChange(e.target.value);
             }}
             onFocus={() => {
-              if (mode === "pos") setIsFocused(true);
+              if (mode === "pos") {setIsFocused(true);}
             }}
             onBlur={() => {
-              if (mode === "pos") setIsFocused(false);
+              if (mode === "pos") {setIsFocused(false);}
             }}
+            data-testid={mode === 'pos' ? 'pos-search-input' : undefined}
             className={`block w-full pl-10 pr-${
               searchTerm ? "12" : "3"
             } py-2.5 border rounded-lg 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+
 import ClosingBackupLoader from './ClosingBackupLoader';
 
 /**
@@ -33,7 +34,7 @@ const BackupDialogManager: React.FC = () => {
   }, []);
   
   // Sadece gerektiğinde yedekleme ekranını göster
-  if (!showBackupDialog) return null;
+  if (!showBackupDialog) {return null;}
   
   return <ClosingBackupLoader onBackupComplete={handleBackupComplete} />;
 };

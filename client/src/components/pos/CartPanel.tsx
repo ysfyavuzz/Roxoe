@@ -1,11 +1,13 @@
 // components/pos/CartPanel.tsx
-import React from "react";
 import { ShoppingCart, Plus, Minus, X, Trash2 } from "lucide-react";
-import { formatCurrency } from "../../utils/vatUtils";
-import { CartItem, CartTab } from "../../types/pos";
+import React from "react";
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
-import PaymentControls from "./PaymentControls";
+
+import { CartItem, CartTab } from "../../types/pos";
+import { formatCurrency } from "../../utils/vatUtils";
 import { useAlert } from "../AlertProvider";
+
+import PaymentControls from "./PaymentControls";
 
 interface CartTotals {
   subtotal: number;
@@ -72,7 +74,7 @@ const CartPanel: React.FC<CartPanelProps> = React.memo(({
       const confirmed = await onConfirm(
         `${tab?.title} sepetini silmek istediğinize emin misiniz?`
       );
-      if (confirmed) onRemoveTab(tabId);
+      if (confirmed) {onRemoveTab(tabId);}
     } else {
       onRemoveTab(tabId);
     }
@@ -198,6 +200,7 @@ const CartPanel: React.FC<CartPanelProps> = React.memo(({
                   onClick={handleClearCart}
                   className="text-red-500 hover:text-red-600 p-1"
                   title="Sepeti Temizle"
+                  data-testid="clear-cart-button"
                 >
                   <Trash2 size={18} />
                 </button>
@@ -264,8 +267,8 @@ const CompactCartView: React.FC<{
   const ITEM_SIZE = 44;
   const THRESHOLD = 50;
 
-  const Row = ({ index, style }: ListChildComponentProps) => {
-    const item = items[index] as CartItem;
+  const Row = ({ index, style, data }: ListChildComponentProps<CartItem[]>) => {
+    const item = data[index] as CartItem;
     return (
       <div style={style} className="flex items-center px-2 py-1 hover:bg-gray-50">
         <div className="flex-1 mr-1 truncate">
@@ -297,6 +300,7 @@ const CompactCartView: React.FC<{
         itemCount={items.length}
         itemSize={ITEM_SIZE}
         width={"100%"}
+        itemData={items}
       >
         {Row}
       </List>
@@ -306,7 +310,7 @@ const CompactCartView: React.FC<{
   return (
     <div className="py-1">
       {items.map((item, idx) => (
-        <Row key={item.id} index={idx} style={{}} />
+        <Row key={item.id} index={idx} style={{}} data={items} />
       ))}
     </div>
   );
@@ -321,8 +325,8 @@ const NormalCartView: React.FC<{
   const ITEM_SIZE = 56;
   const THRESHOLD = 40;
 
-  const Row = ({ index, style }: ListChildComponentProps) => {
-    const item = items[index] as CartItem;
+  const Row = ({ index, style, data }: ListChildComponentProps<CartItem[]>) => {
+    const item = data[index] as CartItem;
     return (
       <div style={style} className="flex items-center gap-3 py-2 border-b last:border-0 px-3">
         <div className="flex-1">
@@ -356,6 +360,7 @@ const NormalCartView: React.FC<{
         itemCount={items.length}
         itemSize={ITEM_SIZE}
         width={"100%"}
+        itemData={items}
       >
         {Row}
       </List>
@@ -365,7 +370,7 @@ const NormalCartView: React.FC<{
   return (
     <div className="p-3">
       {items.map((_, idx) => (
-        <Row key={(items[idx] as CartItem).id} index={idx} style={{}} />
+        <Row key={(items[idx] as CartItem).id} index={idx} style={{}} data={items} />
       ))}
     </div>
   );

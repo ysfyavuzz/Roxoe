@@ -18,13 +18,13 @@ class EventBus {
 
   // Olay dinleyicisini kaldır
   off(eventName: string, callback: EventCallback): void {
-    if (!this.events[eventName]) return;
+    if (!this.events[eventName]) {return;}
     this.events[eventName] = this.events[eventName].filter(cb => cb !== callback);
   }
 
   // Olay yayınla (emit)
   emit<T = unknown>(eventName: string, data?: T): void {
-    if (!this.events[eventName]) return;
+    if (!this.events[eventName]) {return;}
     this.events[eventName].forEach(callback => callback(data));
   }
 }

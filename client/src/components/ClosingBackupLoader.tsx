@@ -27,17 +27,18 @@ const ClosingBackupLoader: React.FC<ClosingBackupLoaderProps> = ({ onBackupCompl
     const handleBackup = async () => {
       try {
         // Backup Progress event listener
-        window.backupAPI.onBackupProgress(progressHandler);
+        window.backupAPI?.onBackupProgress?.(progressHandler);
 
         // Otomatik yedekleme işlemini başlat
-        const result = await window.backupAPI.createBackup({
+        type BackupResult = { success: boolean; error?: string };
+        const result = (await window.backupAPI?.createBackup({
           description: "Kapatılırken Otomatik Yedekleme",
           backupType: "full",
           isAutoBackup: true
-        });
+        })) as unknown as BackupResult | undefined;
 
         if (isMounted) {
-          if (result.success) {
+          if (result?.success) {
             setIsComplete(true);
             setStage('completed');
             setProgress(100);
@@ -49,7 +50,7 @@ const ClosingBackupLoader: React.FC<ClosingBackupLoaderProps> = ({ onBackupCompl
               }
             }, 1000);
           } else {
-            setError(result.error || "Yedekleme sırasında bir hata oluştu");
+            setError((result && result.error) || "Yedekleme sırasında bir hata oluştu");
             // Hata durumunda da kapatılmasına izin ver (2 sn gecikmeli)
             setTimeout(() => {
               if (onBackupComplete && isMounted) {
@@ -58,9 +59,10 @@ const ClosingBackupLoader: React.FC<ClosingBackupLoaderProps> = ({ onBackupCompl
             }, 2000);
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (isMounted) {
-          setError(error.message || "Beklenmeyen bir hata oluştu");
+          const message = error instanceof Error ? error.message : "Beklenmeyen bir hata oluştu";
+          setError(message);
           // Hata durumunda da kapatılmasına izin ver (2 sn gecikmeli)
           setTimeout(() => {
             if (onBackupComplete && isMounted) {
@@ -71,7 +73,7 @@ const ClosingBackupLoader: React.FC<ClosingBackupLoaderProps> = ({ onBackupCompl
       } finally {
         // Event listener'ı temizle
         if (isMounted) {
-          window.backupAPI.offBackupProgress(progressHandler);
+          window.backupAPI?.offBackupProgress?.(progressHandler);
         }
       }
     };
@@ -82,7 +84,7 @@ const ClosingBackupLoader: React.FC<ClosingBackupLoaderProps> = ({ onBackupCompl
     return () => {
       isMounted = false;
       // Component unmount olurken event listener'ı temizle
-      window.backupAPI.offBackupProgress(progressHandler);
+      window.backupAPI?.offBackupProgress?.(progressHandler);
     };
   }, [onBackupComplete]);
 

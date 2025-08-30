@@ -1,6 +1,7 @@
 // components/modals/SelectProductsModal.tsx
-import React, { useState, useMemo, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+
 import { Product } from '../../types/product';
 import { formatCurrency } from '../../utils/vatUtils';
 
@@ -54,7 +55,7 @@ const SelectProductsModal: React.FC<SelectProductsModalProps> = ({
   };
 
   // Modal açıldığında, bileşen render edildiğinde seçimler zaten temiz olacak
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

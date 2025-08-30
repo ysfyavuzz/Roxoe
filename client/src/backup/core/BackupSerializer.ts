@@ -2,8 +2,8 @@
  * Veriyi .roxoe formatına dönüştürecek modül
  */
 
-import { CompressionUtils } from '../utils/compressionUtils';
 import { ChecksumUtils } from '../utils/checksumUtils';
+import { CompressionUtils } from '../utils/compressionUtils';
 
 // Yedek meta veri tipini tanımlama
 export interface BackupMetadata {
@@ -26,7 +26,7 @@ export class BackupSerializer {
   /**
  * Date nesnelerini özel biçimde işaretleyerek serileştirmeye hazırlar
  */
-private prepareDataForBackup(data: any): any {
+private prepareDataForBackup(data: unknown): unknown {
   if (data === null || data === undefined) {
     return data;
   }
@@ -46,10 +46,11 @@ private prepareDataForBackup(data: any): any {
   
   // Nesne kontrolü
   if (typeof data === 'object') {
-    const result: any = {};
-    for (const key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-        result[key] = this.prepareDataForBackup(data[key]);
+    const src = data as Record<string, unknown>;
+    const result: Record<string, unknown> = {};
+    for (const key in src) {
+      if (Object.prototype.hasOwnProperty.call(src, key)) {
+        result[key] = this.prepareDataForBackup(src[key]);
       }
     }
     return result;
@@ -65,7 +66,7 @@ private prepareDataForBackup(data: any): any {
    * @param metadata Yedek meta verileri
    * @returns .roxoe formatında serileştirilmiş veri
    */
-  serializeToRoxoeFormat(data: any, metadata: Partial<BackupMetadata>): string {
+  serializeToRoxoeFormat(data: unknown, metadata: Partial<BackupMetadata>): string {
     const preparedData = this.prepareDataForBackup(data);
     // Veriyi JSON formatına dönüştür
     const jsonData = JSON.stringify(data);

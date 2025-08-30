@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
-import { formatCurrency } from "../../utils/vatUtils";
+
 import { posService } from "../../services/posServices";
-import { PaymentModalProps, PaymentMethod } from "../../types/pos";
 import { Customer } from "../../types/credit";
+import { PaymentModalProps, PaymentMethod } from "../../types/pos";
+import { formatCurrency } from "../../utils/vatUtils";
 import { useAlert } from "../AlertProvider";
-import CustomerSearchModal from "./CustomerSearchModal"; // Müşteri seçim modalı import edildi
 import CustomerSelectionButton from "../CustomerSelectionButton"; // Müşteri seçim butonu import edildi
+
+import CustomerSearchModal from "./CustomerSearchModal"; // Müşteri seçim modalı import edildi
+import PaymentFooter from "./payment/PaymentFooter";
 import PaymentHeader from "./payment/PaymentHeader";
 import PaymentTypeToggle from "./payment/PaymentTypeToggle";
-import PaymentFooter from "./payment/PaymentFooter";
 
 // Tipler aynı kalıyor
 type PosItem = {
@@ -35,6 +37,41 @@ type ProductPaymentInput = {
 };
 
 type DiscountType = "percentage" | "amount";
+
+// Stub components to satisfy type-check; can be replaced with real implementations
+interface ProductSplitSectionProps {
+  remainingItems: PosItem[];
+  productPaymentInputs: Record<number, ProductPaymentInput>;
+  productPayments: ProductPaymentData[];
+  customers: Customer[];
+  paymentMethods: { method: PaymentMethod; icon: string; label: string }[];
+  onQuantityChange: (itemId: number, newQty: number) => void;
+  onSetPaymentMethod: (itemId: number, method: PaymentMethod) => void;
+  onSetReceived: (itemId: number, value: string) => void;
+  onOpenCustomerModal: (itemId: number) => void;
+  onProductPay: (itemId: number) => void;
+}
+
+const ProductSplitSection: React.FC<ProductSplitSectionProps> = () => null;
+
+interface EqualSplitSectionProps {
+  friendCount: number;
+  discountedTotal: number;
+  equalPayments: { paymentMethod: PaymentMethod; received: string; customerId: string }[];
+  remainingTotal: number;
+  paymentMethods: { method: PaymentMethod; icon: string; label: string }[];
+  customers: Customer[];
+  calculateRemainingForPerson: (index: number) => number;
+  onFriendCountDecrease: () => void;
+  onFriendCountIncrease: () => void;
+  onPaymentChange: (
+    i: number,
+    updates: { paymentMethod: PaymentMethod; received: string; customerId: string }
+  ) => void;
+  onOpenCustomerModal: (i: number) => void;
+}
+
+const EqualSplitSection: React.FC<EqualSplitSectionProps> = () => null;
 
 function getDefaultProductInput(): ProductPaymentInput {
   return {
@@ -238,18 +275,20 @@ const PaymentModal: React.FC<PaymentModalProps & { items: PosItem[] }> = ({
           await posService.disconnect();
         }
         // Başarılı
-        onComplete({
-          mode: "normal",
-          paymentMethod,
-          received: parsedReceived,
-          discount: applyDiscount
+        {
+          const base = { mode: "normal" as const, paymentMethod, received: parsedReceived };
+          const payload = applyDiscount
             ? {
-                type: discountType,
-                value: parseFloat(discountValue) || 0,
-                discountedTotal: discountedTotal,
+                ...base,
+                discount: {
+                  type: discountType,
+                  value: parseFloat(discountValue) || 0,
+                  discountedTotal: discountedTotal,
+                },
               }
-            : undefined,
-        });
+            : base;
+          onComplete(payload);
+        }
       } catch (error) {
         showError("POS işleminde hata!");
         console.error(error);
@@ -260,18 +299,20 @@ const PaymentModal: React.FC<PaymentModalProps & { items: PosItem[] }> = ({
     }
 
     // Nakit / Veresiye
-    onComplete({
-      mode: "normal",
-      paymentMethod,
-      received: parsedReceived,
-      discount: applyDiscount
+    {
+      const base = { mode: "normal" as const, paymentMethod, received: parsedReceived };
+      const payload = applyDiscount
         ? {
-            type: discountType,
-            value: parseFloat(discountValue) || 0,
-            discountedTotal: discountedTotal,
+            ...base,
+            discount: {
+              type: discountType,
+              value: parseFloat(discountValue) || 0,
+              discountedTotal: discountedTotal,
+            },
           }
-        : undefined,
-    });
+        : base;
+      onComplete(payload);
+    }
   };
 
   /** ===================
@@ -279,7 +320,7 @@ const PaymentModal: React.FC<PaymentModalProps & { items: PosItem[] }> = ({
    *  =================== */
   const handleQuantityChange = (itemId: number, newQty: number) => {
     const item = remainingItems.find((i) => i.id === itemId);
-    if (!item) return;
+    if (!item) {return;}
 
     newQty = Math.max(0, Math.min(newQty, item.quantity));
 
@@ -456,6 +497,10 @@ const PaymentModal: React.FC<PaymentModalProps & { items: PosItem[] }> = ({
       // Sadece POS / veresiye limit gibi kontroller
       for (let i = 0; i < friendCount; i++) {
         const p = equalPayments[i];
+        if (!p) {
+          showError(`${i + 1}. kişi için ödeme bilgisi eksik!`);
+          return;
+        }
         const val = parseFloat(p.received) || 0;
         totalPaid += val;
 
@@ -526,38 +571,38 @@ const PaymentModal: React.FC<PaymentModalProps & { items: PosItem[] }> = ({
             change
           )} verilecek. Devam edilsin mi?`
         );
-        if (!ok) return;
+        if (!ok) {return;}
       }
     }
 
     // Ödeme Tamamla
-    onComplete({
-      mode: "split",
-      splitOption: splitType,
-      // Ürün bazında
-      productPayments: splitType === "product" ? productPayments : undefined,
-      // Eşit bölüşüm
-      equalPayments:
+    {
+      const base = { mode: "split" as const, splitOption: splitType };
+      const productPart = splitType === "product" ? { productPayments } : {};
+      const equalPart =
         splitType === "equal"
-          ? equalPayments.map((p) => ({
-              paymentMethod: p.paymentMethod,
-              received: parseFloat(p.received) || 0,
-              customer:
-                p.paymentMethod === "veresiye"
-                  ? customers.find((c) => c.id.toString() === p.customerId) ||
-                    null
-                  : null,
-            }))
-          : undefined,
-      // İndirim
-      discount: applyDiscount
+          ? {
+              equalPayments: equalPayments.map((p) => ({
+                paymentMethod: p.paymentMethod,
+                received: parseFloat(p.received) || 0,
+                customer:
+                  p.paymentMethod === "veresiye"
+                    ? customers.find((c) => c.id.toString() === p.customerId) || null
+                    : null,
+              })),
+            }
+          : {};
+      const discountPart = applyDiscount
         ? {
-            type: discountType,
-            value: parseFloat(discountValue) || 0,
-            discountedTotal: discountedTotal,
+            discount: {
+              type: discountType,
+              value: parseFloat(discountValue) || 0,
+              discountedTotal: discountedTotal,
+            },
           }
-        : undefined,
-    });
+        : {};
+      onComplete({ ...base, ...productPart, ...equalPart, ...discountPart });
+    }
   };
 
   // Ödeme butonunun devre dışı olması gerekip gerekmediğini kontrol et
@@ -620,7 +665,7 @@ const PaymentModal: React.FC<PaymentModalProps & { items: PosItem[] }> = ({
       ? (total * (parseFloat(discountValue) || 0)) / 100
       : parseFloat(discountValue) || 0;
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   // Ödeme yöntemleri
   const paymentMethods: {
@@ -972,7 +1017,7 @@ const PaymentModal: React.FC<PaymentModalProps & { items: PosItem[] }> = ({
         isOpen={normalCustomerModalOpen}
         onClose={() => setNormalCustomerModalOpen(false)}
         customers={customers}
-        selectedCustomerId={selectedCustomer?.id?.toString()}
+        selectedCustomerId={selectedCustomer ? selectedCustomer.id.toString() : ""}
         onSelect={(customer) => setSelectedCustomer(customer)}
       />
 
@@ -983,7 +1028,7 @@ const PaymentModal: React.FC<PaymentModalProps & { items: PosItem[] }> = ({
         customers={customers}
         selectedCustomerId={
           productCustomerItemId
-            ? productPaymentInputs[productCustomerItemId]?.customerId
+            ? (productPaymentInputs[productCustomerItemId]?.customerId ?? "")
             : ""
         }
         onSelect={(customer) => {

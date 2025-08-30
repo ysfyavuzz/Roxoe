@@ -2,11 +2,15 @@
  * Yedekleme işlemlerini koordine eden ana servis
  */
 
-import { BackupSerializer, BackupMetadata } from './BackupSerializer';
-import { BackupDeserializer, DeserializedBackup } from './BackupDeserializer';
+import { v4 as uuidv4 } from 'uuid';
+
+import type { DatabaseExportInfo } from '../database/IndexedDBExporter';
 import { BackupScheduler, BackupSchedule } from '../scheduler/BackupScheduler';
 import { FileUtils } from '../utils/fileUtils';
-import { v4 as uuidv4 } from 'uuid';
+
+import { BackupDeserializer, DeserializedBackup } from './BackupDeserializer';
+import { BackupSerializer, BackupMetadata } from './BackupSerializer';
+
 
 export interface BackupOptions {
   description?: string;
@@ -77,7 +81,17 @@ export class BackupManager {
    * @param exportedData Dışa aktarılmış veritabanı verisi
    * @param options Yedekleme seçenekleri
    */
-  async createBackupWithData(exportedData: any, options?: BackupOptions & { isAutoBackup?: boolean }): Promise<BackupResult> {
+  async createBackupWithData(
+    exportedData: {
+      databases: Record<string, Record<string, unknown[]>>;
+      exportInfo: {
+        databases: DatabaseExportInfo[];
+        totalRecords: number;
+        timestamp: string;
+      };
+    },
+    options?: BackupOptions & { isAutoBackup?: boolean }
+  ): Promise<BackupResult> {
     try {
       // İlerleme bildirimi
       const notifyProgress = (stage: string, progress: number) => {
@@ -100,10 +114,10 @@ export class BackupManager {
         appVersion: 'Roxoe POS v1.0',
         createdAt: new Date().toISOString(),
         description: safeDescription,
-        databases: exportedData.exportInfo.databases.map((db: any) => db.name),
-        recordCounts: exportedData.exportInfo.databases.reduce((counts: Record<string, number>, db: any) => {
+        databases: exportedData.exportInfo.databases.map((db) => db.name),
+        recordCounts: exportedData.exportInfo.databases.reduce((counts: Record<string, number>, db) => {
           Object.entries(db.recordCounts).forEach(([store, count]) => {
-            counts[`${db.name}.${store}`] = count as number;
+            counts[`${db.name}.${store}`] = count;
           });
           return counts;
         }, {} as Record<string, number>),
@@ -149,13 +163,13 @@ export class BackupManager {
         metadata,
         filename
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Yedekleme hatası:', error);
       return {
         success: false,
         backupId: '',
         metadata: {},
-        error: `Yedekleme hatası: ${error.message || 'Bilinmeyen hata'}`
+        error: `Yedekleme hatası: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`
       };
     }
   }
@@ -164,8 +178,8 @@ export class BackupManager {
    * Unicode karakterler için verileri serileştirmeye hazırlar
    * Türkçe karakter kodlama sorunlarını önler
    */
-  private prepareDataForSerialization(data: any): any {
-    const processValue = (value: any): any => {
+  private prepareDataForSerialization(data: unknown): unknown {
+    const processValue = (value: unknown): unknown => {
       if (value === null || value === undefined) {
         return value;
       }
@@ -184,10 +198,11 @@ export class BackupManager {
       
       // Objeleri işle
       if (typeof value === 'object') {
-        const result: any = {};
-        for (const key in value) {
-          if (Object.prototype.hasOwnProperty.call(value, key)) {
-            result[key] = processValue(value[key]);
+        const src = value as Record<string, unknown>;
+        const result: Record<string, unknown> = {};
+        for (const key in src) {
+          if (Object.prototype.hasOwnProperty.call(src, key)) {
+            result[key] = processValue(src[key]);
           }
         }
         return result;
@@ -215,13 +230,13 @@ export class BackupManager {
       }
       
       return result;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Yedek deserializasyon hatası:', error);
       return {
         metadata: {} as BackupMetadata,
         data: null,
         isValid: false,
-        error: `Yedek deserializasyon hatası: ${error.message || 'Bilinmeyen hata'}`
+        error: `Yedek deserializasyon hatası: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`
       };
     }
   }
@@ -245,10 +260,10 @@ export class BackupManager {
    * Mevcut yedekleri listeler
    * @returns Yedek geçmişi
    */
-  listBackups(): any[] {
+  listBackups(): unknown[] {
     try {
       return FileUtils.getBackupHistory();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Yedek listesi alınırken hata:', error);
       return [];
     }

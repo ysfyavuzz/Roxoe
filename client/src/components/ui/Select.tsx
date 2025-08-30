@@ -13,7 +13,7 @@ export const Select: React.FC<SelectProps> = ({ value, onValueChange, children }
     <div className="relative inline-block w-full">
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child as React.ReactElement<any>, { value, onValueChange });
+          return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, { value, onValueChange });
         }
         return child;
       })}

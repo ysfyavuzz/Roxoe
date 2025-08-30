@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from "react";
 import {
   Calendar,
   ChevronDown,
@@ -15,6 +14,8 @@ import {
   X,
   CalendarRange
 } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+
 import { SalesFilter } from "../types/sales";
 
 // Dışa tıklama hook'u
@@ -77,7 +78,7 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
 
   // Tarih formatı
   const formatDateDisplay = (date: Date | undefined) => {
-    if (!date) return "-";
+    if (!date) {return "-";}
     return new Date(date).toLocaleDateString('tr-TR', {
       day: 'numeric',
       month: 'short',
@@ -98,15 +99,21 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
     return newDate;
   };
 
-  // Filtre değişikliklerini anında uygula
-  const handleFilterChange = (key: string, value: any) => {
-    // Yeni filtreyi oluştur
-    const newFilter = {
+// Yardımcı: Anahtarları typesafe şekilde kaldır
+  const omitKeys = <K extends keyof SalesFilter>(obj: SalesFilter, keys: K[]): SalesFilter => {
+    const cloned: SalesFilter = { ...obj };
+    keys.forEach((k) => {
+      delete (cloned as Partial<SalesFilter>)[k];
+    });
+    return cloned;
+  };
+
+  // Filtre değişikliklerini anında uygula (typesafe)
+  const handleFilterChange = <K extends keyof SalesFilter>(key: K, value: SalesFilter[K] | "") => {
+    const newFilter: SalesFilter = {
       ...filter,
-      [key]: value === "" ? undefined : value
+      [key]: (value === "" ? undefined : value) as SalesFilter[K]
     };
-    
-    // Anında değişikliği uygula
     onFilterChange(newFilter);
   };
 
@@ -146,27 +153,30 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
         startDate = startOfDay(today);
         endDate = endOfDay(today);
         break;
-      case 'yesterday':
+      case 'yesterday': {
         // Dün için dün 00:00:00 - dün 23:59:59
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
         startDate = startOfDay(yesterday);
         endDate = endOfDay(yesterday);
         break;
-      case 'last7days':
+      }
+      case 'last7days': {
         // Son 7 gün (bugün dahil)
         const sevenDaysAgo = new Date(today);
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
         startDate = startOfDay(sevenDaysAgo);
         endDate = endOfDay(today);
         break;
-      case 'last30days':
+      }
+      case 'last30days': {
         // Son 30 gün (bugün dahil)
         const thirtyDaysAgo = new Date(today);
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
         startDate = startOfDay(thirtyDaysAgo);
         endDate = endOfDay(today);
         break;
+      }
     }
     
     // Konsola log ekleyerek kontrol edelim
@@ -208,10 +218,10 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
     }
     
     // Diğer filtreleri say
-    if (filter.status) count++;
-    if (filter.paymentMethod) count++;
-    if (filter.hasDiscount !== undefined) count++;
-    if (filter.minAmount !== undefined || filter.maxAmount !== undefined) count++;
+    if (filter.status) {count++;}
+    if (filter.paymentMethod) {count++;}
+    if (filter.hasDiscount !== undefined) {count++;}
+    if (filter.minAmount !== undefined || filter.maxAmount !== undefined) {count++;}
     
     return count;
   };
@@ -343,7 +353,7 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
                       </label>
                       <select
                         value={filter.status || ""}
-                        onChange={(e) => handleFilterChange("status", e.target.value)}
+onChange={(e) => handleFilterChange("status", e.target.value === "" ? "" : (e.target.value as SalesFilter['status']))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                       >
                         <option value="">Tümü</option>
@@ -360,7 +370,7 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
                       </label>
                       <select
                         value={filter.paymentMethod || ""}
-                        onChange={(e) => handleFilterChange("paymentMethod", e.target.value)}
+onChange={(e) => handleFilterChange("paymentMethod", e.target.value === "" ? "" : (e.target.value as SalesFilter['paymentMethod']))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                       >
                         <option value="">Tümü</option>
@@ -385,7 +395,7 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
                           <input
                             type="number"
                             value={filter.minAmount || ""}
-                            onChange={(e) => handleFilterChange("minAmount", e.target.value ? parseFloat(e.target.value) : "")}
+onChange={(e) => handleFilterChange("minAmount", e.target.value ? parseFloat(e.target.value) : "")}
                             placeholder="0.00"
                             className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                             onWheel={(e) => e.currentTarget.blur()}
@@ -403,7 +413,7 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
                           <input
                             type="number"
                             value={filter.maxAmount || ""}
-                            onChange={(e) => handleFilterChange("maxAmount", e.target.value ? parseFloat(e.target.value) : "")}
+onChange={(e) => handleFilterChange("maxAmount", e.target.value ? parseFloat(e.target.value) : "")}
                             placeholder="0.00"
                             className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                             onWheel={(e) => e.currentTarget.blur()}
@@ -419,9 +429,9 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
                       </label>
                       <select
                         value={filter.hasDiscount === undefined ? "" : filter.hasDiscount ? "true" : "false"}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          handleFilterChange("hasDiscount", value === "" ? undefined : value === "true");
+onChange={(e) => {
+                          const v = e.target.value;
+                          handleFilterChange("hasDiscount", v === "" ? "" : (v === "true"));
                         }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                       >
@@ -473,7 +483,9 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
                 <CalendarRange size={14} />
                 {displayDateRange()}
                 <button 
-                  onClick={() => onFilterChange({...filter, startDate: undefined, endDate: undefined})}
+onClick={() => {
+                    onFilterChange(omitKeys(filter, ['startDate', 'endDate']));
+                  }}
                   className="text-indigo-400 hover:text-indigo-600 ml-1"
                 >
                   <XCircle size={14} />
@@ -505,7 +517,9 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
                   ? `≥ ₺${filter.minAmount}`
                   : `≤ ₺${filter.maxAmount}`}
                 <button 
-                  onClick={() => onFilterChange({...filter, minAmount: undefined, maxAmount: undefined})}
+onClick={() => {
+                    onFilterChange(omitKeys(filter, ['minAmount', 'maxAmount']));
+                  }}
                   className="text-emerald-400 hover:text-emerald-600 ml-1"
                 >
                   <XCircle size={14} />
@@ -535,7 +549,7 @@ const SalesFilterPanel: React.FC<SalesFilterPanelProps> = ({
                 <Percent size={14} />
                 {filter.hasDiscount ? "İndirimli Satışlar" : "İndirimsiz Satışlar"}
                 <button 
-                  onClick={() => handleFilterChange("hasDiscount", undefined)}
+onClick={() => handleFilterChange("hasDiscount", "") }
                   className="text-purple-400 hover:text-purple-600 ml-1"
                 >
                   <XCircle size={14} />

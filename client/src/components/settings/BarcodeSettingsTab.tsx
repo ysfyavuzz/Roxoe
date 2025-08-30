@@ -1,6 +1,7 @@
 // components/settings/BarcodeSettingsTab.tsx
-import React from "react";
 import { Barcode, Check, RefreshCw } from "lucide-react";
+import React from "react";
+
 import { BarcodeConfig } from "../../types/barcode";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
@@ -21,8 +22,11 @@ const BarcodeSettingsTab: React.FC<BarcodeSettingsTabProps> = React.memo(({
   onSave,
   saveStatus,
 }) => {
-  const handleConfigChange = (key: keyof BarcodeConfig, value: any) => {
-    setBarcodeConfig({ ...barcodeConfig, [key]: value });
+  const handleConfigChange = (
+    key: keyof BarcodeConfig,
+    value: string | number | boolean
+  ) => {
+    setBarcodeConfig({ ...barcodeConfig, [key]: value } as BarcodeConfig);
   };
 
   return (

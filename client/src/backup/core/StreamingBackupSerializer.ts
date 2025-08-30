@@ -3,8 +3,10 @@
  * Kasma problemlerini çözmek için optimize edilmiştir
  */
 
-import { CompressionUtils } from '../utils/compressionUtils';
 import { ChecksumUtils } from '../utils/checksumUtils';
+import { CompressionUtils } from '../utils/compressionUtils';
+
+import type { BackupMetadata } from './BackupSerializer';
 
 export interface StreamingSerializeOptions {
   chunkSize?: number;
@@ -19,8 +21,8 @@ export class StreamingBackupSerializer {
    * Büyük veri setlerinde bellek sorunlarını önler
    */
   async serializeToRoxoeFormatStreaming(
-    data: any, 
-    metadata: any, 
+    data: unknown, 
+    metadata: Partial<BackupMetadata>, 
     options?: StreamingSerializeOptions
   ): Promise<string> {
     console.log('Streaming serialization başlatılıyor...');
@@ -155,7 +157,7 @@ export class StreamingBackupSerializer {
   /**
    * Date nesneleri ve diğer özel tipleri backup için hazırlar
    */
-  private prepareDataForBackup(data: any): any {
+  private prepareDataForBackup(data: unknown): unknown {
     if (data === null || data === undefined) {
       return data;
     }
@@ -172,10 +174,11 @@ export class StreamingBackupSerializer {
     }
     
     if (typeof data === 'object') {
-      const result: any = {};
-      for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(data, key)) {
-          result[key] = this.prepareDataForBackup(data[key]);
+      const src = data as Record<string, unknown>;
+      const result: Record<string, unknown> = {};
+      for (const key in src) {
+        if (Object.prototype.hasOwnProperty.call(src, key)) {
+          result[key] = this.prepareDataForBackup(src[key]);
         }
       }
       return result;

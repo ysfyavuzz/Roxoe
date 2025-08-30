@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+
 import { productService } from './productDB'
 
 // Mock the UnifiedDBInitializer to avoid real IndexedDB
@@ -22,11 +23,15 @@ vi.mock('./UnifiedDBInitializer', () => {
               return 1
             },
           }
+          // Provide objectStore accessor expected by code
+          tx.objectStore = (_: string) => tx.store
           tx.done = Promise.resolve()
           return tx
         }
         if (stores === 'products') {
           tx.store = {
+            // Simulate presence of 'barcode' index
+            indexNames: { contains: (name: string) => name === 'barcode' },
             index: () => ({ get: async (_barcode: string) => ({ id: 999, barcode: 'DUP' }) }),
             add: async (_val: any) => {
               // should not be called in duplicate case
@@ -34,6 +39,8 @@ vi.mock('./UnifiedDBInitializer', () => {
               return 100
             },
           }
+          // Provide objectStore accessor expected by code
+          tx.objectStore = (_: string) => tx.store
           return tx
         }
         return tx

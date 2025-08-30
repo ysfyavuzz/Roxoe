@@ -1,6 +1,7 @@
 // components/settings/POSSettingsTab.tsx
-import React from "react";
 import { Printer, Check, RefreshCw } from "lucide-react";
+import React from "react";
+
 import { POSConfig, SerialOptions } from "../../types/pos";
 import Button from "../ui/Button";
 import Card from "../ui/Card";

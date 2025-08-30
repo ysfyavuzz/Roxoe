@@ -1,6 +1,6 @@
 # RoxoePOS Teknik Doküman (Geliştirici Kitabı)
 
-Son Güncelleme: 2025-08-29
+Son Güncelleme: 2025-08-30
 Sürüm Bağlamı: 0.5.3 (client/package.json)
 
 İçindekiler
@@ -32,6 +32,9 @@ Dokümantasyon Ana İndeksi (Hızlı Bağlantılar)
 - Bileşen Envanteri: components.md (ve ayrıntılar için components-batch-1..12)
 - Performans Rehberi: performance-overview.md (ayrıca performance/performance-checklist.md, performance/measurement-guide.md, performance/performance-playbook.md)
 - Test Kapsam Politikası: test-coverage.md
+- Playwright E2E Rehberi: testing/playwright-e2e.md
+- E2E Test Kataloğu: testing/e2e-tests.md
+- Son E2E Sonuçları: testing/test-results.md
 - Diyagramlar: diagrams.md
 - Operasyon & Monitoring: operations-monitoring.md
 - Runbook’lar: runbooks/operation-guides.md
@@ -229,6 +232,8 @@ CashRegisterPage ve useRegisterStatus (Kullanım Örneği)
 
 9. Test Altyapısı ve Kapsam
 - Test çatısı: Vitest (jsdom) + React Testing Library, E2E için Playwright
+- E2E dokümanları: testing/playwright-e2e.md (çalıştırma ve env), testing/e2e-tests.md (senaryo kataloğu), testing/test-results.md (son çalıştırma özeti)
+- Diagnostics ve RBAC: Diagnostics sekmesinde indeks uygulama işlemi admin guard (VITE_ADMIN_MODE) ile sınırlandı; indeks önerileri için onay diyaloğu ve dry-run önizlemesi eklendi. IndexedDB indeks fallback durumları IndexTelemetry ile kaydediliyor.
 - Gelişmiş Test Stratejileri:
   - Contract Testing (IPC): Ajv ile JSON Schema doğrulaması (src/ipc-schemas/*, src/integration/ipc-contracts.test.ts)
   - Visual Regression: Playwright toHaveScreenshot ile piksel-düzeyi kontroller (client/e2e/visual-regression.spec.ts)
@@ -389,6 +394,10 @@ Not: UI dosyaları çok sayıda olduğundan her biri benzer kalıpları izler (T
 - command-guide.md ve bu teknik kitap düzenli güncellenmeli; RELEASE/DEGISIKLIK-GUNLUGU akışı eklenebilir.
 
 Ek Öneriler (Kurallarla uyumlu):
+- Test stabilitesi: Kritik UI öğelerine data-testid eklenmesi; placeholder/text bağımlılığını azaltma.
+- POS E2E deterministikliği: Grupların varsayılan (Tümü) aktivasyonunun test modunda garantilenmesi veya testte beklemelerin güçlendirilmesi.
+- Performans testleri: fake-indexeddb ile orta ölçekli tohumlama (seed) ve süre bütçesi; CI’da kademeli unskip.
+- Electron/Node bağımlılıkları: Test modunda stub/alias ile tarayıcı bundle’ından dışlama (build sorunlarını önlemek için).
 - React.memo/useMemo/useCallback kullanımlarını kritik bileşenlerde artırın.
 - Ortak fonksiyonları utils ve hooks klasörlerinde tekrar kullanılır hale getirin (DRY).
 - Error handling’i merkezi bir biçimde yönetin (örneğin /src/error-handler/ yapısı; proje hazır değilse planlayın).

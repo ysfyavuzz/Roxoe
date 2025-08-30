@@ -1,9 +1,10 @@
 // components/ProductGroupTabs.tsx
-import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Plus, Edit2, Minus } from "lucide-react";
-import { ProductGroup } from "../services/productDB";
+import React, { useState, useRef, useEffect, useMemo } from "react";
+
 import { useProductGroups } from "../hooks/useProductGroups";
 import { useProducts } from "../hooks/useProducts";
+import { ProductGroup } from "../services/productDB";
 
 interface ProductGroupTabsProps {
   groups: ProductGroup[];
@@ -40,7 +41,7 @@ const ProductGroupTabs: React.FC<ProductGroupTabsProps> = ({
   }, [editingGroupId]);
 
   const handleMouseDown = (groupId: number, isDefault: boolean) => {
-    if (isDefault) return; // Varsayılan grup için çalışmasın
+    if (isDefault) {return;} // Varsayılan grup için çalışmasın
 
     pressTimer.current = setTimeout(() => {
       setShakingGroupId(groupId);
@@ -61,7 +62,7 @@ const ProductGroupTabs: React.FC<ProductGroupTabsProps> = ({
     isDefault: boolean
   ) => {
     e.preventDefault();
-    if (isDefault) return; // Varsayılan grup için çalışmasın
+    if (isDefault) {return;} // Varsayılan grup için çalışmasın
 
     setShakingGroupId(groupId);
     setShowDeleteButton(groupId);
@@ -168,8 +169,8 @@ const ProductGroupTabs: React.FC<ProductGroupTabsProps> = ({
                 onChange={(e) => setEditingName(e.target.value)}
                 onBlur={handleEditSubmit}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") handleEditSubmit();
-                  if (e.key === "Escape") setEditingGroupId(null);
+                  if (e.key === "Enter") {handleEditSubmit();}
+                  if (e.key === "Escape") {setEditingGroupId(null);}
                 }}
                 className="w-32 px-2 py-1 text-sm border rounded bg-white"
                 onClick={(e) => e.stopPropagation()}

@@ -1,5 +1,9 @@
 # Batch 1 — Çekirdek Uygulama ve Altyapı (Router, Layout, Sağlayıcılar, Hata Yönetimi, Güncelleme ve Yedekleme)
 
+Son Gözden Geçirme: 2025-08-28T22:17Z
+
+Navigasyon: [SUMMARY.md](SUMMARY.md) • [PROGRESS.md](PROGRESS.md)
+
 Hedef Metrikler (Özet, P95)
 - Soğuk açılış (Electron) ≤ 1500 ms
 - Rota geçişi ≤ 150 ms
@@ -29,7 +33,6 @@ Dosya: `client/src/App.tsx`
 Yeni (Lisans BYPASS — dev/test için):
 - `isLicenseBypassEnabled()` (utils/feature-flags) dev/test’te true ise aktivasyon ekranı atlanır ve uygulama doğrudan açılır.
 - Production/Staging’de BYPASS her zaman yok sayılır (güvenlik için). Konsola uyarı yazılır.
-Dosya: `client/src/App.tsx`
 
 - Router: Electron uyumu için HashRouter kullanılır. Rotalar:
   - `/`, `/pos`, `/products`, `/credit`, `/history`, `/cash`, `/settings`, `/sales/:id`
@@ -161,7 +164,6 @@ Dosya: `client/src/components/SerialActivation.tsx`
 
 Lisans BYPASS ile ilişki:
 - Dev/Test’te BYPASS aktif ise bu ekran görünmez. Prod/Staging’de lisans/seri aktivasyonu zorunludur.
-Dosya: `client/src/components/SerialActivation.tsx`
 
 - Electron modu: `window.ipcRenderer.invoke('activate-serial', serialNo)` ile main process’e doğrulama.
 - Web modu: Basit bir whitelist kontrolü ve `localStorage` kaydı.
@@ -297,6 +299,17 @@ Performans & İyileştirme Önerileri:
   - Hata mesajlarını kullanıcıya yüzeyleyecek bir UI geri bildirim kanalı (progress + error toast).
 - MainLayout:
   - Sidebar/TopNav butonlarına ek ARIA nitelikleri ve klavye navigasyonu iyileştirmeleri eklenebilir.
+
+## Kod Kalitesi (Code Quality)
+- Router + Layout + Provider hiyerarşisi tek merkezde toplanmış; bağımlılıklar açık. Provider value’larını memolamak ve route bazlı kod bölme (lazy) ile prop referans istikrarı güçlendirilmelidir.
+- ErrorBoundary ve global handler’lar ayrık ve okunaklı; TS 5+ için override kullanımı uygulanmış olmalı. Fallback’ler hafif tutulmalı.
+- AlertProvider ve NotificationContext net sorumluluklara sahip; a11y etiketleri ve focus management iyileştirilebilir.
+- backup-bridge tarafında IPC mesaj sözleşmesi ve durum makineleri (progress/cancel) belirgin; idempotent init ve temizlik önemlidir.
+
+## Bilinen Sorunlar (Known Issues)
+- Electron/web ikili ortamında `window.*` API’leri için guard eksik olduğu yerler olabilir; tüm yeni kullanım noktalarında protective check zorunlu tutulmalı.
+- MainLayout’ta bazı buton/ikonlarda aria-label eksikliği UX/A11y için boşluk yaratabilir.
+- Backup sürecinde uzun işlemlerde kullanıcıya yetersiz geri bildirim kalan akışlar olabilir; iptal/geri alma stratejileri tamamlanmalıdır.
 
 ## İlgili Belgeler
 - Batch 4: Dashboard ve alt sekmeler

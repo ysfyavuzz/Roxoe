@@ -1,6 +1,7 @@
 // hooks/useCart.ts
 
 import { useState, useEffect } from "react";
+
 import { CartTab, CartItem } from "../types/pos";
 import { Product } from "../types/product";
 import { calculateCartItemTotals } from "../utils/vatUtils";
@@ -75,11 +76,12 @@ export function useCart() {
 
   // Sepet sekmesini kaldır
   function removeTab(tabId: string) {
-    if (cartTabs.length === 1) return; // Tek sepet varsa silme
+    if (cartTabs.length === 1) {return;} // Tek sepet varsa silme
     setCartTabs((prev) => prev.filter((tab) => tab.id !== tabId));
     // Eğer aktif sekme silinirse, ilk sekmeye geç
     if (activeTabId === tabId && cartTabs.length > 1) {
-      setActiveTabId(cartTabs[0].id);
+      const first = cartTabs[0];
+      if (first) { setActiveTabId(first.id); }
     }
   }
 
@@ -87,11 +89,11 @@ export function useCart() {
   // hooks/useCart.ts içindeki addToCart fonksiyonunda değişiklik
   // Sepete ürün ekle
   function addToCart(product: Product) {
-    if (!activeTab) return;
+    if (!activeTab) {return;}
 
     setCartTabs((prev) =>
       prev.map((tab) => {
-        if (tab.id !== activeTabId) return tab;
+        if (tab.id !== activeTabId) {return tab;}
 
         // Eğer ürün ID'si 1 milyondan büyükse, bu bir barkod ürünüdür
         // Bu, handleBarcodeDetected'da eklediğimiz barkod ön ekidir
@@ -143,13 +145,13 @@ export function useCart() {
   }
 
   function updateQuantity(productId: number, change: number): boolean {
-    if (!activeTab) return false;
+    if (!activeTab) {return false;}
   
     const tab = cartTabs.find((t) => t.id === activeTabId);
-    if (!tab) return false;
+    if (!tab) {return false;}
   
     const item = tab.cart.find((i) => i.id === productId);
-    if (!item) return false;
+    if (!item) {return false;}
   
     const newQuantity = item.quantity + change;
     console.log(`updateQuantity: ${item.name} miktarı ${item.quantity} -> ${newQuantity}`);
@@ -175,7 +177,7 @@ export function useCart() {
     // If stock is sufficient, update the cart
     setCartTabs((prev) =>
       prev.map((tab) => {
-        if (tab.id !== activeTabId) return tab;
+        if (tab.id !== activeTabId) {return tab;}
         const updatedCart = tab.cart.map((i) =>
           i.id === productId
             ? calculateCartItemTotals({ ...i, quantity: newQuantity })
@@ -190,10 +192,10 @@ export function useCart() {
 
   // Sepetten ürün kaldır
   function removeFromCart(productId: number) {
-    if (!activeTab) return;
+    if (!activeTab) {return;}
     setCartTabs((prev) =>
       prev.map((tab) => {
-        if (tab.id !== activeTabId) return tab;
+        if (tab.id !== activeTabId) {return tab;}
         return {
           ...tab,
           cart: tab.cart.filter((item) => item.id !== productId),
@@ -204,7 +206,7 @@ export function useCart() {
 
   // Sepeti tamamen temizle
   async function clearCart(): Promise<void> {
-    if (!activeTab) return;
+    if (!activeTab) {return;}
     setCartTabs((prev) =>
       prev.map((tab) => (tab.id === activeTabId ? { ...tab, cart: [] } : tab))
     );

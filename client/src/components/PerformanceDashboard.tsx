@@ -3,18 +3,19 @@
  * Provides comprehensive visual analytics for database performance monitoring
  */
 
+import { 
+  Activity, Clock, Database, TrendingUp, AlertTriangle, 
+  CheckCircle, Info, Zap, Target, Brain
+} from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
   LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer,
   AreaChart, Area
 } from 'recharts';
-import { 
-  Activity, Clock, Database, TrendingUp, AlertTriangle, 
-  CheckCircle, Info, Zap, Target, Brain
-} from 'lucide-react';
-import { performanceMonitor } from '../services/PerformanceMonitor';
+
 import { aiIndexAnalyzer, IndexRecommendation } from '../services/AIIndexAnalyzer';
+import { performanceMonitor, PerformanceStats } from '../services/PerformanceMonitor';
 
 interface DashboardStats {
   totalQueries: number;
@@ -32,6 +33,9 @@ interface ChartData {
   tablePerformance: Array<{ table: string; avgTime: number; queryCount: number }>;
   hourlyActivity: Array<{ hour: string; queries: number }>;
 }
+
+type TimeRange = '1h' | '24h' | '7d' | '30d';
+ type TabKey = 'overview' | 'trends' | 'recommendations' | 'alerts';
 
 export const PerformanceDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -51,10 +55,10 @@ export const PerformanceDashboard: React.FC = () => {
     hourlyActivity: []
   });
 
-  const [recommendations, setRecommendations] = useState<IndexRecommendation[]>([]);
-  const [selectedTimeRange, setSelectedTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
+const [recommendations, setRecommendations] = useState<IndexRecommendation[]>([]);
+  const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRange>('24h');
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'recommendations' | 'alerts'>('overview');
+  const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
   useEffect(() => {
     loadDashboardData();
@@ -66,7 +70,7 @@ export const PerformanceDashboard: React.FC = () => {
     setIsLoading(true);
     try {
       // Load performance stats
-      const performanceStats = await performanceMonitor.getPerformanceStats();
+      const performanceStats = await performanceMonitor.getStats();
       const recommendations = await aiIndexAnalyzer.analyzeAndRecommend();
       
       setStats({
@@ -111,7 +115,7 @@ export const PerformanceDashboard: React.FC = () => {
     return data;
   };
 
-  const generateQueryTypes = (performanceStats: any) => {
+const generateQueryTypes = (_stats: PerformanceStats) => {
     return [
       { type: 'SELECT', count: 850, avgTime: 45 },
       { type: 'INSERT', count: 320, avgTime: 25 },
@@ -120,7 +124,7 @@ export const PerformanceDashboard: React.FC = () => {
     ];
   };
 
-  const generateTablePerformance = (performanceStats: any) => {
+const generateTablePerformance = (_stats: PerformanceStats) => {
     return [
       { table: 'products', avgTime: 42, queryCount: 450 },
       { table: 'sales', avgTime: 38, queryCount: 380 },
@@ -189,7 +193,7 @@ export const PerformanceDashboard: React.FC = () => {
         <div className="flex items-center space-x-2">
           <select
             value={selectedTimeRange}
-            onChange={(e) => setSelectedTimeRange(e.target.value as any)}
+onChange={(e) => setSelectedTimeRange(e.target.value as TimeRange)}
             className="border border-gray-300 rounded-md px-3 py-2 text-sm"
           >
             <option value="1h">Last Hour</option>
@@ -210,15 +214,17 @@ export const PerformanceDashboard: React.FC = () => {
       {/* Tabs */}
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
-          {[
-            { key: 'overview', label: 'Overview', icon: Activity },
-            { key: 'trends', label: 'Trends', icon: TrendingUp },
-            { key: 'recommendations', label: 'AI Recommendations', icon: Brain },
-            { key: 'alerts', label: 'Alerts', icon: AlertTriangle }
-          ].map(({ key, label, icon: Icon }) => (
+{(
+            [
+              { key: 'overview', label: 'Overview', icon: Activity },
+              { key: 'trends', label: 'Trends', icon: TrendingUp },
+              { key: 'recommendations', label: 'AI Recommendations', icon: Brain },
+              { key: 'alerts', label: 'Alerts', icon: AlertTriangle }
+            ] as Array<{ key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }>
+          ).map(({ key, label, icon: Icon }) => (
             <button
               key={key}
-              onClick={() => setActiveTab(key as any)}
+              onClick={() => setActiveTab(key)}
               className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                 activeTab === key
                   ? 'border-blue-500 text-blue-600'

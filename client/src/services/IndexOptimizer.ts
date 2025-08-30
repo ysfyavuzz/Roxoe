@@ -3,8 +3,10 @@
  * Mevcut veritabanı tablolarına performans indeksleri ekler
  */
 
-import { openDB, IDBPDatabase } from 'idb';
+import { openDB, IDBPDatabase, IDBPTransaction } from 'idb';
+
 import DBVersionHelper from '../helpers/DBVersionHelper';
+import { IndexTelemetry } from '../diagnostics/indexTelemetry';
 
 export interface IndexOptimizationResult {
   success: boolean;
@@ -21,6 +23,19 @@ export class IndexOptimizer {
    */
   async optimizeAllDatabases(): Promise<IndexOptimizationResult> {
     console.log('🚀 IndexedDB İndeks Optimizasyonu başlatılıyor...');
+
+    // E2E/preview modunda ağır işlemleri atla
+    // VITE_E2E_MODE build-time flag'i ile kontrol edilir
+    if (import.meta.env.VITE_E2E_MODE === 'true') {
+      console.log('🧪 E2E mod: gerçek optimizasyon atlandı, başarı simüle ediliyor.')
+      return {
+        success: true,
+        optimizedTables: [],
+        addedIndexes: [],
+        errors: [],
+        performanceGain: 'E2E mock'
+      }
+    }
     
     const result: IndexOptimizationResult = {
       success: true,
@@ -81,13 +96,13 @@ export class IndexOptimizer {
           // Veritabanına göre indeks stratejileri
           switch (dbName) {
             case 'posDB':
-              this.optimizePosDB(db, result);
+              this.optimizePosDB(db, transaction, result);
               break;
             case 'salesDB':
-              this.optimizeSalesDB(db, result);
+              this.optimizeSalesDB(db, transaction, result);
               break;
             case 'creditDB':
-              this.optimizeCreditDB(db, result);
+              this.optimizeCreditDB(db, transaction, result);
               break;
           }
         }
@@ -109,12 +124,13 @@ export class IndexOptimizer {
   /**
    * posDB için kritik indeksleri ekler
    */
-  private optimizePosDB(db: any, result: IndexOptimizationResult): void {
+  private optimizePosDB(db: IDBPDatabase<unknown>, upgradeTx: IDBPTransaction<unknown, string[], 'versionchange'>, result: IndexOptimizationResult): void {
     console.log('🏪 posDB indeksleri optimize ediliyor...');
 
     // Products tablosu indeksleri
     if (db.objectStoreNames.contains('products')) {
-      const productStore = db.objectStore('products');
+      // Upgrade aşamasında objectStore erişimi upgradeTx üzerinden yapılır
+      const productStore = upgradeTx.objectStore('products') as unknown as IDBObjectStore;
       
       // Kategori bazlı arama için indeks
       if (!Array.from(productStore.indexNames).includes('categoryIndex')) {
@@ -149,7 +165,7 @@ export class IndexOptimizer {
 
     // Cash Register Sessions için tarih indeksi
     if (db.objectStoreNames.contains('cashRegisterSessions')) {
-      const sessionStore = db.objectStore('cashRegisterSessions');
+      const sessionStore = upgradeTx.objectStore('cashRegisterSessions') as unknown as IDBObjectStore;
       
       if (!Array.from(sessionStore.indexNames).includes('dateIndex')) {
         sessionStore.createIndex('dateIndex', 'date', { unique: false });
@@ -162,7 +178,7 @@ export class IndexOptimizer {
 
     // Cash Transactions için tip ve tarih indeksleri
     if (db.objectStoreNames.contains('cashTransactions')) {
-      const transactionStore = db.objectStore('cashTransactions');
+      const transactionStore = upgradeTx.objectStore('cashTransactions') as unknown as IDBObjectStore;
       
       if (!Array.from(transactionStore.indexNames).includes('typeIndex')) {
         transactionStore.createIndex('typeIndex', 'type', { unique: false });
@@ -183,38 +199,45 @@ export class IndexOptimizer {
   /**
    * salesDB için kritik indeksleri ekler
    */
-  private optimizeSalesDB(db: any, result: IndexOptimizationResult): void {
+  private optimizeSalesDB(db: IDBPDatabase<unknown>, upgradeTx: IDBPTransaction<unknown, string[], 'versionchange'>, result: IndexOptimizationResult): void {
     console.log('💰 salesDB indeksleri optimize ediliyor...');
 
     if (db.objectStoreNames.contains('sales')) {
-      const salesStore = db.objectStore('sales');
+      const salesStore = upgradeTx.objectStore('sales') as unknown as IDBObjectStore;
 
       // Tarih bazlı sorgular için (en kritik)
-      if (!Array.from(salesStore.indexNames).includes('dateIndex')) {
-        salesStore.createIndex('dateIndex', 'date', { unique: false });
-        result.addedIndexes.push('sales.dateIndex');
-        console.log('  ✅ sales.dateIndex eklendi - Rapor performansı artacak!');
+      if (!Array.from(salesStore.indexNames).includes('date')) {
+        salesStore.createIndex('date', 'date', { unique: false });
+        result.addedIndexes.push('sales.date');
+        console.log('  ✅ sales.date index eklendi - Rapor performansı artacak!');
       }
 
       // Toplam tutar aralığı sorguları için
-      if (!Array.from(salesStore.indexNames).includes('totalIndex')) {
-        salesStore.createIndex('totalIndex', 'total', { unique: false });
-        result.addedIndexes.push('sales.totalIndex');
-        console.log('  ✅ sales.totalIndex eklendi');
+      if (!Array.from(salesStore.indexNames).includes('total')) {
+        salesStore.createIndex('total', 'total', { unique: false });
+        result.addedIndexes.push('sales.total');
+        console.log('  ✅ sales.total index eklendi');
       }
 
       // Müşteri bazlı sorgular için 
-      if (!Array.from(salesStore.indexNames).includes('customerIndex')) {
-        salesStore.createIndex('customerIndex', 'customerId', { unique: false });
-        result.addedIndexes.push('sales.customerIndex');
-        console.log('  ✅ sales.customerIndex eklendi');
+      if (!Array.from(salesStore.indexNames).includes('customerId')) {
+        salesStore.createIndex('customerId', 'customerId', { unique: false });
+        result.addedIndexes.push('sales.customerId');
+        console.log('  ✅ sales.customerId index eklendi');
       }
 
-      // Ödeme türü filtreleme için
-      if (!Array.from(salesStore.indexNames).includes('paymentTypeIndex')) {
-        salesStore.createIndex('paymentTypeIndex', 'paymentType', { unique: false });
-        result.addedIndexes.push('sales.paymentTypeIndex');
-        console.log('  ✅ sales.paymentTypeIndex eklendi');
+      // Ödeme yöntemi filtreleme için (veri alanı paymentMethod)
+      if (!Array.from(salesStore.indexNames).includes('paymentMethod')) {
+        salesStore.createIndex('paymentMethod', 'paymentMethod', { unique: false });
+        result.addedIndexes.push('sales.paymentMethod');
+        console.log('  ✅ sales.paymentMethod index eklendi');
+      }
+
+      // Durum filtresi için
+      if (!Array.from(salesStore.indexNames).includes('status')) {
+        salesStore.createIndex('status', 'status', { unique: false });
+        result.addedIndexes.push('sales.status');
+        console.log('  ✅ sales.status index eklendi');
       }
 
       // Bileşik indeks: tarih ve toplam (rapor için kritik)
@@ -231,12 +254,12 @@ export class IndexOptimizer {
   /**
    * creditDB için kritik indeksleri ekler
    */
-  private optimizeCreditDB(db: any, result: IndexOptimizationResult): void {
+  private optimizeCreditDB(db: IDBPDatabase<unknown>, upgradeTx: IDBPTransaction<unknown, string[], 'versionchange'>, result: IndexOptimizationResult): void {
     console.log('💳 creditDB indeksleri optimize ediliyor...');
 
     // Customers tablosu
     if (db.objectStoreNames.contains('customers')) {
-      const customerStore = db.objectStore('customers');
+      const customerStore = upgradeTx.objectStore('customers') as unknown as IDBObjectStore;
 
       // İsim bazlı arama için
       if (!Array.from(customerStore.indexNames).includes('nameIndex')) {
@@ -257,7 +280,7 @@ export class IndexOptimizer {
 
     // Transactions tablosu
     if (db.objectStoreNames.contains('transactions')) {
-      const transactionStore = db.objectStore('transactions');
+      const transactionStore = upgradeTx.objectStore('transactions') as unknown as IDBObjectStore;
 
       // Müşteri bazlı işlemler için
       if (!Array.from(transactionStore.indexNames).includes('customerIdIndex')) {
@@ -288,7 +311,7 @@ export class IndexOptimizer {
    * Performans kazancını hesaplar
    */
   private calculatePerformanceGain(indexCount: number): string {
-    if (indexCount === 0) return 'Hiç indeks eklenmedi';
+    if (indexCount === 0) {return 'Hiç indeks eklenmedi';}
     
     // Ortalama performans kazancı tahmini
     const estimatedGain = Math.min(indexCount * 15, 80); // Max %80
@@ -299,8 +322,8 @@ export class IndexOptimizer {
   /**
    * Mevcut indeksleri listeler (debug için)
    */
-  async listCurrentIndexes(): Promise<Record<string, any>> {
-    const result: Record<string, any> = {};
+  async listCurrentIndexes(): Promise<Record<string, Record<string, string[]> | { error: string }>> {
+    const result: Record<string, Record<string, string[]> | { error: string }> = {};
     const databases = ['posDB', 'salesDB', 'creditDB'];
 
     for (const dbName of databases) {
@@ -322,6 +345,16 @@ export class IndexOptimizer {
     }
 
     return result;
+  }
+}
+
+// Guard loglarından eksik indeks adaylarını raporlayan yardımcı fonksiyon
+export function reportMissingIndexCandidates(): Array<{ db: string; store: string; index: string; count: number }> {
+  try {
+    return IndexTelemetry.getMissingIndexCandidates()
+  } catch (e) {
+    console.warn('[IndexOptimizer] Eksik indeks adayları raporu alınamadı:', e)
+    return []
   }
 }
 

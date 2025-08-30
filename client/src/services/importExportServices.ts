@@ -1,6 +1,7 @@
-import { Product } from "../types/product";
 import ExcelJS from "exceljs";
 import Papa from "papaparse";
+
+import { Product } from "../types/product";
 
 class ProcessingError extends Error {
   constructor(message: string) {

@@ -57,7 +57,7 @@ class DiscountService {
    * @returns Formatted discount text (e.g. "%10 İndirim (-₺50.00)")
    */
   formatDiscountInfo(discount: DiscountInfo, originalTotal?: number): string {
-    if (!discount) return "";
+    if (!discount) {return "";}
     const total = originalTotal || 0;
     const discountAmount = total - discount.discountedTotal;
     
@@ -75,7 +75,7 @@ class DiscountService {
    * @returns İndirim yüzdesi
    */
   getDiscountPercentage(originalPrice: number, discountedPrice: number): number {
-    if (originalPrice <= 0) return 0;
+    if (originalPrice <= 0) {return 0;}
     const discountPercentage = ((originalPrice - discountedPrice) / originalPrice) * 100;
     return Math.round(discountPercentage * 10) / 10; // 1 ondalık basamağa yuvarla
   }
@@ -87,7 +87,7 @@ class DiscountService {
    * @returns İndirim uygulanmış toplam
    */
   applyDiscountToTotal(total: number, discountInfo?: DiscountInfo): number {
-    if (!discountInfo) return total;
+    if (!discountInfo) {return total;}
     return discountInfo.discountedTotal;
   }
 }

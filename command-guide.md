@@ -45,11 +45,16 @@ Testler (Vitest/Playwright)
 - Birim testleri: `npm run test:unit`
 - Entegrasyon testleri: `npm run test:integration`
 - Performans testleri: `npm run test:performance`
-- E2E testleri: `npm run test:e2e`
+- E2E testleri: `npm run test:e2e` veya `npm run e2e`
+  - Tek E2E dosyası: `npm run e2e -- e2e/pos-sale-flow.spec.ts`
+  - Başlık filtresi: `npm run e2e -- -g "POS satış akışı"`
+  - Headed/Debug: `npm run e2e -- --headed -g "POS"` veya `PWDEBUG=1 npm run e2e -- e2e/diagnostics.spec.ts`
 - Kritik kapsam (≥%95): `npm run test:critical`
   - Eşik özelleştirme: `MIN_CRITICAL_COVERAGE=97 npm run test:critical`
 - Tek test dosyası: `npm run test -- src/test/Button.test.tsx`
 - İsim filtresiyle tek test: `npm run test -- -t "başlık parçası"`
+
+Not: Playwright E2E, Vite preview sunucusunu otomatik başlatır (baseURL: http://localhost:4173). Test ortamında NODE_ENV=test, VITE_LICENSE_BYPASS=true, VITE_ADMIN_MODE=true, VITE_E2E_MODE=true bayrakları set edilir.
 
 Notlar
 

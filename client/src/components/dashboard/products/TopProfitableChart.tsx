@@ -1,5 +1,6 @@
 import React from "react";
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
+
 import type { ProductStats } from "../../../types/product";
 
 interface TopProfitableChartProps {

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+
 import { cashRegisterService } from "../services/cashRegisterDB";
 import type { CashRegisterSession } from "../types/cashRegister";
 

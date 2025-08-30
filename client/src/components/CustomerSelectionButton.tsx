@@ -1,6 +1,7 @@
 import React from "react";
-import { formatCurrency } from "../utils/vatUtils";
+
 import { Customer } from "../types/credit"; // Customer tipini import ediyoruz
+import { formatCurrency } from "../utils/vatUtils";
 
 // Prop tipleri için bir interface tanımlıyoruz
 interface CustomerSelectionButtonProps {

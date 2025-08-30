@@ -1,5 +1,7 @@
 import { ipcRenderer, contextBridge } from "electron";
 
+import type { UpdateProgressPayload, UpdateStatusPayload, BackupCreateOptions, BackupResult, RestoreResult, WebSerial } from "./ipcTypes";
+
 // --------- Version App Info API ---------
 contextBridge.exposeInMainWorld("appInfo", {
   getVersion: () => ipcRenderer.invoke("get-app-version"),
@@ -35,7 +37,7 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
 // --------- Web Serial API'yi Renderer Sürecine Expose Edelim ---------
 contextBridge.exposeInMainWorld("serialAPI", {
   requestPort: async () => {
-    const nav = navigator as unknown as { serial?: any }; // TypeScript için manuel tanımlama
+    const nav = navigator as unknown as { serial?: WebSerial };
     if (nav.serial) {
       return await nav.serial.requestPort();
     } else {
@@ -43,7 +45,7 @@ contextBridge.exposeInMainWorld("serialAPI", {
     }
   },
   getPorts: async () => {
-    const nav = navigator as unknown as { serial?: any };
+    const nav = navigator as unknown as { serial?: WebSerial };
     if (nav.serial) {
       return await nav.serial.getPorts();
     } else {
@@ -60,15 +62,15 @@ contextBridge.exposeInMainWorld("updaterAPI", {
   },
 
   // Güncelleme durumu event'leri
-  onUpdateAvailable: (callback: (info: any) => void) => {
+  onUpdateAvailable: (callback: (info: unknown) => void) => {
     ipcRenderer.on("update-available", (_event, info) => callback(info));
   },
 
-  onUpdateDownloaded: (callback: (info: any) => void) => {
+  onUpdateDownloaded: (callback: (info: unknown) => void) => {
     ipcRenderer.on("update-downloaded", (_event, info) => callback(info));
   },
 
-  onUpdateError: (callback: (err: any) => void) => {
+  onUpdateError: (callback: (err: unknown) => void) => {
     ipcRenderer.on("update-error", (_event, err) => callback(err));
   },
 
@@ -77,14 +79,14 @@ contextBridge.exposeInMainWorld("updaterAPI", {
   },
 
   // Yeni eklenen metodlar
-  onUpdateProgress: (callback: (progressObj: any) => void) => {
-    ipcRenderer.on("update-progress", (_event, progressObj) =>
+  onUpdateProgress: (callback: (progressObj: UpdateProgressPayload) => void) => {
+    ipcRenderer.on("update-progress", (_event, progressObj: UpdateProgressPayload) =>
       callback(progressObj)
     );
   },
 
-  onUpdateStatus: (callback: (statusObj: any) => void) => {
-    ipcRenderer.on("update-status", (_event, statusObj) => callback(statusObj));
+  onUpdateStatus: (callback: (statusObj: UpdateStatusPayload) => void) => {
+    ipcRenderer.on("update-status", (_event, statusObj: UpdateStatusPayload) => callback(statusObj));
   },
 
   // Test metodları (geliştirme modunda)
@@ -104,17 +106,17 @@ contextBridge.exposeInMainWorld("updaterAPI", {
 // --------- Yedekleme API'sini Renderer Sürecine Expose Edelim ---------
 contextBridge.exposeInMainWorld("backupAPI", {
   // Yedekleme işlemleri
-  createBackup: (options?: any) => {
-    return ipcRenderer.invoke("create-backup-bridge", options);
+  createBackup: (options?: BackupCreateOptions) => {
+    return ipcRenderer.invoke("create-backup-bridge", options) as Promise<BackupResult>;
   },
 
-  restoreBackup: async (content: string, options?: any) => {
+  restoreBackup: async (content: string, options?: Record<string, unknown>) => {
     try {
-      return await ipcRenderer.invoke(
+      return (await ipcRenderer.invoke(
         "restore-backup-bridge",
         content,
         options
-      );
+      )) as RestoreResult;
     } catch (error) {
       console.error("Yedekleme geri yükleme hatası:", error);
       throw error;
@@ -181,7 +183,7 @@ contextBridge.exposeInMainWorld("indexedDBAPI", {
     return await ipcRenderer.invoke("db-export-request");
   },
 
-  importAllDatabases: async (data: any, options: any) => {
+  importAllDatabases: async (data: unknown, options: unknown) => {
     return await ipcRenderer.invoke("db-import-request", data, options);
   },
 });

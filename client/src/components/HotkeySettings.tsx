@@ -1,6 +1,7 @@
 // components/HotkeySettings.tsx
-import React, { useState, useEffect, useRef } from "react";
 import { Keyboard, RotateCcw } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+
 import { useAlert } from "../components/AlertProvider";
 
 interface CustomHotkeySettings {
@@ -138,12 +139,12 @@ const HotkeySettings: React.FC<Props> = ({ onSave }) => {
         
         if (!hasCashPayment) {
           const defaultCashHotkey = defaultHotkeys.find((h: CustomHotkeySettings) => h.id === "quick_cash_payment");
-          if (defaultCashHotkey) result.push(defaultCashHotkey);
+          if (defaultCashHotkey) {result.push(defaultCashHotkey);}
         }
         
         if (!hasCardPayment) {
           const defaultCardHotkey = defaultHotkeys.find((h: CustomHotkeySettings) => h.id === "quick_card_payment");
-          if (defaultCardHotkey) result.push(defaultCardHotkey);
+          if (defaultCardHotkey) {result.push(defaultCardHotkey);}
         }
         
         return result;
@@ -244,7 +245,7 @@ const HotkeySettings: React.FC<Props> = ({ onSave }) => {
 
   // Handle key events for regular hotkeys
   useEffect(() => {
-    if (!listenForKey || !editingId) return;
+    if (!listenForKey || !editingId) {return;}
 
     const handleKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
@@ -305,7 +306,7 @@ const HotkeySettings: React.FC<Props> = ({ onSave }) => {
 
   // Handle key events for special hotkeys
   useEffect(() => {
-    if (!listenForKey || !editingSpecialId) return;
+    if (!listenForKey || !editingSpecialId) {return;}
 
     const handleKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();

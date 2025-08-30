@@ -41,6 +41,22 @@ export class SmartArchiveManager {
   private usagePatterns: Map<string, UsagePattern> = new Map();
   private archivingRules: ArchivingRule[] = [];
 
+  // Güvenli tip yardımcıları
+  private toRecord(value: unknown): Record<string, unknown> {
+    return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : {};
+  }
+  private num(value: unknown, fallback = 0): number {
+    if (typeof value === 'number') {return value;}
+    if (typeof value === 'string') {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : fallback;
+    }
+    return fallback;
+  }
+  private str(value: unknown, fallback = ''): string {
+    return typeof value === 'string' ? value : fallback;
+  }
+
   /**
    * Analyzes usage patterns and performs intelligent archiving
    */
@@ -143,7 +159,7 @@ export class SmartArchiveManager {
         recordCount++;
       }
       
-      await transaction.complete;
+      await transaction.done;
       console.log(`📋 ${dbName}.${tableName}: ${recordCount} kayıt analiz edildi`);
     } catch (error) {
       console.error(`Tablo analiz hatası ${dbName}.${tableName}:`, error);
@@ -156,25 +172,37 @@ export class SmartArchiveManager {
   private analyzeRecordUsage(
     dbName: string, 
     tableName: string, 
-    record: any
+    record: unknown
   ): UsagePattern | null {
     try {
       const now = new Date();
-      const recordDate = new Date(record.createdAt || record.date || now);
+      const rec = this.toRecord(record);
+      const createdRaw = rec['createdAt'] ?? rec['date'];
+      let recordDate: Date;
+      if (typeof createdRaw === 'string') {
+        recordDate = new Date(createdRaw);
+      } else if (createdRaw instanceof Date) {
+        recordDate = createdRaw;
+      } else {
+        recordDate = now;
+      }
       const daysSinceCreated = Math.floor((now.getTime() - recordDate.getTime()) / (1000 * 60 * 60 * 24));
       
-      // Calculate simulated access patterns based on record characteristics
-      const accessPattern = this.calculateAccessPattern(tableName, record, daysSinceCreated);
+      // Kayıt özelliklerine göre simüle erişim deseni
+      const accessPattern = this.calculateAccessPattern(tableName, rec, daysSinceCreated);
+      
+      const idRaw = rec['id'] ?? rec['sessionId'] ?? 'unknown';
+      const recordId = (typeof idRaw === 'string' || typeof idRaw === 'number') ? idRaw : 'unknown';
       
       return {
         table: `${dbName}.${tableName}`,
-        recordId: record.id || record.sessionId || 'unknown',
-        lastAccessed: this.estimateLastAccess(record, daysSinceCreated),
+        recordId,
+        lastAccessed: this.estimateLastAccess(rec, daysSinceCreated),
         accessCount: accessPattern.totalAccess,
         accessFrequency: accessPattern.frequency,
-        dataSize: this.estimateRecordSize(record),
-        importance: this.calculateImportance(tableName, record, daysSinceCreated),
-        businessValue: this.calculateBusinessValue(tableName, record)
+        dataSize: this.estimateRecordSize(rec),
+        importance: this.calculateImportance(tableName, rec, daysSinceCreated),
+        businessValue: this.calculateBusinessValue(tableName, rec)
       };
     } catch (error) {
       console.error('Record usage analiz hatası:', error);
@@ -185,31 +213,31 @@ export class SmartArchiveManager {
   /**
    * Calculates access patterns based on record type and age
    */
-  private calculateAccessPattern(tableName: string, record: any, daysSinceCreated: number) {
+  private calculateAccessPattern(tableName: string, record: Record<string, unknown>, daysSinceCreated: number) {
     let baseAccess = 10;
     let frequency = 1;
 
     switch (tableName) {
       case 'products':
-        // Popular products accessed more frequently
-        baseAccess = record.stock > 10 ? 50 : 20;
+        // Popüler ürünler daha sık erişilir
+        baseAccess = this.num(record['stock']) > 10 ? 50 : 20;
         frequency = daysSinceCreated > 30 ? 0.5 : 2;
         break;
         
       case 'sales':
-        // Recent sales accessed more frequently
+        // Son satışlara daha sık erişilir
         baseAccess = daysSinceCreated < 7 ? 15 : 3;
         frequency = Math.max(0.1, 5 - daysSinceCreated / 10);
         break;
         
       case 'customers':
-        // Active customers with recent transactions
-        baseAccess = record.totalDebt > 0 ? 25 : 8;
-        frequency = record.totalDebt > 0 ? 1.5 : 0.3;
+        // Borcu olan aktif müşteriler
+        baseAccess = this.num(record['totalDebt']) > 0 ? 25 : 8;
+        frequency = this.num(record['totalDebt']) > 0 ? 1.5 : 0.3;
         break;
         
       case 'cashRegisterSessions':
-        // Recent sessions accessed more
+        // Yakın tarihli oturumlar
         baseAccess = daysSinceCreated < 30 ? 10 : 2;
         frequency = Math.max(0.1, 2 - daysSinceCreated / 30);
         break;
@@ -217,14 +245,14 @@ export class SmartArchiveManager {
 
     return {
       totalAccess: Math.floor(baseAccess * Math.random() * 1.5),
-      frequency: frequency * (0.8 + Math.random() * 0.4) // Add some randomness
+      frequency: frequency * (0.8 + Math.random() * 0.4) // Biraz rastgelelik
     };
   }
 
   /**
    * Estimates last access date based on record characteristics
    */
-  private estimateLastAccess(record: any, daysSinceCreated: number): Date {
+  private estimateLastAccess(_record: Record<string, unknown>, daysSinceCreated: number): Date {
     const now = new Date();
     const randomDaysAgo = Math.floor(Math.random() * Math.min(daysSinceCreated, 90));
     return new Date(now.getTime() - randomDaysAgo * 24 * 60 * 60 * 1000);
@@ -233,33 +261,33 @@ export class SmartArchiveManager {
   /**
    * Estimates record size in bytes
    */
-  private estimateRecordSize(record: any): number {
+  private estimateRecordSize(record: Record<string, unknown>): number {
     const jsonString = JSON.stringify(record);
-    return jsonString.length * 2; // Rough UTF-16 estimation
+    return jsonString.length * 2; // Yaklaşık UTF-16 tahmini
   }
 
   /**
    * Calculates record importance based on business logic
    */
-  private calculateImportance(tableName: string, record: any, daysSinceCreated: number): 'HIGH' | 'MEDIUM' | 'LOW' {
+  private calculateImportance(tableName: string, record: Record<string, unknown>, daysSinceCreated: number): 'HIGH' | 'MEDIUM' | 'LOW' {
     switch (tableName) {
       case 'products':
-        if (record.stock > 0) return 'HIGH';
-        if (daysSinceCreated < 90) return 'MEDIUM';
+        if (this.num(record['stock']) > 0) {return 'HIGH';}
+        if (daysSinceCreated < 90) {return 'MEDIUM';}
         return 'LOW';
         
       case 'sales':
-        if (daysSinceCreated < 30) return 'HIGH';
-        if (record.total > 100) return 'MEDIUM';
+        if (daysSinceCreated < 30) {return 'HIGH';}
+        if (this.num(record['total']) > 100) {return 'MEDIUM';}
         return 'LOW';
         
       case 'customers':
-        if (record.totalDebt > 0) return 'HIGH';
-        if (daysSinceCreated < 180) return 'MEDIUM';
+        if (this.num(record['totalDebt']) > 0) {return 'HIGH';}
+        if (daysSinceCreated < 180) {return 'MEDIUM';}
         return 'LOW';
         
       default:
-        if (daysSinceCreated < 60) return 'MEDIUM';
+        if (daysSinceCreated < 60) {return 'MEDIUM';}
         return 'LOW';
     }
   }
@@ -267,17 +295,17 @@ export class SmartArchiveManager {
   /**
    * Calculates business value (0-1 scale)
    */
-  private calculateBusinessValue(tableName: string, record: any): number {
+  private calculateBusinessValue(tableName: string, record: Record<string, unknown>): number {
     switch (tableName) {
       case 'products':
-        return record.stock > 0 ? 0.9 : 0.3;
+        return this.num(record['stock']) > 0 ? 0.9 : 0.3;
         
       case 'sales':
-        // Higher value sales are more important
-        return Math.min(0.95, 0.3 + (record.total || 0) / 1000);
+        // Yüksek tutarlı satışlar daha önemli
+        return Math.min(0.95, 0.3 + this.num(record['total']) / 1000);
         
       case 'customers':
-        return record.totalDebt > 0 ? 0.8 : 0.4;
+        return this.num(record['totalDebt']) > 0 ? 0.8 : 0.4;
         
       default:
         return 0.5;

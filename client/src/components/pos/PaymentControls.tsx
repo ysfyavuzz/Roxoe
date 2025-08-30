@@ -1,6 +1,7 @@
 // components/pos/PaymentControls.tsx
-import React from "react";
 import { CreditCard, Banknote } from "lucide-react";
+import React from "react";
+
 import Button from "../ui/Button";
 
 interface PaymentControlsProps {
@@ -41,6 +42,7 @@ const PaymentControls: React.FC<PaymentControlsProps> = React.memo(({
         variant="primary"
         icon={CreditCard}
         className="w-full"
+        data-testid="pay-button"
       >
         Ödeme Yap
       </Button>
@@ -53,6 +55,7 @@ const PaymentControls: React.FC<PaymentControlsProps> = React.memo(({
           variant="cash"
           icon={Banknote}
           className="flex-1"
+          data-testid="quick-cash-button"
         >
           {compactView ? "Nakit" : "Hızlı Nakit"}
         </Button>
@@ -63,6 +66,7 @@ const PaymentControls: React.FC<PaymentControlsProps> = React.memo(({
           variant="card"
           icon={CreditCard}
           className="flex-1"
+          data-testid="quick-card-button"
         >
           {compactView ? "Kart" : "Hızlı Kart"}
         </Button>

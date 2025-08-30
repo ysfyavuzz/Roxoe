@@ -2,7 +2,7 @@
 
 [← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
-Son Güncelleme: 2025-08-29
+Son Güncelleme: 2025-08-30
 Sürüm: 0.5.3
 
 ## 🎯 Genel Durum
@@ -41,6 +41,11 @@ Sürüm: 0.5.3
 - Onboarding/Diagram/Monitoring dokümanları genişletildi
 
 Ayrıntı: docs/changelog.md
+
+Güncel Notlar (2025-08-30)
+- E2E suite genişletildi: POS satış akışı iyileştirildi, sepet temizleme senaryosu eklendi; Diagnostics ve Backup akışları stabilize edildi.
+- Playwright testleri Vite preview ile koşturuluyor; test ortamı bayrakları otomatik set ediliyor.
+- Dokümantasyon güncellendi; Playwright E2E rehberi eklendi.
 
 ## 🧱 Modül Durumu
 Modül detayları için: docs/modules.md

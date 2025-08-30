@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
-import { expect, afterEach, vi, beforeEach, afterAll } from 'vitest'
 import { cleanup } from '@testing-library/react'
+import { expect, afterEach, vi, beforeEach, afterAll } from 'vitest'
 
 // Her test sonrası temizlik yap
 afterEach(() => {
@@ -48,14 +48,14 @@ Object.defineProperty(window, 'indexedDB', {
 // Console uyarılarını sessizleştir
 const originalConsoleError = console.error
 beforeEach(() => {
-  console.error = (...args: any[]) => {
+  console.error = (...args: unknown[]) => {
     if (
       typeof args[0] === 'string' &&
       args[0].includes('Warning: ReactDOM.render is deprecated')
     ) {
       return
     }
-    originalConsoleError.call(console, ...args)
+    originalConsoleError.call(console, ...(args as unknown[]))
   }
 })
 

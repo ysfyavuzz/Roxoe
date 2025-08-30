@@ -136,8 +136,8 @@ export class AIIndexAnalyzer {
   /**
    * Gets common query patterns for different table types
    */
-  private getCommonQueryPatterns(table: string) {
-    const patterns: any[] = [];
+  private getCommonQueryPatterns(table: string): Array<{ type: string; columns: string[]; frequency: number; }> {
+    const patterns: Array<{ type: string; columns: string[]; frequency: number; }> = [];
     
     switch (table) {
       case 'products':
@@ -183,7 +183,7 @@ export class AIIndexAnalyzer {
   /**
    * Estimates execution time based on pattern and existing indexes
    */
-  private estimateExecutionTime(pattern: any, existingIndexes: string[]): number {
+  private estimateExecutionTime(pattern: { type: string; columns: string[]; frequency: number }, existingIndexes: string[]): number {
     // Base execution time
     let baseTime = 50;
     
@@ -191,9 +191,11 @@ export class AIIndexAnalyzer {
     baseTime *= pattern.frequency / 100;
     
     // Check if pattern is already optimized
-    const hasOptimalIndex = pattern.columns.some((col: string) => 
-      existingIndexes.some(idx => idx.includes(col.split('.')[0]))
-    );
+    const hasOptimalIndex = pattern.columns.some((col: string) => {
+      if (!col) {return false;}
+      const base = (col.split('.')[0] ?? '') as string;
+      return existingIndexes.some(idx => idx.includes(base));
+    });
     
     if (!hasOptimalIndex) {
       baseTime *= 2.5; // Unoptimized queries are much slower
@@ -210,7 +212,10 @@ export class AIIndexAnalyzer {
     const patterns: QueryPattern[] = [];
     
     for (const [key, times] of this.performanceData.entries()) {
-      const [database, table, patternType] = key.split('.');
+      const parts = key.split('.');
+      const database = parts[0] || 'unknown';
+      const table = parts[1] || 'unknown';
+      const patternType = parts[2] || 'unknown';
       const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
       
       const pattern: QueryPattern = {
@@ -353,7 +358,7 @@ export class AIIndexAnalyzer {
    * Creates single column index recommendation
    */
   private createSingleColumnRecommendation(table: string, pattern: QueryPattern): IndexRecommendation {
-    const column = pattern.columns[0];
+    const column = pattern.columns[0] ?? 'id';
     const improvement = Math.min(90, (pattern.avgExecutionTime / 50) * 40);
     
     return {
@@ -369,7 +374,7 @@ export class AIIndexAnalyzer {
         storageOverhead: 5,
         maintenanceCost: 'LOW'
       },
-      affectedQueries: [pattern.filterConditions[0]]
+      affectedQueries: [pattern.filterConditions[0] ?? 'unknown']
     };
   }
 
@@ -393,7 +398,7 @@ export class AIIndexAnalyzer {
         storageOverhead: 15,
         maintenanceCost: 'MEDIUM'
       },
-      affectedQueries: [pattern.filterConditions[0]]
+      affectedQueries: [pattern.filterConditions[0] ?? 'unknown']
     };
   }
 
@@ -433,7 +438,7 @@ export class AIIndexAnalyzer {
           storageOverhead: 25,
           maintenanceCost: 'MEDIUM'
         },
-        affectedQueries: patterns.map(p => p.filterConditions[0])
+        affectedQueries: patterns.map(p => p.filterConditions[0] ?? 'unknown').filter((q): q is string => q.length > 0)
       };
     }
     
@@ -444,7 +449,7 @@ export class AIIndexAnalyzer {
    * Calculates overall performance impact
    */
   private calculateOverallImpact(recommendations: IndexRecommendation[]): number {
-    if (recommendations.length === 0) return 0;
+    if (recommendations.length === 0) {return 0;}
     
     const weightedImpact = recommendations.reduce((total, rec) => {
       const weight = rec.priority === 'HIGH' ? 1.0 : rec.priority === 'MEDIUM' ? 0.7 : 0.4;

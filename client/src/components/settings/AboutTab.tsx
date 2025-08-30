@@ -1,6 +1,7 @@
 // components/settings/AboutTab.tsx
-import React from "react";
 import { Info, Globe, Mail, Phone, ExternalLink } from "lucide-react";
+import React from "react";
+
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 
@@ -154,6 +155,14 @@ const AboutTab: React.FC<AboutTabProps> = React.memo(({
                   <div className="text-gray-500">Teknik destek için</div>
                 </div>
               </div>
+
+              <div className="flex items-center gap-3">
+                <Mail size={16} className="text-gray-400" />
+                <div>
+                  <div className="text-gray-900">Yusuf Yavuz</div>
+                  <div className="text-gray-500">Roxoe Team · yusuf.yavuz@roxoe.com.tr</div>
+                </div>
+              </div>
               
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-gray-400" />
@@ -235,12 +244,13 @@ const AboutTab: React.FC<AboutTabProps> = React.memo(({
           
           <div>
             <span className="font-medium text-gray-700">Bellek:</span>
-            <div className="text-gray-900 mt-1">
-              {(performance as any).memory ? 
-                `${Math.round((performance as any).memory.usedJSHeapSize / 1024 / 1024)} MB` : 
-                'Bilinmiyor'
-              }
-            </div>
+              <div className="text-gray-900 mt-1">
+              {(() => {
+                type PerfWithMemory = { memory?: { usedJSHeapSize: number } };
+                const mem = (performance as unknown as PerfWithMemory).memory;
+                return mem ? `${Math.round(mem.usedJSHeapSize / 1024 / 1024)} MB` : 'Bilinmiyor';
+              })()}
+              </div>
           </div>
         </div>
       </Card>

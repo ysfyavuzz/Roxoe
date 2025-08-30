@@ -1,8 +1,9 @@
-import { describe, it, expect } from 'vitest'
 import Ajv from 'ajv'
-import { updateStatusSchema } from '../ipc-schemas/updateStatusSchema'
+import { describe, it, expect } from 'vitest'
+
 import { backupProgressSchema } from '../ipc-schemas/backupProgressSchema'
 import { backupResultSchema } from '../ipc-schemas/backupResultSchema'
+import { updateStatusSchema } from '../ipc-schemas/updateStatusSchema'
 
 const ajv = new Ajv({ allErrors: true })
 

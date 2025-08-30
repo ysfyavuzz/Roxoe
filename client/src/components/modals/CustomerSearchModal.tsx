@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { formatCurrency } from "../../utils/vatUtils";
+
 import { Customer } from "../../types/credit"; // Customer tipini import ediyoruz
+import { formatCurrency } from "../../utils/vatUtils";
 
 // Prop tipleri için bir interface tanımlıyoruz
 interface CustomerSearchModalProps {
@@ -54,7 +55,7 @@ const CustomerSearchModal: React.FC<CustomerSearchModalProps> = ({
     }
   }, [isOpen]);
   
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
   
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">

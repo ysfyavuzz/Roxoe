@@ -3,11 +3,13 @@
  * Performans sorunlarını ve kasmaları çözmek için tasarlanmıştır
  */
 
-import { StreamingIndexedDBExporter, StreamingExportOptions } from '../database/StreamingIndexedDBExporter';
-import { StreamingBackupSerializer } from './StreamingBackupSerializer';
-import { FileUtils } from '../utils/fileUtils';
-import { BackupResult } from './BackupManager';
 import { v4 as uuidv4 } from 'uuid';
+
+import { StreamingIndexedDBExporter, StreamingExportOptions, type DatabaseExportInfo } from '../database/StreamingIndexedDBExporter';
+import { FileUtils } from '../utils/fileUtils';
+
+import { BackupResult } from './BackupManager';
+import { StreamingBackupSerializer } from './StreamingBackupSerializer';
 
 export interface OptimizedBackupOptions {
   description?: string;
@@ -153,18 +155,19 @@ export class OptimizedBackupManager {
         recordCount: exportResult.exportInfo.totalRecords
       };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Optimize edilmiş backup başarısız:', error);
       
+      const message = error instanceof Error ? error.message : 'Bilinmeyen hata';
       if (options?.onProgress) {
-        options.onProgress(`Backup başarısız: ${error.message}`, 0);
+        options.onProgress(`Backup başarısız: ${message}`, 0);
       }
 
       return {
         success: false,
         backupId,
         metadata: {},
-        error: `Backup başarısız: ${error.message}`
+        error: `Backup başarısız: ${message}`
       };
     }
   }
@@ -172,12 +175,12 @@ export class OptimizedBackupManager {
   /**
    * Export bilgisinden kayıt sayılarını hesapla
    */
-  private calculateRecordCounts(databases: any[]): Record<string, number> {
+  private calculateRecordCounts(databases: DatabaseExportInfo[]): Record<string, number> {
     const counts: Record<string, number> = {};
     
-    databases.forEach(db => {
+    databases.forEach((db) => {
       Object.entries(db.recordCounts).forEach(([store, count]) => {
-        counts[`${db.name}.${store}`] = count as number;
+        counts[`${db.name}.${store}`] = count;
       });
     });
     
@@ -188,7 +191,7 @@ export class OptimizedBackupManager {
    * Dosya boyutunu görüntülenebilir formata çevir
    */
   private formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) {return '0 Bytes';}
     
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];

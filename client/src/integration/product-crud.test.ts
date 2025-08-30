@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+
 import 'fake-indexeddb/auto'
 import { productService } from '../services/productDB'
 

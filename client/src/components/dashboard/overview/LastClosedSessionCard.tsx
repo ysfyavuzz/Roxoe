@@ -1,4 +1,5 @@
 import React from "react";
+
 import type { CashRegisterSession } from "../../../services/cashRegisterDB";
 
 interface LastClosedSessionCardProps {
@@ -7,7 +8,7 @@ interface LastClosedSessionCardProps {
 }
 
 const LastClosedSessionCard: React.FC<LastClosedSessionCardProps> = ({ lastClosedSession, formatDate }) => {
-  if (!lastClosedSession) return null;
+  if (!lastClosedSession) {return null;}
 
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden">

@@ -1,8 +1,9 @@
 // components/cashregister/TransactionHistory.tsx
-import React from "react";
 import { FileText, Clock } from "lucide-react";
-import { formatCurrency } from "../../utils/vatUtils";
+import React from "react";
+
 import { CashRegisterStatus, CashTransactionType } from "../../types/cashRegister";
+import { formatCurrency } from "../../utils/vatUtils";
 
 interface Transaction {
   id?: string;

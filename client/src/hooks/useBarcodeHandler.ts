@@ -1,7 +1,8 @@
 // hooks/useBarcodeHandler.ts
 import { useCallback } from "react";
-import { Product } from "../types/product";
+
 import { CartTab } from "../types/pos";
+import { Product } from "../types/product";
 import { normalizedSearch } from "../utils/turkishSearch";
 
 interface UseBarcodeHandlerProps {

@@ -9,30 +9,36 @@ test.describe('POS satış akışı (basit)', () => {
 
     // Ürün ekle
     await page.goto(baseURL + '/#/products')
+    await expect(page.getByRole('button', { name: 'Ürün Ekle' })).toBeVisible()
     await page.getByRole('button', { name: 'Ürün Ekle' }).click()
 
     // Modal içinde form alanlarını doldur
-    await page.getByLabel('Ürün Adı').fill(name)
-    await page.getByLabel('Barkod').fill(barcode)
-    await page.getByLabel("Alış Fiyatı (KDV'siz)").fill('10')
-    await page.getByLabel("Satış Fiyatı (KDV'li)").fill('12')
-    await page.getByLabel('Stok Miktarı').fill('5')
+    await expect(page.getByText('Yeni Ürün Ekle')).toBeVisible()
+    await page.getByPlaceholder('Ürün adı girin').fill(name)
+    await page.getByPlaceholder('Barkod girin').fill(barcode)
+    // İlk 0.00 -> Alış fiyatı, ikinci 0.00 -> Satış fiyatı
+    await page.getByPlaceholder('0.00').first().fill('10')
+    await page.getByPlaceholder('0.00').nth(1).fill('12')
+    await page.getByPlaceholder('0', { exact: true }).fill('5')
 
-    // Kategori select'i varsa ilk seçeneği bırak (varsayılan dolu kabul ediyoruz)
     // Kaydet
     await page.getByRole('button', { name: 'Kaydet' }).click()
 
-    // POS'a git
+    // POS'a git ve arama kutusunun geldiğini doğrula
     await page.goto(baseURL + '/#/')
+    const searchInput = page.getByPlaceholder('Ürün Adı, Barkod veya Kategori Ara...')
+    await expect(searchInput).toBeVisible()
 
     // Arama kutusu
-    await page.getByPlaceholder('Ürün Adı, Barkod veya Kategori Ara...').fill(name)
+    await searchInput.fill(name)
 
-    // Ürün satırına tıkla (ürün adı ile)
-    await page.getByText(name, { exact: true }).first().click()
+    // Ürün listesinde aranan ürün görünene kadar bekle ve tıkla
+    const productItem = page.getByText(name, { exact: true }).first()
+    await expect(productItem).toBeVisible({ timeout: 15000 })
+    await productItem.click()
 
     // Sepet başlığı "1 Ürün" şeklinde gözükmeli
-    await expect(page.getByText(/1 Ürün/)).toBeVisible()
+    await expect(page.getByText(/1 Ürün/)).toBeVisible({ timeout: 10000 })
 
     // Ödeme butonu görünür ve disabled olmamalı (metin: "Ödeme Yap")
     const payBtn = page.getByRole('button', { name: 'Ödeme Yap' })

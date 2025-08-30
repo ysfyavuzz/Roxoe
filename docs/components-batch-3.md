@@ -1,5 +1,9 @@
 # Batch 3 — Ortak UI Bileşenleri ve Hook’lar
 
+Son Gözden Geçirme: 2025-08-28T22:45Z
+
+Navigasyon: [SUMMARY.md](SUMMARY.md) • [PROGRESS.md](PROGRESS.md)
+
 Hedef Metrikler (Özet, P95)
 - Virtualized Table (1000 satır) ilk render ≤ 150 ms; kaydırma 60 fps (frame ≤ 16 ms)
 - FilterPanel → filtre uygulama ≤ 120 ms
@@ -242,6 +246,17 @@ Performans & İyileştirme Önerileri:
 - Tekrarlı kod: FilterPanel’de tarih preset/işlevleri DatePicker ile birleştirilip tek kaynaktan kullanılabilir.
 - Depolama: useCart localStorage yazımı debounced yapılabilir; barkod kaynaklı item ID stratejisi merkezi yardımcıya taşınabilir.
 - UI tutarlılığı: Badge/Chip stilleri tek bir tema haritasına taşınabilir; Cards ve NeonProductCard için ortak base komponent düşünülebilir.
+
+## Kod Kalitesi (Code Quality)
+- Table.tsx generic yapısı ve prop tipleri tutarlı; sütun tanımlarını ve render fonksiyonlarını useMemo/React.memo ile stabilize etmek tavsiye edilir.
+- Dialog ve Select bileşenlerinde erişilebilirlik kapsamı sınırlı (odak tuzağı/ESC kapatma yok veya sınırlı). A11y genişletmesi önerilir.
+- Büyük listelerde (Table/CustomerList) sanallaştırma stratejisi net; itemKey ve memo kullanımı ile yeniden oluşturma maliyetleri düşürülmeli.
+- Hook’larda (useProducts/useCart/usePaymentFlow) türetilmiş değerlerin memoize edilmesi ve yan etkilerin sıraya alınması (transaction-idempotency) kod kalitesini artırır.
+- Tip güvenliği: any kullanımı azaltılıp paylaşılmış tipler (PaymentResult, CartItem, Customer) merkezîleştirilmeli.
+
+## Bilinen Sorunlar (Known Issues)
+- Dialog/Select erişilebilirlik boşlukları: Odak tuzağı ve ESC ile kapatma varsayılan olarak yok. Bu durum klavye kullanıcıları için kullanım zorluğu yaratabilir.
+- Barkod/kısayol çakışma riskleri: useHotkeys ve FilterPanel birlikte kullanılırken bayraklar doğru yönetilmezse kısayol önceliklendirme hataları oluşabilir. Belgelendi: shouldHandleEvent ve barcodeScanMode bayraklarını kullanın.
 
 ## Prop Tabloları ve Küçük Kullanım Örnekleri
 

@@ -4,9 +4,10 @@
  * Automatically moves old sales data to archive database to improve performance
  */
 
-import { Sale } from '../types/sales';
-import { salesDB } from './salesDB';
 import DBVersionHelper from '../helpers/DBVersionHelper';
+import { Sale } from '../types/sales';
+
+import { salesDB } from './salesDB';
 
 // Archive configuration interface
 export interface ArchiveConfig {
@@ -39,6 +40,13 @@ export interface ArchivedSalesInfo {
   status: Sale['status'];
 }
 
+// Arşivde tutulan satış kaydının tam yapısı
+export type ArchivedSaleRecord = Sale & {
+  originalId: string;
+  archiveDate: Date;
+  originalDate: Date;
+};
+
 // Archive statistics
 export interface ArchiveStats {
   totalArchived: number;
@@ -65,6 +73,12 @@ export class ArchiveService {
     keepCompletedSales: true,
     completedRetentionDays: 730 // 2 years for completed sales
   };
+
+  // Güvenli JSON parse yardımcı metodu
+  private safeParseJson<T>(raw: string | null, fallback: T): T {
+    if (!raw) { return fallback; }
+    try { return JSON.parse(raw) as T; } catch { return fallback; }
+  }
 
   /**
    * Initialize archive database
@@ -101,13 +115,8 @@ export class ArchiveService {
    * Get current archive configuration
    */
   getConfig(): ArchiveConfig {
-    try {
-      const stored = localStorage.getItem(this.CONFIG_KEY);
-      return stored ? { ...this.defaultConfig, ...JSON.parse(stored) } : this.defaultConfig;
-    } catch (error) {
-      console.error('Error loading archive config:', error);
-      return this.defaultConfig;
-    }
+    const stored = this.safeParseJson<Partial<ArchiveConfig>>(localStorage.getItem(this.CONFIG_KEY), {});
+    return { ...this.defaultConfig, ...stored };
   }
 
   /**
@@ -125,9 +134,15 @@ export class ArchiveService {
    */
   async getStats(): Promise<ArchiveStats> {
     try {
-      // Get stored stats
-      const stored = localStorage.getItem(this.STATS_KEY);
-      const baseStats = stored ? JSON.parse(stored) : {
+      type StoredStats = {
+        totalArchived: number;
+        lastArchiveDate: string | null;
+        sizeReduction: number;
+        performanceGain: number;
+      };
+
+      const stored = this.safeParseJson<StoredStats | null>(localStorage.getItem(this.STATS_KEY), null);
+      const baseStats: StoredStats = stored ?? {
         totalArchived: 0,
         lastArchiveDate: null,
         sizeReduction: 0,
@@ -139,10 +154,12 @@ export class ArchiveService {
       const archivedSales = await this.getArchivedSales();
 
       return {
-        ...baseStats,
+        totalArchived: baseStats.totalArchived,
+        lastArchiveDate: baseStats.lastArchiveDate ? new Date(baseStats.lastArchiveDate) : null,
         activeRecordsCount: activeSales.length,
         archivedRecordsCount: archivedSales.length,
-        lastArchiveDate: baseStats.lastArchiveDate ? new Date(baseStats.lastArchiveDate) : null
+        sizeReduction: baseStats.sizeReduction,
+        performanceGain: baseStats.performanceGain
       };
     } catch (error) {
       console.error('Error getting archive stats:', error);
@@ -160,8 +177,8 @@ export class ArchiveService {
   /**
    * Update archive statistics
    */
-  private updateStats(archivedCount: number, sizeReduction: number): void {
-    const current = this.getStats();
+  private async updateStats(archivedCount: number, sizeReduction: number): Promise<void> {
+    const current = await this.getStats();
     const updated = {
       totalArchived: (current.totalArchived || 0) + archivedCount,
       lastArchiveDate: new Date().toISOString(),
@@ -176,7 +193,7 @@ export class ArchiveService {
    */
   async identifyRecordsToArchive(): Promise<Sale[]> {
     const config = this.getConfig();
-    if (!config.enabled) return [];
+    if (!config.enabled) {return [];}
 
     const allSales = await salesDB.getAllSales();
     const now = new Date();
@@ -251,7 +268,7 @@ export class ArchiveService {
       const sizeReduction = Math.round((result.archivedCount / (originalCount.length + result.archivedCount)) * 100);
 
       // Update statistics
-      this.updateStats(result.archivedCount, sizeReduction);
+      await this.updateStats(result.archivedCount, sizeReduction);
 
       result.success = result.errors.length === 0;
       result.duration = Date.now() - startTime;
@@ -336,15 +353,15 @@ export class ArchiveService {
   /**
    * Get all archived sales
    */
-  async getArchivedSales(): Promise<any[]> {
+  async getArchivedSales(): Promise<ArchivedSaleRecord[]> {
     try {
       const db = await this.initArchiveDB();
-      return new Promise((resolve, reject) => {
+      return new Promise<ArchivedSaleRecord[]>((resolve, reject) => {
         const transaction = db.transaction([this.ARCHIVE_STORE_NAME], 'readonly');
         const store = transaction.objectStore(this.ARCHIVE_STORE_NAME);
         const request = store.getAll();
         
-        request.onsuccess = () => resolve(request.result);
+        request.onsuccess = () => resolve(request.result as ArchivedSaleRecord[]);
         request.onerror = () => reject(request.error);
       });
     } catch (error) {
@@ -361,14 +378,14 @@ export class ArchiveService {
     endDate?: Date;
     receiptNo?: string;
     status?: Sale['status'];
-  }): Promise<any[]> {
+  }): Promise<ArchivedSaleRecord[]> {
     const allArchived = await this.getArchivedSales();
     
     return allArchived.filter(sale => {
-      if (query.startDate && new Date(sale.originalDate) < query.startDate) return false;
-      if (query.endDate && new Date(sale.originalDate) > query.endDate) return false;
-      if (query.receiptNo && !sale.receiptNo.includes(query.receiptNo)) return false;
-      if (query.status && sale.status !== query.status) return false;
+      if (query.startDate && new Date(sale.originalDate) < query.startDate) {return false;}
+      if (query.endDate && new Date(sale.originalDate) > query.endDate) {return false;}
+      if (query.receiptNo && !sale.receiptNo.includes(query.receiptNo)) {return false;}
+      if (query.status && sale.status !== query.status) {return false;}
       return true;
     });
   }
@@ -381,12 +398,12 @@ export class ArchiveService {
       const db = await this.initArchiveDB();
       
       // Get archived record
-      const archivedSale = await new Promise<any>((resolve, reject) => {
+      const archivedSale = await new Promise<ArchivedSaleRecord | undefined>((resolve, reject) => {
         const transaction = db.transaction([this.ARCHIVE_STORE_NAME], 'readonly');
         const store = transaction.objectStore(this.ARCHIVE_STORE_NAME);
         const request = store.get(originalId);
         
-        request.onsuccess = () => resolve(request.result);
+        request.onsuccess = () => resolve(request.result as ArchivedSaleRecord | undefined);
         request.onerror = () => reject(request.error);
       });
 
@@ -396,8 +413,8 @@ export class ArchiveService {
       }
 
       // Restore to main database
-      const { archiveDate, originalId: _, ...saleData } = archivedSale;
-      await salesDB.addSale(saleData);
+      const { archiveDate, originalId: _, originalDate, ...saleData } = archivedSale;
+      await salesDB.addSale(saleData as Omit<Sale, 'id'>);
 
       // Remove from archive
       await new Promise<void>((resolve, reject) => {

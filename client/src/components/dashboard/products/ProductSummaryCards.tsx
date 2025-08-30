@@ -1,6 +1,7 @@
 import React from "react";
-import Card from "../../ui/Card";
+
 import type { ProductStats } from "../../../types/product";
+import Card from "../../ui/Card";
 
 interface ProductSummaryCardsProps {
   products: ProductStats[];

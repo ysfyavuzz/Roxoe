@@ -1,8 +1,10 @@
-import React from 'react';
-import { Package, X } from 'lucide-react';
-import { useNotifications } from '../contexts/NotificationContext';
 import { formatDistanceToNow } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { Package, X } from 'lucide-react';
+import React from 'react';
+
+import { useNotifications } from '../contexts/NotificationContext';
+
 
 interface NotificationPopupProps {
   isOpen: boolean;
@@ -12,7 +14,7 @@ interface NotificationPopupProps {
 const NotificationPopup: React.FC<NotificationPopupProps> = ({ isOpen, onClose }) => {
   const { notifications, markAsRead, markAllAsRead } = useNotifications();
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <div className="fixed inset-0 z-50" onClick={onClose}>

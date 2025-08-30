@@ -1,6 +1,7 @@
 // components/settings/SerialSettingsTab.tsx
-import React from "react";
 import { Key, Check, RefreshCw, Shield, Info } from "lucide-react";
+import React from "react";
+
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 

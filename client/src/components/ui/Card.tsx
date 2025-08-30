@@ -1,4 +1,3 @@
-import React from "react";
 import clsx from "clsx";
 import {
   AlertTriangle,
@@ -9,6 +8,7 @@ import {
   ShoppingCart,
   Percent,
 } from "lucide-react";
+import React from "react";
 
 export type CardVariant =
   | "default"

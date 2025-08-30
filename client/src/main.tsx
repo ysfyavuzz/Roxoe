@@ -1,9 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+
 import App from './App.tsx'
 import './index.css'
-import { ErrorBoundary } from './error-handler/ErrorBoundary'
 import { setupGlobalErrorHandlers } from './error-handler'
+import { ErrorBoundary } from './error-handler/ErrorBoundary'
 
 // Sentry (renderer) – preload üzerinden dsn sağlanırsa dinamik init
 (async () => {

@@ -1,5 +1,6 @@
 // src/components/DynamicWindowTitle.tsx
 import { useEffect, useState, useRef } from "react";
+
 import eventBus from "../utils/eventBus";
 
 // Farklı zaman dilimlerine göre mesajlar
@@ -11,8 +12,8 @@ interface TimeBasedMessage {
 
 // Rastgele mesaj seçmek için yardımcı fonksiyon
 const getRandomMessage = (messages: string[]): string => {
-  const randomIndex = Math.floor(Math.random() * messages.length);
-  return messages[randomIndex];
+  const randomIndex = Math.floor(Math.random() * (messages.length || 1));
+  return messages[randomIndex] ?? "";
 };
 
 // Kasa kapanış verisi için arayüz
@@ -299,25 +300,25 @@ const DynamicWindowTitle: React.FC = () => {
 
     // Özel günler - daha motivasyonel versiyonları
     if (day === 1 && month === 1)
-      return "🎆 Yeni Yıl, Yeni Rekorlar! Kutlu Olsun Patron!";
+      {return "🎆 Yeni Yıl, Yeni Rekorlar! Kutlu Olsun Patron!";}
     if (day === 14 && month === 2)
-      return "❤️ Sevgililer Günün Kutlu Olsun! İşletmen de seni seviyor!";
+      {return "❤️ Sevgililer Günün Kutlu Olsun! İşletmen de seni seviyor!";}
     if (day === 23 && month === 4)
-      return "🇹🇷 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı! Geleceğin girişimcileri büyüyor!";
+      {return "🇹🇷 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı! Geleceğin girişimcileri büyüyor!";}
     if (day === 19 && month === 5)
-      return "🏃 19 Mayıs Gençlik Bayramı! Enerjin hiç bitmesin!";
+      {return "🏃 19 Mayıs Gençlik Bayramı! Enerjin hiç bitmesin!";}
     if (day === 30 && month === 8)
-      return "🏆 30 Ağustos Zafer Bayramı! Sen de kendi zaferlerini kazanıyorsun!";
+      {return "🏆 30 Ağustos Zafer Bayramı! Sen de kendi zaferlerini kazanıyorsun!";}
     if (day === 29 && month === 10)
-      return "🇹🇷 Cumhuriyet Bayramı Kutlu Olsun! Başarılarla dolu nice yıllar!";
+      {return "🇹🇷 Cumhuriyet Bayramı Kutlu Olsun! Başarılarla dolu nice yıllar!";}
     if (day === 10 && month === 11)
-      return `🕊️ Atatürk'ü Saygıyla Anıyoruz! İlkelerle işinde de yüksel!`;
+      {return `🕊️ Atatürk'ü Saygıyla Anıyoruz! İlkelerle işinde de yüksel!`;}
     if (day === 31 && month === 12)
-      return "🎄 Yeni Yıla Hazır mısın? Bu yılki başarıları ikiye katlayacaksın!";
+      {return "🎄 Yeni Yıla Hazır mısın? Bu yılki başarıları ikiye katlayacaksın!";}
 
     // Ayın ilk günü
     if (day === 1)
-      return "📅 Yeni bir ay, yeni fırsatlar! Bu ay rekorları kırıyoruz!";
+      {return "📅 Yeni bir ay, yeni fırsatlar! Bu ay rekorları kırıyoruz!";}
 
     // Ayın son günü
     const lastDay = new Date(
@@ -326,7 +327,7 @@ const DynamicWindowTitle: React.FC = () => {
       0
     ).getDate();
     if (day === lastDay)
-      return "🏁 Ayın son günü! Hedefleri tamamladın mı? Tebrikler patron!";
+      {return "🏁 Ayın son günü! Hedefleri tamamladın mı? Tebrikler patron!";}
 
     // Normal günlere dönüş
     return null;
@@ -563,13 +564,10 @@ const getCashRegisterCloseMessage = (data: CashRegisterCloseData): string => {
       updateWindowTitle(message);
       
       // 20 dakika sonra normal mesajlara geri dön
-      const resetTimer = setTimeout(() => {
+      setTimeout(() => {
         setShowingSpecialMessage(false);
         updateTitle(); // Normal mesaj döngüsüne dön
       }, specialMessageDuration);
-      
-      // Component unmount olursa timer'ı temizle
-      return () => clearTimeout(resetTimer);
     };
     
     // Kasa açılış olayı dinleyicisi
@@ -587,23 +585,28 @@ const getCashRegisterCloseMessage = (data: CashRegisterCloseData): string => {
       updateWindowTitle(message);
       
       // 20 dakika sonra normal mesajlara geri dön
-      const resetTimer = setTimeout(() => {
+      setTimeout(() => {
         setShowingSpecialMessage(false);
         updateTitle(); // Normal mesaj döngüsüne dön
       }, specialMessageDuration);
-      
-      // Component unmount olursa timer'ı temizle
-      return () => clearTimeout(resetTimer);
     };
     
-    // Olayları dinle
-    eventBus.on('cashRegisterClosed', handleCashRegisterClose);
-    eventBus.on('cashRegisterOpened', handleCashRegisterOpen);
+    // Olayları dinle (tip güvenli sarmalayıcılarla)
+    const onCloseWrapper = (payload?: unknown) => {
+      if (!payload) {return;}
+      handleCashRegisterClose(payload as CashRegisterCloseData);
+    };
+    const onOpenWrapper = (payload?: unknown) => {
+      if (!payload) {return;}
+      handleCashRegisterOpen(payload as CashRegisterOpenData);
+    };
+    eventBus.on('cashRegisterClosed', onCloseWrapper);
+    eventBus.on('cashRegisterOpened', onOpenWrapper);
     
     // Temizleme
     return () => {
-      eventBus.off('cashRegisterClosed', handleCashRegisterClose);
-      eventBus.off('cashRegisterOpened', handleCashRegisterOpen);
+      eventBus.off('cashRegisterClosed', onCloseWrapper);
+      eventBus.off('cashRegisterOpened', onOpenWrapper);
     };
   }, []);
 

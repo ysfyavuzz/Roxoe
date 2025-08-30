@@ -1,6 +1,8 @@
 // src/helpers/UnifiedDBInitializer.ts - veya - src/services/UnifiedDBInitializer.ts
-import { openDB } from "idb";
+import { openDB, type IDBPDatabase } from "idb";
+
 import DBVersionHelper from "../helpers/DBVersionHelper"; // Import yolunu projenize göre ayarlayın
+import type { PosDBSchema } from "../types/db";
 
 // Tüm servislerden gerekli sabitler (bunlar ilgili dosyalardan alınmalı)
 const POS_DB_NAME = "posDB";
@@ -8,7 +10,7 @@ const POS_DB_NAME = "posDB";
 /**
  * POS veritabanını tek bir seferde başlatma ve tüm store'ları oluşturma
  */
-export const initUnifiedPOSDB = async () => {
+export const initUnifiedPOSDB = async (): Promise<IDBPDatabase<PosDBSchema>> => {
   // Güncel sürüm numarasını al
   const dbVersion = DBVersionHelper.getVersion(POS_DB_NAME);
   console.log(`Initializing unified ${POS_DB_NAME} database, version ${dbVersion}`);
@@ -16,7 +18,7 @@ export const initUnifiedPOSDB = async () => {
   // Sürüm yükseltme işaretini temizle
   DBVersionHelper.clearUpgradeFlag();
   
-  return openDB(POS_DB_NAME, dbVersion, {
+  return openDB<PosDBSchema>(POS_DB_NAME, dbVersion, {
     upgrade(db, oldVersion, newVersion) {
       console.log(`Upgrading ${POS_DB_NAME} database from ${oldVersion} to ${newVersion || "unknown"}`);
       
@@ -51,7 +53,7 @@ export const initUnifiedPOSDB = async () => {
           name: "Tümü",
           order: 0,
           isDefault: true,
-        };
+        } as PosDBSchema['productGroups']['value'];
         groupStore.add(defaultGroup);
         console.log("Added default group:", defaultGroup);
       }

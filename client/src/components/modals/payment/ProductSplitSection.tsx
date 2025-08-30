@@ -1,7 +1,8 @@
 import React from "react";
-import { formatCurrency } from "../../../utils/vatUtils";
-import { PaymentMethod } from "../../../types/pos";
+
 import { Customer } from "../../../types/credit";
+import { PaymentMethod } from "../../../types/pos";
+import { formatCurrency } from "../../../utils/vatUtils";
 
 // Types reused from PaymentModal
 export type PosItem = {

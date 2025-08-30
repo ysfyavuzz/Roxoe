@@ -1,5 +1,9 @@
 # Batch 2 — Servisler ve Veritabanı Katmanı (IndexedDB, POS/Ödeme, Dışa Aktarım, Arşiv, Performans)
 
+Son Gözden Geçirme: 2025-08-28T22:23Z
+
+Navigasyon: [SUMMARY.md](SUMMARY.md) • [PROGRESS.md](PROGRESS.md)
+
 Hedef Metrikler (Özet, P95)
 - productDB: barkod ile ürün ≤ 40 ms; updateStock ≤ 60 ms; 1000 ürün bulkInsert ≤ 3 s
 - salesDB: 30 günlük sorgu ≤ 80 ms; getDailySales ≤ 120 ms
@@ -176,6 +180,8 @@ Ne işe yarar / Nasıl çalışır:
 Performans & İyileştirme Önerileri:
 - Büyük dosyalar: Okuma/yazma işlemlerini stream tabanlı veya worker ile yapın; UI bloklanmasın.
 - Doğrulama maliyeti: Yalnızca zorunlu sütunları doğrulayın; tip dönüşümlerini satır bazlı ve erken hatalı durdurma ile yönetin.
+- Küçük veri odaklı akışlar: Çok büyük datasetler için ColumnMapping/worker tabanlı akış tercih edilmelidir; bu modül küçük/orta setler için optimize edilmelidir.
+- Doğrulamayı modüler yapın: Saha eşleme ve normalize adımlarını ayrı fonksiyonlara bölerek yeniden kullanılabilir kılın.
 
 ## exportSevices.ts — Gelişmiş Raporlama (Excel)
 - Not: Dosya adı “exportSevices” (typo). Şu an kullanılmakta; isim değişikliği düşünülüyorsa tüm import’lar güncellenmeli.
@@ -311,16 +317,6 @@ Performans & İyileştirme Önerileri:
 - Model karmaşıklığı: Hesabı hafif tutun; canlı sistemde gerçek AI yerine heuristic yaklaşım yeterli olabilir.
 - Karar kaydı: Uygulanan/uygulanmayan önerileri loglayıp geri besleme döngüsü oluşturun.
 
-## importExportServices.ts — Ürün Şablon ve Basit Dışa Aktarım
-- Excel/CSV şablon üretir; temel ürün sütunları ile örnek veri yazar.
-- CSV dışa aktarma PapaParse ile; Excel dışa aktarma ExcelJS ile.
-
-Ne işe yarar / Nasıl çalışır:
-- Basit şablon/dışa aktarma yardımcıları ile küçük veri setleri için hızlı içe/dışa aktarma sağlar.
-
-Performans & İyileştirme Önerileri:
-- Küçük veri odaklı: Büyük datasetler için ColumnMapping/worker tabanlı akış tercih edilmelidir.
-- Doğrulamayı modüler yapın: Saha eşleme ve normalize adımlarını ayrı fonksiyonlara bölerek yeniden kullanılabilir kılın.
 
 ---
 
@@ -344,10 +340,24 @@ Performans & İyileştirme Önerileri:
 
 ## Entegrasyon ve Akış Notları
 - POSPage ödemeleri: posService ile manuel/cihaz modları; salesDB ile satış kayıt; cashRegisterService.recordSale ile kasa
-- Veresiye: creditService.addTransaction(payment) -> processPayment ile borç kapatma/kısmi ödeme
+- Veresiye: creditServices.addTransaction(payment) -> processPayment ile borç kapatma/kısmi ödeme
 - Bildirim: productService.emitStockChange -> NotificationContext düşük stok uyarıları
 - Dışa aktarım: exportSevices/importExportServices ile Excel/CSV/PDF
 - Arşiv/Performans: ArchiveService + IndexOptimizer + PerformanceMonitor + AIIndexAnalyzer + SmartArchiveManager birlikte çalışabilir
+
+## Kod Kalitesi (Genel)
+- TypeScript Strict (exactOptionalPropertyTypes dahil) ile uyum kısmen eksik: optional alanlar için “undefined” yerine property’i hiç eklemeyecek şekilde nesne oluşturulmalı.
+- IndexedDB tipleri (idb): transaction/store türleri bazı yerlerde gevşek; store metodları “possibly undefined” görünüyor. Güvenli sarmalayıcı veya non-null assertion + guard tercih edilmeli.
+- Testler: export/import ve arşiv akışları için gerçekçi fixture’lar ve edge-case testleri arttırılmalı.
+- İsimlendirme: exportSevices dosya adında yazım hatası; tüm import’lar senkron güncellenmeli.
+
+## Bilinen Hatalar (Gözlenen)
+- IndexedDBImporter: readwrite transaction tip uyuşmazlığı; tx possibly null; store.clear/put possibly undefined.
+- productDB/cashRegisterDB: tx.store possibly undefined; index isimleri generic IndexNames ile çakışıyor; bazı add/put çağrıları undefined olabilir.
+- ArchiveService: getArchiveSummary vb. yerlerde await eksik; Promise alanlarında property erişimi yapılıyor.
+- AIIndexAnalyzer: patternType/column gibi seçenekler undefined olabiliyor; string bekleyen yerlere undefined geçiliyor.
+- exportSevices: reduce akışında acc[...] possibly undefined; guard veya başlangıç objesi eksik.
+- ProductsPage: idb index.get ile generic imza uyuşmazlıkları (literal string yerine IndexNames türü bekleniyor).
 
 ## İyileştirme Önerileri
 - İsimlendirme: exportSevices dosyası “exportServices” olarak düzeltilirse tüm import’lar güncellenmeli.
@@ -357,6 +367,19 @@ Performans & İyileştirme Önerileri:
 - CloudSync: gerçek sağlayıcı entegrasyonları (S3/Azure/Firebase) ve imzalı istekler; hata/yeniden deneme stratejileri.
 - Arşivleme: ArchiveService ile SmartArchiveManager kuralları birleştirilerek otomatik/kural tabanlı arşivleme planlanabilir.
 - PerformanceMonitor: prod ortamda interception stratejisi kontrollü (feature-flag) olmalı.
+
+### Teknik Düzeltme Önerileri (TS/idb)
+- idb transaction/store:
+  - readwrite/readonly modları açıkça belirtin ve tx değişkenini null olmayacak şekilde yerinde tanımlayın (ör. const tx = db.transaction(...)).
+  - store referanslarını local const ile alın ve “if (!store) return” guard ekleyin; çağrıları optional chain yerine erken çıkışla koruyun.
+- IndexNames uyuşmazlıkları:
+  - store.index("barcode") gibi string literal yerine tür güvenli index adları sağlayın veya generic parametreleri gerçek store şemasıyla hizalayın.
+- exactOptionalPropertyTypes:
+  - API/DTO oluştururken optional alanları “undefined” atamak yerine hiç eklemeyin (spread + koşullu ekleme).
+- Promise alan erişimi:
+  - ArchiveService gibi yerlerde “await” eksiklerini giderin; sonra property erişimi yapın.
+- Reduce akışları:
+  - exportSevices içindeki acc için başlangıç objesini tüm gerekli alanlarla kurun veya guard ekleyin.
 
 ## İlgili Belgeler
 - Batch 1: Çekirdek uygulama (Router/Layout/Provider/Hata/Güncelleme/Yedekleme)

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Calendar, ChevronDown, RefreshCw, ArrowLeft, ArrowRight, CheckCircle, Calendar as CalendarIcon } from "lucide-react";
 import { format, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isValid, isBefore } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { Calendar, ChevronDown, RefreshCw, ArrowLeft, ArrowRight, CheckCircle, Calendar as CalendarIcon } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
 
 // Düzeltilmiş Popover bileşeni için hook (toggle butonunu dikkate alır)
 const useClickOutside = (handler: () => void, excludeRef?: React.RefObject<HTMLElement>) => {
@@ -72,23 +72,24 @@ const DateFilter: React.FC<DateFilterProps> = ({
 
   // Tarih format yardımcıları
   const formatDateDisplay = (date: Date) => {
-    if (!isValid(date)) return "-";
+    if (!isValid(date)) {return "-";}
     return format(date, 'd MMM yyyy', { locale: tr });
   };
   
   const formatDateInput = (date: Date) => {
-    if (!isValid(date)) return "";
+    if (!isValid(date)) {return "";}
     return format(date, 'yyyy-MM-dd');
   };
 
   // Tarih aralığı değişince loading state'ini göster
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
     if (localLoading) {
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         setLocalLoading(false);
       }, 500);
-      return () => clearTimeout(timer);
     }
+    return () => { if (timer) { clearTimeout(timer); } };
   }, [localLoading]);
 
   // Tarih değiştirme işlemleri

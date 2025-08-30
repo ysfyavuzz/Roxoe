@@ -1,7 +1,8 @@
 // client/src/utils/importProcessing.ts
 import { Product, VatRate } from "../types/product";
-import { calculatePriceWithoutVat } from "./../utils/vatUtils";
+
 import { parseTurkishNumber } from "./../utils/numberFormatUtils";
+import { calculatePriceWithoutVat } from "./../utils/vatUtils";
 
 export interface ProcessResult {
   product: Product | null;
@@ -68,32 +69,34 @@ export const VAT_RATE_MAP: Record<string, VatRate> = {
   "%20": 20,
 };
 
-function cleanValue(value: any): string {
-  if (value === null || value === undefined) return "";
-  return value.toString().trim();
+function cleanValue(value: unknown): string {
+  if (value === null || value === undefined) {return "";}
+  return String(value).trim();
 }
 
-export function parseNumberWithTurkishSupport(value: any): number | null {
-  if (value === null || value === undefined || value === "") return null;
-  const parsedNumber = parseTurkishNumber(value);
+export function parseNumberWithTurkishSupport(value: unknown): number | null {
+  const s = cleanValue(value);
+  if (s === "") {return null;}
+  const parsedNumber = parseTurkishNumber(s);
   return parsedNumber !== undefined ? parsedNumber : null;
 }
 
-export function normalizeVatRate(value: any): VatRate | null {
-  if (value === null || value === undefined || value === "") return null;
-  const cleaned = cleanValue(value).replace(/\s/g, "").replace(/%/g, "").replace(/,/g, ".");
-  if (VAT_RATE_MAP[cleaned as keyof typeof VAT_RATE_MAP] !== undefined) {
-    return VAT_RATE_MAP[cleaned as keyof typeof VAT_RATE_MAP];
+export function normalizeVatRate(value: unknown): VatRate | null {
+  const base = cleanValue(value);
+  if (base === "") {return null;}
+  const cleaned = base.replace(/\s/g, "").replace(/%/g, "").replace(/,/g, ".");
+  if (Object.prototype.hasOwnProperty.call(VAT_RATE_MAP, cleaned)) {
+    return VAT_RATE_MAP[cleaned as keyof typeof VAT_RATE_MAP] as VatRate;
   }
   const numValue = parseNumberWithTurkishSupport(cleaned);
-  if (numValue === null) return null;
+  if (numValue === null) {return null;}
   const validRates: VatRate[] = [0, 1, 8, 18, 20];
   const closest = validRates.reduce((prev, curr) => (Math.abs(curr - numValue) < Math.abs(prev - numValue) ? curr : prev));
   return closest as VatRate;
 }
 
 export function processRow(
-  row: Record<string, any>,
+  row: Record<string, unknown>,
   rowIndex: number,
   mapping: Record<SystemColumnKey, string>,
   salePriceIncludesVat: boolean
@@ -118,7 +121,7 @@ export function processRow(
     }
 
     for (const [systemField, fileField] of Object.entries(mapping)) {
-      if (!fileField) continue;
+      if (!fileField) {continue;}
       const rawValue = row[fileField];
       switch (systemField as SystemColumnKey) {
         case "vatRate": {
@@ -275,20 +278,23 @@ export function processRow(
       stock: product.stock!,
     };
 
-    return {
+    const out: ProcessResult = {
       product: completeProduct,
-      warning: warnings.length > 0 ? warnings.join("; ") : undefined,
     };
-  } catch (error: any) {
+    if (warnings.length > 0) {
+      out.warning = warnings.join("; ");
+    }
+    return out;
+  } catch (error: unknown) {
     return {
       product: null,
-      warning: error?.message || "Bilinmeyen hata",
+      warning: error instanceof Error ? error.message : "Bilinmeyen hata",
     };
   }
 }
 
 export function processAllRows(
-  rows: Record<string, any>[],
+  rows: Record<string, unknown>[],
   mapping: Record<SystemColumnKey, string>,
   salePriceIncludesVat: boolean,
   allowPartialImport: boolean,
@@ -306,7 +312,7 @@ export function processAllRows(
 
   const total = rows.length;
   rows.forEach((row, index) => {
-    if (canceledRef?.current) return;
+    if (canceledRef?.current) {return;}
     const result = processRow(row, index, mapping, salePriceIncludesVat);
     if (result.product) {
       products.push(result.product);

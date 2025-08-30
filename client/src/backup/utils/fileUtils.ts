@@ -1,12 +1,30 @@
 // fileUtils.ts
 import fs from "fs";
 import path from "path";
+
 import { app, dialog } from "electron";
 import Store from 'electron-store'; // 1. electron-store'u import et
 
 // 2. electron-store örneği oluştur (yedekleme dizini yolunu saklamak için)
 // Tip olarak { backupDirectoryPath?: string } belirterek ne sakladığımızı netleştirelim.
 const store = new Store<{ backupDirectoryPath?: string }>();
+
+export type BackupHistoryMetadata = {
+  filename: string;
+  description: string;
+  createdAt: string;
+  databases: string[];
+  recordCounts: Record<string, number>;
+  totalRecords: number;
+  size?: number;
+  optimized?: boolean;
+  isAutoBackup?: boolean;
+};
+
+export type BackupHistoryRecord = {
+  id: string;
+  directory?: string;
+} & BackupHistoryMetadata;
 
 export class FileUtils {
   // Kullanıcı tanımlı yedekleme dizinini oturum boyunca hafızada tutmak için
@@ -173,7 +191,7 @@ export class FileUtils {
         throw new Error("Dosya seçilmedi");
       }
 
-      const filePath = result.filePaths[0];
+      const filePath = result.filePaths[0]!;
       const content = fs.readFileSync(filePath, "utf8");
 
       return {
@@ -193,20 +211,24 @@ export class FileUtils {
    * @param backupId Yedek ID'si
    * @param backupMetadata Yedekleme meta verileri (filename, description, createdAt vb. içermeli)
    */
-  static saveBackupToHistory(backupId: string, backupMetadata: any): void {
+  static saveBackupToHistory(backupId: string, backupMetadata: BackupHistoryMetadata): void {
     try {
       const historyFilePath = path.join(
         app.getPath("userData"), // Uygulamanın kullanıcı verileri klasörü
         "backup_history.json"
       );
 
-      let backupHistory: any[] = [];
+      let backupHistory: BackupHistoryRecord[] = [];
       if (fs.existsSync(historyFilePath)) {
         try {
           const historyData = fs.readFileSync(historyFilePath, "utf8");
-          backupHistory = JSON.parse(historyData);
+          const parsed = JSON.parse(historyData) as unknown;
           // JSON parse hatasına karşı kontrol
-          if (!Array.isArray(backupHistory)) backupHistory = [];
+          if (Array.isArray(parsed)) {
+            backupHistory = parsed as BackupHistoryRecord[];
+          } else {
+            backupHistory = [];
+          }
         } catch (parseError) {
            console.error("Yedek geçmişi dosyası okunamadı/parse edilemedi:", parseError);
            backupHistory = []; // Hata durumunda sıfırla
@@ -214,12 +236,15 @@ export class FileUtils {
       }
 
       // Yeni yedeği başa ekle
-      backupHistory.unshift({
+      const newEntry: BackupHistoryRecord = {
         id: backupId,
         ...backupMetadata, // filename, description, createdAt gibi bilgiler burada olmalı
-        // Otomatik yedeklemeler için dizini de kaydedebiliriz, manuelde zaten dialogdan geliyor
-        directory: backupMetadata.isAutoBackup ? FileUtils.getBackupDirectory() : undefined
-      });
+      };
+      // exactOptionalPropertyTypes: undefined geçmeyelim, sadece varsa ekleyelim
+      if (backupMetadata.isAutoBackup) {
+        newEntry.directory = FileUtils.getBackupDirectory();
+      }
+      backupHistory.unshift(newEntry);
 
       // Maksimum 20 yedek tut (veya başka bir limit)
       backupHistory = backupHistory.slice(0, 20);
@@ -234,7 +259,7 @@ export class FileUtils {
    * Yerel dosya sisteminden yedek geçmişini yükler
    * @returns Yedek geçmişi listesi (any[])
    */
-  static getBackupHistory(): any[] {
+  static getBackupHistory(): BackupHistoryRecord[] {
     try {
       const historyFilePath = path.join(
         app.getPath("userData"),
@@ -244,8 +269,8 @@ export class FileUtils {
       if (fs.existsSync(historyFilePath)) {
          try {
              const historyData = fs.readFileSync(historyFilePath, "utf8");
-             const parsedData = JSON.parse(historyData);
-             return Array.isArray(parsedData) ? parsedData : []; // Dizi olduğundan emin ol
+             const parsedData = JSON.parse(historyData) as unknown;
+             return Array.isArray(parsedData) ? (parsedData as BackupHistoryRecord[]) : []; // Dizi olduğundan emin ol
          } catch (parseError) {
               console.error("Yedek geçmişi dosyası okunamadı/parse edilemedi:", parseError);
               return []; // Hata durumunda boş dizi döndür
@@ -272,11 +297,12 @@ export class FileUtils {
       if (fs.existsSync(historyFilePath)) {
          try {
              const historyData = fs.readFileSync(historyFilePath, "utf8");
-             let backupHistory = JSON.parse(historyData);
-             if (!Array.isArray(backupHistory)) return; // Geçerli değilse çık
+             const backupHistoryRaw = JSON.parse(historyData) as unknown;
+             if (!Array.isArray(backupHistoryRaw)) {return;} // Geçerli değilse çık
 
+             const backupHistory = backupHistoryRaw as BackupHistoryRecord[];
              const filteredHistory = backupHistory.filter(
-               (item: any) => item && item.id !== backupId // item'ın varlığını da kontrol et
+               (item) => item && item.id !== backupId // item'ın varlığını da kontrol et
              );
 
              // Eğer liste değişmişse dosyayı tekrar yaz

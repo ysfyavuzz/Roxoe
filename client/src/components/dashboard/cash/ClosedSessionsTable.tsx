@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
-import { Table } from "../../ui/Table";
+
 import type { CashRegisterSession } from "../../../services/cashRegisterDB";
+import { Table } from "../../ui/Table";
 
 interface ClosedSessionsTableProps {
   displaySessions: CashRegisterSession[];
@@ -63,7 +64,7 @@ const ClosedSessionsTable: React.FC<ClosedSessionsTableProps> = ({ displaySessio
       className: "text-right",
       render: (session: CashRegisterSession) => (
         <div>
-          {session.countingDifference != null ? (
+{(session.countingDifference !== null && session.countingDifference !== undefined) ? (
             <span
               className={
                 session.countingDifference < 0

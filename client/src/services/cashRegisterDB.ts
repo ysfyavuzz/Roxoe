@@ -1,18 +1,22 @@
 // cashRegisterDB.ts
-import { openDB, IDBPDatabase } from "idb";
+import { type IDBPDatabase } from "idb";
+import { v4 as uuidv4 } from "uuid";
+
 import {
   CashRegisterSession,
   CashRegisterStatus,
   CashTransaction,
   CashTransactionType,
 } from "../types/cashRegister";
-import { v4 as uuidv4 } from "uuid";
+import type { PosDBSchema } from "../types/db";
+
 import initUnifiedPOSDB from './UnifiedDBInitializer';
+import { IndexTelemetry } from '../diagnostics/indexTelemetry';
 
 const DB_NAME = "posDB";
 
 // initCashRegisterDB fonksiyonunu birleştirilmiş başlatıcıyı kullanacak şekilde güncelle
-const initCashRegisterDB = async () => {
+const initCashRegisterDB = async (): Promise<IDBPDatabase<PosDBSchema>> => {
   return initUnifiedPOSDB(); // Birleştirilmiş başlatıcıyı kullan
 };
 
@@ -20,9 +24,28 @@ class CashRegisterService {
   async getActiveSession(): Promise<CashRegisterSession | null> {
     const db = await initCashRegisterDB();
     const tx = db.transaction("cashRegisterSessions", "readonly");
-    const index = tx.store.index("status");
-    const activeSession = await index.get(CashRegisterStatus.OPEN);
-    return activeSession || null;
+    const store = tx.objectStore("cashRegisterSessions") as unknown as IDBObjectStore;
+
+    // Index guard for 'status'
+    try {
+      const idxNames = (store as unknown as { indexNames: DOMStringList }).indexNames as unknown as DOMStringList;
+      if (typeof (idxNames as unknown as DOMStringList).contains === 'function' && (idxNames as unknown as DOMStringList).contains('status')) {
+        const index = (store as unknown as { index: (name: string) => unknown }).index("status") as unknown as { get: (q: unknown) => Promise<unknown> };
+        const activeSession = await index.get(CashRegisterStatus.OPEN) as CashRegisterSession | undefined;
+        return activeSession || null;
+      }
+      console.warn("[IndexedDB] 'cashRegisterSessions.status' indeksi bulunamadı, fallback ile taranacak.");
+      IndexTelemetry.recordFallback({ db: 'posDB', store: 'cashRegisterSessions', index: 'status', operation: 'query', reason: "index missing: 'status'" });
+      const all = await (store as unknown as { getAll: () => Promise<unknown[]> }).getAll();
+      const active = (all as CashRegisterSession[]).find(s => s.status === CashRegisterStatus.OPEN) || null;
+      return active;
+    } catch (e) {
+      console.warn("[IndexedDB] 'status' indeksi kontrolü hata, fallback kullanılacak:", e);
+      IndexTelemetry.recordFallback({ db: 'posDB', store: 'cashRegisterSessions', index: 'status', operation: 'query', reason: 'status index check failed, using full scan' });
+      const all = await (store as unknown as { getAll: () => Promise<unknown[]> }).getAll();
+      const active = (all as CashRegisterSession[]).find(s => s.status === CashRegisterStatus.OPEN) || null;
+      return active;
+    }
   }
 
   async openRegister(openingBalance: number): Promise<CashRegisterSession> {
@@ -49,7 +72,8 @@ class CashRegisterService {
     // Save to database
     const db = await initCashRegisterDB();
     const tx = db.transaction("cashRegisterSessions", "readwrite");
-    await tx.store.add(newSession);
+    const store = tx.objectStore("cashRegisterSessions") as unknown as { add: (v: unknown) => Promise<unknown> };
+    await store.add(newSession as unknown as PosDBSchema['cashRegisterSessions']['value']);
     await tx.done;
 
     return newSession;
@@ -93,7 +117,8 @@ class CashRegisterService {
     );
 
     // Add transaction
-    await tx.objectStore("cashTransactions").add(newTransaction);
+    const cashTxStore = tx.objectStore("cashTransactions") as unknown as { add: (v: unknown) => Promise<unknown> };
+    await cashTxStore.add(newTransaction as unknown as PosDBSchema['cashTransactions']['value']);
 
     // Update session
     const session = { ...activeSession };
@@ -103,7 +128,8 @@ class CashRegisterService {
       session.cashWithdrawalTotal += amount;
     }
 
-    await tx.objectStore("cashRegisterSessions").put(session);
+    const sessionStore = tx.objectStore("cashRegisterSessions") as unknown as { put: (v: unknown) => Promise<unknown> };
+    await sessionStore.put(session);
     await tx.done;
 
     return newTransaction;
@@ -122,7 +148,8 @@ class CashRegisterService {
     session.cashSalesTotal += cashAmount;
     session.cardSalesTotal += cardAmount;
 
-    await tx.store.put(session);
+    const sessionStore = tx.objectStore("cashRegisterSessions") as unknown as { put: (v: unknown) => Promise<unknown> };
+    await sessionStore.put(session);
     await tx.done;
   }
 
@@ -145,7 +172,8 @@ class CashRegisterService {
     session.countingAmount = countingAmount;
     session.countingDifference = countingDifference;
 
-    await tx.store.put(session);
+    const sessionStore = tx.objectStore("cashRegisterSessions") as unknown as { put: (v: unknown) => Promise<unknown> };
+    await sessionStore.put(session);
     await tx.done;
 
     return session;
@@ -164,7 +192,8 @@ class CashRegisterService {
     session.status = CashRegisterStatus.CLOSED;
     session.closingDate = new Date();
 
-    await tx.store.put(session);
+    const sessionStore = tx.objectStore("cashRegisterSessions") as unknown as { put: (v: unknown) => Promise<unknown> };
+    await sessionStore.put(session as unknown as PosDBSchema['cashRegisterSessions']['value']);
     await tx.done;
 
     return session;
@@ -186,11 +215,12 @@ class CashRegisterService {
   
       // Get all transactions for this session
       const tx = db.transaction("cashTransactions", "readonly");
-      const index = tx.store.index("sessionId");
-      let transactions: CashTransaction[] = []; // Tip tanımlaması eklendi
+      const store = tx.objectStore("cashTransactions") as unknown as IDBObjectStore;
+      const index = (store as unknown as { index: (n: string) => unknown }).index("sessionId") as unknown as { getAll: (q: unknown) => Promise<unknown[]> };
+      let transactions: CashTransaction[] = [];
       
       try {
-        transactions = await index.getAll(sessionId);
+        transactions = await index.getAll(sessionId) as CashTransaction[];
       } catch (err) {
         console.error("İşlem geçmişi alınırken hata:", err);
         transactions = []; // Hata durumunda boş dizi döndür
@@ -226,13 +256,29 @@ class CashRegisterService {
 
     // Tüm nakit işlemlerini çek
     let tx;
-    let transactions;
+    let transactions: CashTransaction[];
 
     if (sessionId) {
       // Belirli bir dönem için
       tx = db.transaction("cashTransactions", "readonly");
-      const index = tx.store.index("sessionId");
-      transactions = await index.getAll(sessionId);
+      const store = tx.objectStore("cashTransactions") as unknown as IDBObjectStore;
+      try {
+        const idxNames = (store as unknown as { indexNames: DOMStringList }).indexNames as unknown as DOMStringList;
+        if (typeof (idxNames as unknown as DOMStringList).contains === 'function' && (idxNames as unknown as DOMStringList).contains('sessionId')) {
+          const index = (store as unknown as { index: (n: string) => unknown }).index("sessionId") as unknown as { getAll: (q: unknown) => Promise<unknown[]> };
+          transactions = await index.getAll(sessionId) as CashTransaction[];
+        } else {
+          console.warn("[IndexedDB] 'cashTransactions.sessionId' indeksi yok, fallback ile filtrelenecek.");
+          IndexTelemetry.recordFallback({ db: 'posDB', store: 'cashTransactions', index: 'sessionId', operation: 'query', reason: "index missing: 'sessionId'" });
+          const all = await (store as unknown as { getAll: () => Promise<unknown[]> }).getAll();
+          transactions = (all as CashTransaction[]).filter(t => t.sessionId === sessionId);
+        }
+      } catch (e) {
+        console.warn("[IndexedDB] sessionId indeksi kontrolü hata, fallback kullanılacak:", e);
+        IndexTelemetry.recordFallback({ db: 'posDB', store: 'cashTransactions', index: 'sessionId', operation: 'query', reason: 'sessionId index check failed, using full scan' });
+        const all = await (store as unknown as { getAll: () => Promise<unknown[]> }).getAll();
+        transactions = (all as CashTransaction[]).filter(t => t.sessionId === sessionId);
+      }
     } else {
       // Tüm dönemler için
       transactions = await db.getAll("cashTransactions");
@@ -240,7 +286,7 @@ class CashRegisterService {
 
     // Açıklaması "Veresiye Tahsilatı" içeren işlemleri filtrele
     return transactions.filter(
-      (t) =>
+      (t: CashTransaction) =>
         t.description.toLowerCase().includes("veresiye tahsilatı") ||
         t.description.toLowerCase().includes("veresiye") ||
         t.type === CashTransactionType.CREDIT_COLLECTION // Eğer özel tip eklediyseniz

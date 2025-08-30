@@ -24,6 +24,24 @@ bayraklar şu şekilde kurgulanmıştır.
     - staging: true (göster)
     - production: true (göster)
 
+- VITE_ADMIN_MODE
+  - Amaç: Diagnostics sekmesinde "Önerilen indeksleri uygula" yetkisini kontrol etmek (RBAC/guard)
+  - Tür: boolean ("true" | "false")
+  - Önerilen değerler:
+    - development: true (kolay test)
+    - test: true (E2E için açık)
+    - staging: false
+    - production: false
+
+- VITE_E2E_MODE
+  - Amaç: E2E testi için özel davranışları etkinleştirmek (örn. Electron stub/alias, test bannerları vb.)
+  - Tür: boolean ("true" | "false")
+  - Önerilen değerler:
+    - development: false
+    - test: true
+    - staging: false
+    - production: false
+
 ## Ortam dosyaları
 
 - client/.env.development
@@ -36,6 +54,8 @@ bayraklar şu şekilde kurgulanmıştır.
 
 VITE_LICENSE_BYPASS=true
 VITE_SERIAL_FEATURE=false
+VITE_ADMIN_MODE=true
+VITE_E2E_MODE=true
 
 ## Uygulama davranışı
 

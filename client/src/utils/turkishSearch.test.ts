@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+
 import { cleanTextForSearch, normalizedSearch } from './turkishSearch'
 
 describe('turkishSearch helpers', () => {

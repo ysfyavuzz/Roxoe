@@ -1,6 +1,5 @@
 // pages/ProductsPage.tsx
 
-import React, { useState, useEffect } from "react";
 import {
   Plus,
   Tag,
@@ -11,31 +10,33 @@ import {
   Package,
   Barcode,
 } from "lucide-react";
-import {
-  calculatePriceWithVat,
-  formatCurrency,
-  formatVatRate,
-} from "../utils/vatUtils";
+import React, { useState, useEffect } from "react";
+
+import { useAlert } from "../components/AlertProvider";
+import BarcodeGenerator from "../components/BarcodeGenerator";
+import BatchPriceUpdate from "../components/BatchPriceUpdate";
+import BulkProductOperations from "../components/BulkProductOperations";
+import CategoryManagement from "../components/CategoryManagement";
+import PageLayout from "../components/layout/PageLayout";
+import ProductModal from "../components/modals/ProductModal";
+import StockManagement from "../components/StockManagement";
+import Button from "../components/ui/Button";
+import FilterPanel, { ActiveFilter } from "../components/ui/FilterPanel";
+import { Pagination } from "../components/ui/Pagination";
+import { Table } from "../components/ui/Table";
+import { useProducts } from "../hooks/useProducts"; // <-- useProducts import
 import {
   emitStockChange,
   initProductDB,
   productService,
 } from "../services/productDB";
-import ProductModal from "../components/modals/ProductModal";
-import BulkProductOperations from "../components/BulkProductOperations";
-import BatchPriceUpdate from "../components/BatchPriceUpdate";
-import CategoryManagement from "../components/CategoryManagement";
-import StockManagement from "../components/StockManagement";
-import BarcodeGenerator from "../components/BarcodeGenerator";
-import Button from "../components/ui/Button";
-import { Column } from "../types/table";
-import { Table } from "../components/ui/Table";
-import { Pagination } from "../components/ui/Pagination";
-import { useAlert } from "../components/AlertProvider";
-import PageLayout from "../components/layout/PageLayout";
 import { Product, Category } from "../types/product";
-import { useProducts } from "../hooks/useProducts"; // <-- useProducts import
-import FilterPanel, { ActiveFilter } from "../components/ui/FilterPanel";
+import { Column } from "../types/table";
+import {
+  calculatePriceWithVat,
+  formatCurrency,
+  formatVatRate,
+} from "../utils/vatUtils";
 
 const ProductsPage: React.FC = () => {
   const { showError, showSuccess, confirm } = useAlert();
@@ -234,7 +235,7 @@ const ProductsPage: React.FC = () => {
 
   // Ürün güncelleme
   const handleEditProduct = async (productData: Omit<Product, "id">) => {
-    if (!selectedProduct) return;
+    if (!selectedProduct) {return;}
     try {
       await productService.updateProduct({
         ...productData,
@@ -272,7 +273,7 @@ const ProductsPage: React.FC = () => {
 
   // Toplu sil
   const handleBatchDelete = async () => {
-    if (selectedProductIds.length === 0) return;
+    if (selectedProductIds.length === 0) {return;}
     const confirmed = await confirm(
       `Seçili ${selectedProductIds.length} ürünü silmek istediğinize emin misiniz?`
     );
@@ -316,7 +317,12 @@ const ProductsPage: React.FC = () => {
       const store = tx.objectStore("products");
       for (const product of importedProducts) {
         try {
-          const index = store.index("barcode");
+          const storeTyped = store as unknown as {
+            index: (name: string) => { get: (key: string) => Promise<Product | undefined> };
+            put: (value: Product) => Promise<unknown>;
+            add: (value: Omit<Product, "id">) => Promise<unknown>;
+          };
+          const index = storeTyped.index("barcode");
           const existing = await index.get(product.barcode);
           const { id, ...productData } = product;
 
@@ -332,13 +338,13 @@ const ProductsPage: React.FC = () => {
           };
 
           if (existing) {
-            await store.put({
+            await storeTyped.put({
               ...processedProduct,
               id: existing.id,
             });
             updatedCount++;
           } else {
-            await store.add(processedProduct);
+            await storeTyped.add(processedProduct);
             addedCount++;
           }
         } catch (err) {
@@ -353,12 +359,11 @@ const ProductsPage: React.FC = () => {
       showSuccess(
         `İçe aktarma tamamlandı:\n${addedCount} yeni ürün eklendi\n${updatedCount} ürün güncellendi`
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("İçe aktarma hatası:", err);
+      const message = err instanceof Error ? err.message : "Bilinmeyen hata";
       showError(
-        `İçe aktarma sırasında hata:\n${addedCount} ürün eklendi\n${updatedCount} ürün güncellendi\nHata: ${
-          err?.message || "Bilinmeyen hata"
-        }`
+        `İçe aktarma sırasında hata:\n${addedCount} ürün eklendi\n${updatedCount} ürün güncellendi\nHata: ${message}`
       );
     }
   }
@@ -634,7 +639,7 @@ const ProductsPage: React.FC = () => {
           setSelectedProduct(undefined);
         }}
         onSave={selectedProduct ? handleEditProduct : handleAddProduct}
-        product={selectedProduct}
+        {...(selectedProduct ? { product: selectedProduct } : {})}
         categories={categories}
       />
 

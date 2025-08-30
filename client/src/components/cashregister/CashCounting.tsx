@@ -1,6 +1,7 @@
 // components/cashregister/CashCounting.tsx
-import React from "react";
 import { Calculator, TrendingUp, TrendingDown } from "lucide-react";
+import React from "react";
+
 import { formatCurrency } from "../../utils/vatUtils";
 
 interface CashCountingProps {

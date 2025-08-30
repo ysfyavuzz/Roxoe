@@ -52,13 +52,13 @@ export async function createSmartBackup(options?: OptimizedBackupOptions): Promi
     // Tekilleştirme: her zaman optimize edilmiş yolu kullan
     console.log('Optimize backup stratejisi kullanılıyor...');
     return await optimizedBackupManager.createOptimizedBackup(options);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Akıllı backup başarısız:', error);
     return {
       success: false,
       backupId: '',
       metadata: {},
-      error: error.message
+      error: error instanceof Error ? error.message : 'Bilinmeyen hata'
     };
   }
 }

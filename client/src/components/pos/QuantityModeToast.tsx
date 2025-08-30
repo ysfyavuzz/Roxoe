@@ -7,7 +7,7 @@ interface QuantityModeToastProps {
 }
 
 const QuantityModeToast: React.FC<QuantityModeToastProps> = React.memo(({ visible, active, quantityText }) => {
-  if (!visible) return null;
+  if (!visible) {return null;}
   return (
     <div
       className={`fixed top-4 right-4 z-50 transition-all duration-300 ${

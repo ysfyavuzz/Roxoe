@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useRef } from "react";
+
 import { Column, TableId } from "../../types/table";
 
 interface TableProps<
-  T extends { [key: string]: any },
+  T extends object,
   K extends TableId = TableId
 > {
   data: T[];
@@ -32,7 +33,7 @@ interface TableProps<
 }
 
 export function Table<
-  T extends { [key: string]: any },
+  T extends object,
   K extends TableId = TableId
 >({
   data,
@@ -136,7 +137,7 @@ export function Table<
   
   // Veriyi sıralama fonksiyonu
   function sortData(dataToSort: T[]): T[] {
-    if (!enableSorting || !sortKey) return dataToSort;
+    if (!enableSorting || !sortKey) {return dataToSort;}
 
     return [...dataToSort].sort((a, b) => {
       const aVal = a[sortKey];
@@ -150,8 +151,8 @@ export function Table<
       // String karşılaştırma
       const aStr = String(aVal || "").toLowerCase();
       const bStr = String(bVal || "").toLowerCase();
-      if (aStr < bStr) return sortDirection === "asc" ? -1 : 1;
-      if (aStr > bStr) return sortDirection === "asc" ? 1 : -1;
+      if (aStr < bStr) {return sortDirection === "asc" ? -1 : 1;}
+      if (aStr > bStr) {return sortDirection === "asc" ? 1 : -1;}
       return 0;
     });
   }
@@ -162,19 +163,21 @@ export function Table<
   // Toplam hesaplama - iyileştirilmiş ve envanter değeri desteği eklendi
   const totals = useMemo(() => {
     if (!showTotals || !totalColumns || Object.keys(totalColumns).length === 0)
-      return null;
+      {return null;}
 
     const dataForTotals = totalData || data;
-    const result = {} as Record<string, any>; // Daha esnek bir tip kullan
+    const result = {} as Record<string, unknown>; // Daha esnek bir tip kullan
 
     // Toplamları hesapla
     Object.entries(totalColumns).forEach(([key, type]) => {
       const typedKey = key as keyof T;
 
       if (type === "sum") {
-        const numericValues = dataForTotals
-          .map((item) => item[typedKey])
-          .filter((value) => typeof value === "number" && !isNaN(value));
+        const rawValues = dataForTotals
+          .map((item) => item[typedKey]) as unknown[];
+        const numericValues = rawValues.filter(
+          (value): value is number => typeof value === "number" && !Number.isNaN(value)
+        );
 
         const sum = numericValues.reduce((sum, value) => sum + value, 0);
         result[key] = sum;
@@ -182,7 +185,7 @@ export function Table<
 
       if (type === "count") {
         const count = dataForTotals.filter(
-          (item) => item[typedKey] != null
+(item) => item[typedKey] !== null && item[typedKey] !== undefined
         ).length;
         result[key] = count;
       }
@@ -223,7 +226,7 @@ export function Table<
 
   // Sütun genişliğini değiştirme işlevi
   const onMouseMove = (e: MouseEvent) => {
-    if (!resizingColumn.current) return;
+    if (!resizingColumn.current) {return;}
 
     const dx = e.clientX - startX.current;
     const newWidth = Math.max(50, startWidth.current + dx); // Minimum 50px genişlik
@@ -243,7 +246,7 @@ export function Table<
 
   // Çift tıklama ile sütunu içeriğe göre boyutlandırma
   const autoResizeColumn = (columnKey: string) => {
-    if (!tableRef.current) return;
+    if (!tableRef.current) {return;}
 
     // Sütun başlığı ve hücreleri bul
     const headerCells = tableRef.current.querySelectorAll("th");
@@ -251,7 +254,7 @@ export function Table<
       (cell) => cell.getAttribute("data-column-key") === columnKey
     );
 
-    if (!headerCell) return;
+    if (!headerCell) {return;}
 
     // İçeriği ölçmek için geçici bir span oluştur
     const tempSpan = document.createElement("span");
@@ -292,7 +295,7 @@ export function Table<
       return;
     }
 
-    if (!enableSorting) return;
+    if (!enableSorting) {return;}
 
     if (sortKey === columnKey) {
       // Aynı sütuna tıklandı -> yön değiştir
@@ -316,8 +319,8 @@ export function Table<
 
   // Metni kısaltma işlevi
   const truncateText = (text: string, maxLength = 30) => {
-    if (!text || typeof text !== "string") return "";
-    if (text.length <= maxLength) return text;
+    if (!text || typeof text !== "string") {return "";}
+    if (text.length <= maxLength) {return text;}
     return `${text.substring(0, maxLength)}...`;
   };
 
@@ -459,9 +462,9 @@ export function Table<
                 )}
 
                 {columns.map((column) => {
-                  let content = column.render
+                  const content = column.render
                     ? column.render(item)
-                    : (item as any)[column.key];
+                    : (item as Record<string, unknown>)[column.key as string];
                   // İçeriği JSX olarak render edildiyse truncate yapma
                   const isJSX = React.isValidElement(content);
                   const displayContent =
@@ -484,7 +487,7 @@ export function Table<
                         !isJSX && typeof content === "string" ? content : ""
                       }
                     >
-                      {displayContent}
+                      {displayContent as React.ReactNode}
                     </td>
                   );
                 })}
@@ -501,7 +504,7 @@ export function Table<
                 )}
                 {columns.map((column, index) => {
                   const columnKey = column.key as keyof T;
-                  const isTotal = totalColumns.hasOwnProperty(columnKey);
+const isTotal = Object.prototype.hasOwnProperty.call(totalColumns, columnKey as string);
                   const totalValue = isTotal
                     ? totals[column.key as string]
                     : null;
@@ -510,7 +513,7 @@ export function Table<
                   const isFirstColumn = index === 0 && !selectable;
 
                   // Alt bilgi varsa hesapla
-                  const hasFooter = totalFooters.hasOwnProperty(columnKey);
+const hasFooter = Object.prototype.hasOwnProperty.call(totalFooters, columnKey as string);
                   const footerContent = hasFooter
                     ? totalFooters[columnKey]?.(totalData || data)
                     : null;
@@ -540,7 +543,7 @@ export function Table<
                                 [column.key]: totalValue,
                               } as unknown as T)
                             ) : (
-                              totalValue
+                              totalValue as React.ReactNode
                             )}
                           </div>
                         )}

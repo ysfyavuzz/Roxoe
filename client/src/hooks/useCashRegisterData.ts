@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import { cashRegisterService, CashTransactionType } from '../services/cashRegisterDB';
 
 // Kasa verilerinin dönüş tipi
@@ -64,7 +65,8 @@ export function useCashRegisterData(startDate: Date, endDate: Date) {
         let totalCashSales = 0;
         let totalCardSales = 0;
         let totalOpeningBalance = 0;
-        const dailyTransactions: Record<string, any> = {};
+        interface DailyRow { date: string; deposits: number; withdrawals: number; veresiye: number; total: number }
+        const dailyTransactions: Record<string, DailyRow> = {};
         
         // Her dönem için işlemleri topla
         for (const session of filteredSessions) {
@@ -82,7 +84,7 @@ export function useCashRegisterData(startDate: Date, endDate: Date) {
               for (const tx of sessionDetails.transactions) {
                 // İşlem tarihini al
                 const txDate = new Date(tx.date);
-                const dateStr = txDate.toISOString().split('T')[0];
+                const dateStr = txDate.toISOString().slice(0, 10);
                 
                 // Günlük veriler için hazırlık
                 if (!dailyTransactions[dateStr]) {

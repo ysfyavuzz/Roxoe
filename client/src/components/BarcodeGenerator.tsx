@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import { Printer, Download, X } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Product } from '../types/product';
 
 interface BarcodeGeneratorProps {
@@ -15,7 +16,7 @@ const BarcodeGenerator: React.FC<BarcodeGeneratorProps> = ({ product, onClose })
   const handlePrint = () => {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    if (!context) return;
+    if (!context) {return;}
 
     // Barkod boyutları
     const sizes = {
@@ -59,7 +60,7 @@ const BarcodeGenerator: React.FC<BarcodeGeneratorProps> = ({ product, onClose })
 
     // Yazdırma penceresi
     const printWindow = window.open('', '', `width=${width},height=${height}`);
-    if (!printWindow) return;
+    if (!printWindow) {return;}
 
     printWindow.document.write(`
       <html>
@@ -87,12 +88,12 @@ const BarcodeGenerator: React.FC<BarcodeGeneratorProps> = ({ product, onClose })
   };
 
   const handleDownload = () => {
-    if (!product?.barcode) return;
+    if (!product?.barcode) {return;}
     
     // Canvas oluştur
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    if (!context) return;
+    if (!context) {return;}
     
     const width = 300;
     const height = 150;

@@ -31,7 +31,7 @@ export function isDevOrTestMode(): boolean {
  * - Production/Staging için güvenlik amaçlı her zaman false kabul edilir.
  */
 export function isLicenseBypassEnabled(): boolean {
-  const bypass = parseBoolean(import.meta.env.VITE_LICENSE_BYPASS as any);
+  const bypass = parseBoolean(import.meta.env.VITE_LICENSE_BYPASS as string | undefined);
   if (!isDevOrTestMode()) {
     // Üretim/stage derlemelerinde BYPASS görürsek dev uyarısı
     if (bypass && typeof console !== 'undefined') {
@@ -48,6 +48,16 @@ export function isLicenseBypassEnabled(): boolean {
  * - Production/Staging: true önerilir.
  */
 export function isSerialFeatureEnabled(): boolean {
-  return parseBoolean(import.meta.env.VITE_SERIAL_FEATURE as any);
+  return parseBoolean(import.meta.env.VITE_SERIAL_FEATURE as string | undefined);
+}
+
+/**
+ * Yönetici modu: kritik ayar/görevlerin görünürlüğü ve yetkisi için basit bayrak.
+ * - Dev/Test modlarında varsayılan true
+ * - Prod/Staging: VITE_ADMIN_MODE='true' olmadıkça false
+ */
+export function isAdminModeEnabled(): boolean {
+  if (isDevOrTestMode()) {return true;}
+  return parseBoolean(import.meta.env.VITE_ADMIN_MODE as string | undefined);
 }
 

@@ -83,7 +83,7 @@ export const SalesHelper = {
    * İndirim miktarını hesaplar
    */
   calculateDiscountAmount(sale: Sale): number {
-    if (!sale.discount) return 0;
+    if (!sale.discount) {return 0;}
     return (sale.originalTotal || sale.total) - sale.total;
   },
   
@@ -91,9 +91,9 @@ export const SalesHelper = {
    * İndirim oranını hesaplar (yüzde olarak)
    */
   calculateDiscountPercentage(sale: Sale): number {
-    if (!sale.discount) return 0;
+    if (!sale.discount) {return 0;}
     const originalTotal = sale.originalTotal || sale.total;
-    if (originalTotal <= 0) return 0;
+    if (originalTotal <= 0) {return 0;}
     const discountAmount = originalTotal - sale.total;
     return Math.round((discountAmount / originalTotal) * 100 * 10) / 10; // 1 ondalık basamağa yuvarla
   },
@@ -102,7 +102,7 @@ export const SalesHelper = {
    * İndirim bilgisini formatlar (gösterim için)
    */
   formatDiscountInfo(sale: Sale): string {
-    if (!sale.discount) return '';
+    if (!sale.discount) {return '';}
     if (sale.discount.type === 'percentage') {
       return `%${sale.discount.value} İndirim`;
     } else {

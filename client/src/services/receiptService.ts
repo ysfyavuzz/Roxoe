@@ -1,5 +1,6 @@
-import { ReceiptInfo } from '../types/receipt';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+
+import { ReceiptInfo } from '../types/receipt';
 
 class ReceiptService {
   async generatePDF(receipt: ReceiptInfo): Promise<void> {

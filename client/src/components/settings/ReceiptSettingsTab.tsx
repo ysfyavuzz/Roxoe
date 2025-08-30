@@ -1,6 +1,7 @@
 // components/settings/ReceiptSettingsTab.tsx
-import React from "react";
 import { Building, Check, RefreshCw } from "lucide-react";
+import React from "react";
+
 import { ReceiptConfig } from "../../types/receipt";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
@@ -21,7 +22,7 @@ const ReceiptSettingsTab: React.FC<ReceiptSettingsTabProps> = React.memo(({
   onSave,
   saveStatus,
 }) => {
-  const handleConfigChange = (key: keyof ReceiptConfig, value: any) => {
+  const handleConfigChange = (key: keyof ReceiptConfig, value: string) => {
     setReceiptConfig({ ...receiptConfig, [key]: value });
   };
 

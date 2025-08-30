@@ -12,7 +12,7 @@ export interface DatabaseExportInfo {
 }
 
 export interface ExportResult {
-  databases: Record<string, any>;
+  databases: Record<string, Record<string, unknown[]>>;
   exportInfo: {
     databases: DatabaseExportInfo[];
     totalRecords: number;
@@ -30,9 +30,9 @@ export class IndexedDBExporter {
     
     // Bu uygulamadaki veritabanlarını tanımlayalım
     const databaseNames = ['posDB', 'salesDB', 'creditDB'];
-    
+  
     // Her veritabanını dışa aktar
-    const result: Record<string, any> = {};
+    const result: Record<string, Record<string, unknown[]>> = {};
     const dbInfoList: DatabaseExportInfo[] = [];
     let totalRecords = 0;
     
@@ -62,15 +62,15 @@ export class IndexedDBExporter {
    * @param dbName Veritabanı adı
    * @returns Veritabanının içeriği
    */
-  async exportDatabase(dbName: string): Promise<{ data: Record<string, any[]>, info: DatabaseExportInfo }> {
+  async exportDatabase(dbName: string): Promise<{ data: Record<string, unknown[]>, info: DatabaseExportInfo }> {
     console.log(`${dbName} veritabanı dışa aktarılıyor...`);
     
     // Veritabanını aç
     const db = await openDB(dbName);
     const storeNames = Array.from(db.objectStoreNames);
-    
+  
     // Her tabloyu dışa aktar
-    const data: Record<string, any[]> = {};
+    const data: Record<string, unknown[]> = {};
     const recordCounts: Record<string, number> = {};
     
     for (const storeName of storeNames) {
@@ -98,7 +98,7 @@ export class IndexedDBExporter {
    * @param tableName Tablo adı
    * @returns Tablonun içeriği
    */
-  async exportTable(db: IDBPDatabase, tableName: string): Promise<any[]> {
+  async exportTable(db: IDBPDatabase, tableName: string): Promise<unknown[]> {
     console.log(`${tableName} tablosu dışa aktarılıyor...`);
     
     try {
@@ -120,7 +120,7 @@ export class IndexedDBExporter {
   /**
    * Nesne içerisindeki tüm Date alanlarını işaretler
    */
-  private processDateFields(data: any): any {
+  private processDateFields(data: unknown): unknown {
     if (data === null || data === undefined) {
       return data;
     }
@@ -135,18 +135,19 @@ export class IndexedDBExporter {
     
     // Dizi kontrolü
     if (Array.isArray(data)) {
-      return data.map(item => this.processDateFields(item));
+      return data.map((item) => this.processDateFields(item));
     }
     
     // Nesne kontrolü
     if (typeof data === 'object') {
-      const result: any = {};
-      for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(data, key)) {
-          result[key] = this.processDateFields(data[key]);
+      const out: Record<string, unknown> = {};
+      const obj = data as Record<string, unknown>;
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          out[key] = this.processDateFields(obj[key]);
         }
       }
-      return result;
+      return out;
     }
     
     // Diğer tip değerleri doğrudan döndür

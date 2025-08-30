@@ -1,5 +1,9 @@
 # Batch 5 — POS Bileşenleri ve Ayarlar (Türkçe)
 
+Son Gözden Geçirme: 2025-08-28T22:55Z
+
+Navigasyon: [SUMMARY.md](SUMMARY.md) • [PROGRESS.md](PROGRESS.md)
+
 Hedef Metrikler (Özet, P95)
 - ProductPanel grup değişimi ≤ 120 ms; CartPanel adet arttırma ≤ 60 ms
 - PaymentModal açılış ≤ 200 ms; split adımı ≤ 120 ms
@@ -121,7 +125,6 @@ Dosya Haritası (Batch 5)
 - client/src/components/pos/PaymentControls.tsx (CartPanel ile entegre; showError AlertProvider üzerinden)
 - client/src/components/pos/ProductPanel.tsx
 - client/src/components/pos/CartPanel.tsx
-- client/src/components/pos/PaymentControls.tsx
 - client/src/components/pos/SearchFilterPanel.tsx
 - client/src/components/pos/QuantityModeToast.tsx
 - client/src/pages/SettingsPage.tsx
@@ -311,6 +314,23 @@ Ek: Worker ve Utils
 - client/src/workers/messages.ts
 - client/src/workers/importWorker.ts
 - client/src/utils/importProcessing.ts
+
+## Kod Kalitesi (Code Quality)
+- PaymentModal oldukça büyük; iş akışı mantıklarının (POS cihazı, veresiye, indirim) özel hook’lara ayrılması bileşen karmaşıklığını ve render yükünü azaltır.
+- ProductPanel’de "grupta mı" kontrolü iki görünümde tekrar ediyor; ortak yardımcı fonksiyona taşınmalı.
+- SettingsPage: Feature flag ile lazy load stratejisi yerinde; son aktif sekmeyi localStorage’a yazmak UX’i iyileştirir.
+- Worker tabanlı import akışında mesaj sözleşmesi ve türler paylaşılan bir modülde merkezî tutulmuş (iyi uygulama).
+
+## Bilinen Sorunlar (Known Issues)
+- PaymentControls.tsx: cartTotal prop’u kullanılmıyor. Eylem: UI’de göstermek veya prop’u kaldırmak.
+- CustomerDetailModal.tsx: debug amaçlı console.log çağrıları mevcut. Eylem: Kaldırın veya bir debug bayrağına bağlayın.
+- SelectProductModal.tsx: Dosya başındaki yorum "SelectProductsModal.tsx" (çoğul), dosya adı tekil. Eylem: Yorum veya dosya adı ile tutarlılığı sağlayın.
+- useSettingsPage.ts: Windows’a özgü yedek yolu placeholder (C:\\RoxoePOS\\Backups). Eylem: Platforma göre ayarlanan bir çözüm uygulayın.
+
+## İyileştirme Önerileri
+- POS işlemleri ve veresiye kontrollerini ayrı hook’lara taşıyın; idempotency ve timeout/retry mekanizmaları ekleyin.
+- Büyük listelerde react-window overscan’ı 2–3 seviyede tutun; itemKey ve memo ile satır yeniden yaratmaları azaltın.
+- Ödeme test kapsamını genişletin (normal/split, indirim, cihazlı/cihazsız).
 
 
 ## Prop Tabloları ve Küçük Kullanım Örnekleri

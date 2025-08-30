@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { salesDB } from './salesDB'
+
 import type { Sale } from '../types/sales'
+
+import { salesDB } from './salesDB'
 
 describe('salesDB.applyDiscount', () => {
   it('applies percentage discount and preserves originalTotal', () => {
@@ -13,6 +15,7 @@ describe('salesDB.applyDiscount', () => {
       paymentMethod: 'nakit',
       date: new Date(),
       status: 'completed',
+      receiptNo: 'R-S1',
     }
 
     const updated = salesDB.applyDiscount(sale, 'percentage', 10)
@@ -32,6 +35,7 @@ describe('salesDB.applyDiscount', () => {
       paymentMethod: 'kart',
       date: new Date(),
       status: 'completed',
+      receiptNo: 'R-S2',
     }
 
     const updated = salesDB.applyDiscount(sale, 'amount', 10)

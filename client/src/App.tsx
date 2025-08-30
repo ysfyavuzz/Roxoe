@@ -1,29 +1,30 @@
 // src/App.tsx
+import { useState, useEffect } from "react";
 import {
   HashRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
-import { useState, useEffect } from "react";
-import MainLayout from "./layouts/MainLayout";
-import POSPage from "./pages/POSPage";
-import SalesHistoryPage from "./pages/SalesHistoryPage";
-import SaleDetailPage from "./pages/SaleDetailPage";
-import DashboardPage from "./pages/DashboardPage";
-import ProductsPage from "./pages/ProductsPage";
-import CreditPage from "./pages/CreditPage";
-import SettingsPage from "./pages/SettingsPage";
+
 import AlertProvider from "./components/AlertProvider";
-import { NotificationProvider } from "./contexts/NotificationContext";
+import BackupDialogManager from "./components/BackupDialogManager";
+import DynamicWindowTitle from "./components/DynamicWindowTitle";
 import SerialActivation from "./components/SerialActivation";
 import UpdateNotification from "./components/UpdateNotification";
+import { NotificationProvider } from "./contexts/NotificationContext";
+import MainLayout from "./layouts/MainLayout";
 import CashRegisterPage from "./pages/CashRegisterPage";
-import DynamicWindowTitle from "./components/DynamicWindowTitle";
+import CreditPage from "./pages/CreditPage";
+import DashboardPage from "./pages/DashboardPage";
+import POSPage from "./pages/POSPage";
+import ProductsPage from "./pages/ProductsPage";
+import SaleDetailPage from "./pages/SaleDetailPage";
+import SalesHistoryPage from "./pages/SalesHistoryPage";
+import SettingsPage from "./pages/SettingsPage";
 import { initBackupBridge } from "./utils/backup-bridge";
 import { isLicenseBypassEnabled } from "./utils/feature-flags";
 // Yedekleme dialog manager bileşenini import et
-import BackupDialogManager from "./components/BackupDialogManager";
 
 function App() {
   const [isActivated, setIsActivated] = useState(false);
@@ -36,7 +37,7 @@ function App() {
         if (typeof console !== 'undefined') {
           console.warn('[Lisans] BYPASS aktif (dev/test). Aktivasyon kontrolü atlandı.');
         }
-      } catch {}
+      } catch { /* ignore */ void 0; }
       setIsActivated(true);
       setIsChecking(false);
     } else {

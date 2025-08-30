@@ -6,30 +6,31 @@
  */
 
 import { openDB, IDBPDatabase, IDBPTransaction, DBSchema } from 'idb';
+
 // DBVersionHelper'ı kendi projenizdeki doğru yoldan import edin
 import DBVersionHelper from '../../helpers/DBVersionHelper'; 
 
 // --- Veritabanı Şemalarını Tanımlama (Tip Güvenliği İçin Önerilir) ---
 // Kendi veri modellerinizle (interface/type) güncelleyin. 'any' yerine kullanın.
 interface PosDBSchema extends DBSchema {
-  products: { key: string; value: any; }; // products: { key: string; value: Product; }; gibi
-  categories: { key: string; value: any; };
-  productGroups: { key: number; value: any; };
+  products: { key: string; value: unknown; }; // products: { key: string; value: Product; }; gibi
+  categories: { key: string; value: unknown; };
+  productGroups: { key: number; value: unknown; };
   // productGroupRelations keyPath'inin ['groupId', 'productId'] olduğunu varsayıyoruz (loglardan) - DOĞRULAYIN!
-  productGroupRelations: { key: [number, string]; value: any; }; 
-  cashRegisterSessions: { key: string; value: any; };
-  cashTransactions: { key: string; value: any; };
+  productGroupRelations: { key: [number, string]; value: unknown; }; 
+  cashRegisterSessions: { key: string; value: unknown; };
+  cashTransactions: { key: string; value: unknown; };
   // TODO: posDB için diğer store'ları buraya ekleyin (varsa)
 }
 
 interface SalesDBSchema extends DBSchema {
-  sales: { key: string; value: any; }; // sales: { key: string; value: Sale; }; gibi
+  sales: { key: string; value: unknown; }; // sales: { key: string; value: Sale; }; gibi
   // TODO: salesDB için diğer store'ları buraya ekleyin (varsa)
 }
 
 interface CreditDBSchema extends DBSchema {
-  customers: { key: string; value: any; }; // customers: { key: string; value: Customer; }; gibi
-  transactions: { key: string; value: any; }; // transactions: { key: string; value: CreditTransaction; }; gibi
+  customers: { key: string; value: unknown; }; // customers: { key: string; value: Customer; }; gibi
+  transactions: { key: string; value: unknown; }; // transactions: { key: string; value: CreditTransaction; }; gibi
   // TODO: creditDB için diğer store'ları buraya ekleyin (varsa)
 }
 
@@ -58,7 +59,7 @@ export class IndexedDBImporter {
    * @param options - İçe aktarma seçenekleri (clearExisting, onProgress).
    * @returns İçe aktarma işleminin sonucunu içeren bir Promise.
    */
-  async importAllDatabases(data: Record<string, any>, options?: ImportOptions): Promise<ImportResult> {
+  async importAllDatabases(data: Record<string, unknown>, options?: ImportOptions): Promise<ImportResult> {
     console.log('Tüm veritabanları içe aktarılıyor...');
     const result: ImportResult = {
       success: true,
@@ -91,7 +92,7 @@ export class IndexedDBImporter {
       try {
         console.log(`"${dbName}" veritabanı içe aktarılıyor...`);
         // Her bir veritabanını içe aktarma fonksiyonunu çağır
-        const dbResult = await this.importDatabase(dbName, dbData, options);
+        const dbResult = await this.importDatabase(dbName, dbData as Record<string, unknown[]>, options);
 
         // Sonuçları genel sonuca ekle
         if (dbResult.success) {
@@ -129,7 +130,7 @@ export class IndexedDBImporter {
    */
   async importDatabase(
     dbName: string,
-    dbData: Record<string, any[]>,
+    dbData: Record<string, unknown[]>,
     options?: ImportOptions
   ): Promise<{ success: boolean; importedRecords: number; errors: Array<{ database: string, store: string, error: string }> }> {
     const result = {
@@ -138,7 +139,7 @@ export class IndexedDBImporter {
       errors: [] as Array<{ database: string, store: string, error: string }>
     };
 
-    let db: IDBPDatabase<any> | null = null; // Şema tipleri birleştirilebilir: IDBPDatabase<PosDBSchema | SalesDBSchema | CreditDBSchema>
+    let db: IDBPDatabase | null = null; // Şema tipleri birleştirilebilir: IDBPDatabase<PosDBSchema | SalesDBSchema | CreditDBSchema>
 
     try {
       // 1. Adım: Gerekli veritabanı sürümünü merkezi yerden al
@@ -227,7 +228,7 @@ export class IndexedDBImporter {
           console.warn(`"${dbName}" veritabanı eski sürüm bağlantılarının (${currentVersion}) kapatılmasını bekliyor (Hedef: ${blockedVersion})...`);
           // Gerekirse db.close() çağrısı ile mevcut bağlantıyı kapatmaya çalışabiliriz.
           // Ancak idb genellikle bunu yönetir.
-          if (db) db.close();
+          if (db) {db.close();}
         },
         /** Bağlantı beklenmedik şekilde (örn. tarayıcı kapanması) sonlandırıldığında. */
         terminated() {
@@ -348,20 +349,20 @@ export class IndexedDBImporter {
    * @returns İşlemin başarısını ve aktarılan kayıt sayısını içeren bir Promise.
    */
   async importTable(
-    db: IDBPDatabase<any>,
+    db: IDBPDatabase,
     tableName: string,
-    data: any[],
+    data: unknown[],
     clearExisting: boolean,
     onProgress?: (processedCount: number) => void
   ): Promise<{ success: boolean; importedCount: number }> {
-    let tx: IDBPTransaction<any, [string], "readwrite"> | null = null;
+    let tx: any = null;
     let importedCount = 0; // Başarılı olanların sayısı
     let errorCount = 0;    // Hata alanların sayısı
     let processedCount = 0; // Döngüde işlenenlerin sayısı
 
     try {
       // 1. Veriyi hazırla: Null/undefined filtrele ve tarihleri dönüştür
-      let validData = data
+      const validData = data
         .filter(item => item !== null && item !== undefined)
         .map(item => this.ensureDateFields(item));
 
@@ -374,7 +375,7 @@ export class IndexedDBImporter {
 
       // 3. Yazma işlemi (transaction) başlat
       tx = db.transaction(tableName, 'readwrite');
-      const store = tx.objectStore(tableName);
+      const store = tx.objectStore(tableName) as unknown as { clear: () => Promise<unknown>; put: (value: unknown) => Promise<unknown> };
 
       // 4. Gerekirse mevcut tabloyu temizle
       if (clearExisting) {
@@ -409,7 +410,7 @@ export class IndexedDBImporter {
       } // Kayıt döngüsü sonu
 
       // 6. İşlemin tamamlanmasını bekle
-      await tx.done;
+      if (tx) { await tx.done; }
 
       console.log(`  -> "${tableName}" için veri aktarımı tamamlandı: Toplam Denenen: ${processedCount}, Başarılı: ${importedCount}, Hata: ${errorCount}`);
 
@@ -420,9 +421,7 @@ export class IndexedDBImporter {
       // Transaction başlatma, store.clear() veya tx.done bekleme sırasındaki hatalar
       console.error(`"${tableName}" tablosu için işlem hatası (Genel Hata):`, txError);
       // İşlem devam ediyorsa iptal etmeye çalış
-      if (tx && !tx.done.catch(() => {})) {
-         try { tx.abort(); } catch {}
-      }
+      try { tx?.abort(); } catch { /* ignore */ void 0; }
       return { success: false, importedCount: 0 }; // Genel hata = Tamamen başarısız
     }
   }
@@ -434,15 +433,16 @@ export class IndexedDBImporter {
    * @param item - Dönüştürülecek veri (nesne, dizi, veya başka bir tip).
    * @returns Dönüştürülmüş veri.
    */
-  private ensureDateFields(item: any): any {
+  private ensureDateFields(item: unknown): unknown {
     if (!item || typeof item !== 'object') { // Null, undefined, veya nesne/dizi olmayanlar
       return item;
     }
 
     // Özel işaretli tarih nesnesi kontrolü
-    if (item.__isDate === true && typeof item.value === 'string') {
+    const marker = item as { __isDate?: unknown; value?: unknown };
+    if (marker.__isDate === true && typeof marker.value === 'string') {
       try {
-        return new Date(item.value);
+        return new Date(marker.value);
       } catch (e) {
         console.error(`Hatalı özel tarih formatı dönüştürülemedi:`, item, e);
         return null; // Hata durumunda null döndür
@@ -451,27 +451,27 @@ export class IndexedDBImporter {
 
     // Dizi ise elemanları tek tek işle
     if (Array.isArray(item)) {
-      return item.map(el => this.ensureDateFields(el));
+      return (item as unknown[]).map(el => this.ensureDateFields(el));
     }
 
     // Nesne ise her bir özelliğini işle
-    const result = { ...item }; // Orijinali değiştirmemek için kopyala
-    for (const key in result) {
-      if (Object.prototype.hasOwnProperty.call(result, key)) {
-          const value = result[key];
-          // Standart ISO String kontrolü (YYYY-MM-DDTHH:mm:ss.sssZ)
-          if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/.test(value)) {
-             try {
-               result[key] = new Date(value);
-             } catch (e) {
-                 console.warn(`ISO tarih string'i dönüştürülemedi (${key}): ${value}`, e);
-                 // Dönüştüremezse olduğu gibi bırakabilir veya null yapabiliriz. Şimdilik bırakalım.
-             }
-          } else if (value && typeof value === 'object') {
-              // İç içe nesne/dizi varsa recursive çağrı
-              result[key] = this.ensureDateFields(value);
-          }
-          // Diğer tiplere dokunma (sayı, boolean vb.)
+    const source = item as Record<string, unknown>; // Orijinali değiştirmemek için kopya üzerinde çalış
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(source)) {
+      // Standart ISO String kontrolü (YYYY-MM-DDTHH:mm:ss.sssZ)
+      if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/.test(value)) {
+        try {
+          result[key] = new Date(value);
+        } catch (e) {
+          console.warn(`ISO tarih string'i dönüştürülemedi (${key}): ${value}`, e);
+          result[key] = value; // Dönüştüremezsek olduğu gibi bırak
+        }
+      } else if (value && typeof value === 'object') {
+        // İç içe nesne/dizi varsa recursive çağrı
+        result[key] = this.ensureDateFields(value);
+      } else {
+        // Diğer tiplere dokunma (sayı, boolean vb.)
+        result[key] = value;
       }
     }
     return result;
@@ -485,7 +485,7 @@ export class IndexedDBImporter {
    */
   async clearDatabase(dbName: string): Promise<void> {
     console.warn(`"${dbName}" veritabanındaki TÜM veriler silinecek...`);
-    let db: IDBPDatabase<any> | null = null;
+    let db: IDBPDatabase | null = null;
     try {
       // Veritabanını mevcut sürümüyle açmak yeterli (sürüm yükseltmeye gerek yok)
       db = await openDB(dbName);
@@ -496,7 +496,8 @@ export class IndexedDBImporter {
       const clearPromises = storeNames.map(async (storeName) => {
         try {
           const tx = db!.transaction(storeName, 'readwrite'); // db null olamaz burada
-          await tx.objectStore(storeName).clear();
+          const store = tx.objectStore(storeName) as unknown as { clear: () => Promise<unknown> };
+          await store.clear();
           await tx.done;
           console.log(`    -> "${storeName}" tablosu temizlendi.`);
         } catch (clearError) {

@@ -1,6 +1,7 @@
 // components/settings/BackupSettingsTab.tsx
-import React from "react";
 import { Database, Download, Upload, Clock, Check, RefreshCw, Calendar } from "lucide-react";
+import React from "react";
+
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 
@@ -62,13 +63,16 @@ const BackupSettingsTab: React.FC<BackupSettingsTabProps> = React.memo(({
   onSave,
   saveStatus,
 }) => {
-  const handleScheduleChange = (key: keyof BackupScheduleConfig, value: any) => {
-    setBackupSchedule({ ...backupSchedule, [key]: value });
+  const handleScheduleChange = (
+    key: keyof BackupScheduleConfig,
+    value: boolean | 'daily' | 'weekly' | 'monthly' | string | null
+  ) => {
+    setBackupSchedule({ ...backupSchedule, [key]: value as BackupScheduleConfig[keyof BackupScheduleConfig] });
   };
 
   const formatFileSize = (bytes: number): string => {
     const sizes = ['B', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 B';
+    if (bytes === 0) {return '0 B';}
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
   };

@@ -9,7 +9,7 @@
  * @returns Temizlenmiş metin
  */
 export function cleanTextForSearch(text: string): string {
-    if (!text) return '';
+    if (!text) {return '';}
     
     let result = '';
     // Önce lowercase yapıp karakterleri dönüştürelim
@@ -60,7 +60,7 @@ export function cleanTextForSearch(text: string): string {
    * @returns Eşleşme varsa true, yoksa false
    */
   export function normalizedSearch(source: string, searchTerm: string): boolean {
-    if (!source || !searchTerm) return false;
+    if (!source || !searchTerm) {return false;}
     
     // Basit includes - belki bu çalışabilir
     if (source.toLowerCase().includes(searchTerm.toLowerCase())) {

@@ -42,8 +42,14 @@ export class MobilePerformanceOptimizer {
 
   private performanceObserver?: PerformanceObserver;
   private touchStartTime = 0;
-  private frameCount = 0;
   private lastFrameTime = 0;
+  private cleanup: Array<() => void> = [];
+  private imageObserver?: IntersectionObserver;
+  private intervalId: number | undefined;
+  private rafId?: number;
+  private isMobile = false;
+  private frameSamples: number[] = [];
+  private running = true;
 
   constructor() {
     this.detectMobileDevice();
@@ -56,12 +62,13 @@ export class MobilePerformanceOptimizer {
   private detectMobileDevice(): boolean {
     const userAgent = navigator.userAgent.toLowerCase();
     const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    this.isMobile = isMobile;
     
-    if (isMobile) {
+    if (this.isMobile) {
       this.enableMobileOptimizations();
     }
 
-    return isMobile;
+    return this.isMobile;
   }
 
   /**
@@ -91,7 +98,11 @@ export class MobilePerformanceOptimizer {
    * Adds mobile-specific CSS optimizations
    */
   private addMobileCSS(): void {
+    const existing = document.getElementById('mobile-perf-style');
+    if (existing) { return; }
+
     const style = document.createElement('style');
+    style.id = 'mobile-perf-style';
     style.textContent = `
       /* Mobile Performance Optimizations */
       * {
@@ -151,6 +162,7 @@ export class MobilePerformanceOptimizer {
     `;
     
     document.head.appendChild(style);
+    this.cleanup.push(() => style.remove());
     console.log('✅ Mobile CSS optimizations applied');
   }
 
@@ -158,20 +170,21 @@ export class MobilePerformanceOptimizer {
    * Optimizes touch event handling
    */
   private optimizeTouchEvents(): void {
-    // Passive touch event listeners for better scroll performance
-    const addPassiveListener = (element: Element, event: string, handler: EventListener) => {
-      element.addEventListener(event, handler, { passive: true });
-    };
-
-    // Add passive listeners to common touch elements
-    document.addEventListener('touchstart', (e) => {
+    // Add passive listeners to common touch events
+    const onStart = () => {
       this.touchStartTime = performance.now();
-    }, { passive: true });
-
-    document.addEventListener('touchend', (e) => {
+    };
+    const onEnd = () => {
       const touchResponseTime = performance.now() - this.touchStartTime;
       this.trackTouchPerformance(touchResponseTime);
-    }, { passive: true });
+    };
+
+    document.addEventListener('touchstart', onStart, { passive: true });
+    document.addEventListener('touchend', onEnd, { passive: true });
+    this.cleanup.push(() => {
+      document.removeEventListener('touchstart', onStart as EventListener);
+      document.removeEventListener('touchend', onEnd as EventListener);
+    });
 
     // Optimize scroll performance
     if (this.config.scrollOptimization) {
@@ -199,6 +212,9 @@ export class MobilePerformanceOptimizer {
     };
 
     document.addEventListener('scroll', handleScroll, { passive: true });
+    this.cleanup.push(() => {
+      document.removeEventListener('scroll', handleScroll as EventListener);
+    });
     
     // Add intersection observer for lazy loading
     if (this.config.lazyImageLoading) {
@@ -236,6 +252,9 @@ export class MobilePerformanceOptimizer {
       threshold: 0.1
     });
 
+    this.imageObserver = imageObserver;
+    this.cleanup.push(() => this.imageObserver?.disconnect());
+
     // Observe all lazy images
     document.querySelectorAll('img.lazy').forEach(img => {
       imageObserver.observe(img);
@@ -248,6 +267,8 @@ export class MobilePerformanceOptimizer {
   private updateVirtualScrolling(): void {
     // Virtual scrolling implementation would go here
     // This would render only visible items for large lists
+    // no-op placeholder to satisfy no-empty rule
+    return;
   }
 
   /**
@@ -268,9 +289,15 @@ export class MobilePerformanceOptimizer {
    * Schedules periodic memory cleanup
    */
   private scheduleMemoryCleanup(): void {
-    setInterval(() => {
+    this.intervalId = window.setInterval(() => {
       this.performMemoryCleanup();
     }, 60000); // Every minute
+    this.cleanup.push(() => {
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = undefined;
+      }
+    });
   }
 
   /**
@@ -282,8 +309,10 @@ export class MobilePerformanceOptimizer {
     detachedElements.forEach(el => el.remove());
     
     // Trigger garbage collection hint (if available)
-    if ('gc' in window && typeof (window as any).gc === 'function') {
-      (window as any).gc();
+    type WithGC = { gc?: () => void };
+    const w = window as unknown as WithGC;
+    if (typeof w.gc === 'function') {
+      w.gc();
     }
     
     console.log('🧹 Memory cleanup performed');
@@ -325,6 +354,7 @@ export class MobilePerformanceOptimizer {
       });
 
       this.performanceObserver.observe({ entryTypes: ['navigation', 'paint', 'largest-contentful-paint'] });
+      this.cleanup.push(() => this.performanceObserver?.disconnect());
     }
 
     // Monitor frame rate
@@ -335,23 +365,31 @@ export class MobilePerformanceOptimizer {
    * Starts frame rate monitoring
    */
   private startFrameRateMonitoring(): void {
-    const measureFrameRate = () => {
-      const now = performance.now();
+    const measureFrameRate = (now: number) => {
+      if (!this.running) { return; }
       if (this.lastFrameTime) {
         const delta = now - this.lastFrameTime;
         if (delta > 0) {
-          this.frameCount++;
-          if (this.frameCount % 60 === 0) { // Every 60 frames
-            const fps = 1000 / delta;
-            this.trackFrameRate(fps);
+          const fps = 1000 / delta;
+          this.frameSamples.push(fps);
+          if (this.frameSamples.length >= 60) {
+            const avg = this.frameSamples.reduce((a, b) => a + b, 0) / this.frameSamples.length;
+            this.trackFrameRate(avg);
+            this.frameSamples = [];
           }
         }
       }
       this.lastFrameTime = now;
-      requestAnimationFrame(measureFrameRate);
+      this.rafId = requestAnimationFrame(measureFrameRate);
     };
 
-    requestAnimationFrame(measureFrameRate);
+    this.rafId = requestAnimationFrame(measureFrameRate);
+    this.cleanup.push(() => {
+      this.running = false;
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+      }
+    });
   }
 
   /**
@@ -411,7 +449,9 @@ export class MobilePerformanceOptimizer {
    * Gets current performance metrics
    */
   async getPerformanceMetrics(): Promise<PerformanceMetrics> {
-    const memory = (performance as any).memory;
+    type PerfWithMemory = { memory?: { usedJSHeapSize: number } };
+    const perf = performance as unknown as PerfWithMemory;
+    const memory = perf.memory;
     
     return {
       frameRate: 60, // Would be calculated from actual monitoring
@@ -427,7 +467,7 @@ export class MobilePerformanceOptimizer {
    */
   private calculateBatteryImpact(): 'LOW' | 'MEDIUM' | 'HIGH' {
     // This would analyze CPU usage, animations, etc.
-    if (this.config.reducedAnimations) return 'LOW';
+    if (this.config.reducedAnimations) {return 'LOW';}
     return 'MEDIUM';
   }
 
@@ -439,7 +479,7 @@ export class MobilePerformanceOptimizer {
 
     const appliedOptimizations: string[] = [];
     
-    if (this.config.touchOptimization) {
+    if (this.config.enableTouchOptimization) {
       this.optimizeTouchTargets();
       appliedOptimizations.push('Touch target optimization');
     }
@@ -532,15 +572,15 @@ export class MobilePerformanceOptimizer {
   } {
     const activeOptimizations: string[] = [];
     
-    if (this.config.touchOptimization) activeOptimizations.push('Touch Optimization');
-    if (this.config.scrollOptimization) activeOptimizations.push('Scroll Optimization');
-    if (this.config.virtualScrolling) activeOptimizations.push('Virtual Scrolling');
-    if (this.config.lazyImageLoading) activeOptimizations.push('Lazy Image Loading');
-    if (this.config.reducedAnimations) activeOptimizations.push('Reduced Animations');
-    if (this.config.adaptiveRendering) activeOptimizations.push('Adaptive Rendering');
+    if (this.config.enableTouchOptimization) {activeOptimizations.push('Touch Optimization');}
+    if (this.config.scrollOptimization) {activeOptimizations.push('Scroll Optimization');}
+    if (this.config.virtualScrolling) {activeOptimizations.push('Virtual Scrolling');}
+    if (this.config.lazyImageLoading) {activeOptimizations.push('Lazy Image Loading');}
+    if (this.config.reducedAnimations) {activeOptimizations.push('Reduced Animations');}
+    if (this.config.adaptiveRendering) {activeOptimizations.push('Adaptive Rendering');}
     
     return {
-      isMobileOptimized: this.detectMobileDevice(),
+      isMobileOptimized: this.isMobile,
       activeOptimizations,
       config: this.config
     };
@@ -552,6 +592,23 @@ export class MobilePerformanceOptimizer {
   updateConfig(newConfig: Partial<TouchOptimizationConfig>): void {
     this.config = { ...this.config, ...newConfig };
     console.log('🔧 Mobile optimization config updated:', this.config);
+  }
+
+  /**
+   * Cleans up resources and event listeners
+   */
+  public dispose(): void {
+    this.cleanup.forEach(fn => {
+      try { fn(); } catch (e) { void e; }
+    });
+    this.cleanup = [];
+    this.performanceObserver?.disconnect();
+    this.imageObserver?.disconnect();
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = undefined;
+    }
+    this.running = false;
   }
 }
 

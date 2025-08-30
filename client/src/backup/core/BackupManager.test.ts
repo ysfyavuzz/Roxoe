@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { BackupSerializer } from './BackupSerializer'
+
 import { BackupDeserializer } from './BackupDeserializer'
+import { BackupSerializer } from './BackupSerializer'
 
 describe('Backup serialize/deserialize (.roxoe)', () => {
   it('roundtrips data with valid checksum and metadata', () => {
@@ -28,8 +29,9 @@ describe('Backup serialize/deserialize (.roxoe)', () => {
     const result = deserializer.deserializeFromRoxoeFormat(roxoe)
     expect(result.isValid).toBe(true)
     expect(result.metadata.description).toBe('Test yedek')
-    expect(result.data.products.length).toBe(2)
-    expect(result.data.sales.length).toBe(1)
+    const restored = result.data as { products: unknown[]; sales: unknown[] }
+    expect(restored.products.length).toBe(2)
+    expect(restored.sales.length).toBe(1)
   })
 })
 

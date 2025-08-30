@@ -6,17 +6,19 @@ interface ErrorBoundaryState {
 }
 
 export class ErrorBoundary extends React.Component<React.PropsWithChildren, ErrorBoundaryState> {
-  state: ErrorBoundaryState = { hasError: false }
+  override state: ErrorBoundaryState = { hasError: false }
 
   static getDerivedStateFromError(_error: unknown): ErrorBoundaryState {
     return { hasError: true }
   }
 
-  async componentDidCatch(error: unknown, info: React.ErrorInfo) {
+  override async componentDidCatch(error: unknown, info: React.ErrorInfo) {
     try {
       const mod = await import('@sentry/electron/renderer')
-      // capture with component stack
-      ;(mod as any).captureException?.(error, { extra: { componentStack: info.componentStack } })
+      // capture with component stack (Sentry yoksa sessiz)
+      type SentryRenderer = { captureException?: (err: unknown, opts?: { extra?: Record<string, unknown> }) => void }
+      const sentry = mod as unknown as SentryRenderer
+      sentry.captureException?.(error, { extra: { componentStack: info.componentStack } })
     } catch {
       // no-op if Sentry not available
     }
@@ -24,7 +26,7 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren, Erro
     console.error('Unhandled UI error:', error, info?.componentStack)
   }
 
-  render(): React.ReactNode {
+  override render(): React.ReactNode {
     if (this.state.hasError) {
       return (
         <div className="h-screen flex items-center justify-center p-6">

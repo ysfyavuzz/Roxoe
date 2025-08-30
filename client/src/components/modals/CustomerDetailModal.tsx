@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   X,
   CreditCard,
@@ -11,10 +10,13 @@ import {
   ShoppingBag,
   ExternalLink,
 } from "lucide-react";
-import { Customer, CreditTransaction } from "../../types/credit";
-import { salesDB } from "../../services/salesDB";
-import { Sale } from "../../types/sales";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { salesDB } from "../../services/salesDB";
+import { Customer, CreditTransaction } from "../../types/credit";
+import { Sale } from "../../types/sales";
+
 
 interface CustomerDetailModalProps {
   isOpen: boolean;
@@ -116,10 +118,10 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
       };
 
       transactions.forEach((tx) => {
-        if (tx.status === "active") statusCounts.active++;
-        else if (tx.status === "paid") statusCounts.paid++;
-        else if (tx.status === "overdue") statusCounts.overdue++;
-        else statusCounts.other++;
+        if (tx.status === "active") {statusCounts.active++;}
+        else if (tx.status === "paid") {statusCounts.paid++;}
+        else if (tx.status === "overdue") {statusCounts.overdue++;}
+        else {statusCounts.other++;}
       });
 
       console.log("İşlem durumları:", statusCounts);
@@ -217,7 +219,7 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
     }
   }, [isOpen, transactions]);
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("tr-TR", {

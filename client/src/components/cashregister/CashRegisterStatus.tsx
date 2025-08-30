@@ -1,8 +1,9 @@
 // components/cashregister/CashRegisterStatus.tsx
-import React from "react";
 import { Calendar, DollarSign, Info } from "lucide-react";
-import { formatCurrency } from "../../utils/vatUtils";
+import React from "react";
+
 import { CashRegisterStatus as CashStatus } from "../../types/cashRegister";
+import { formatCurrency } from "../../utils/vatUtils";
 
 interface CashRegisterStatusProps {
   // Status

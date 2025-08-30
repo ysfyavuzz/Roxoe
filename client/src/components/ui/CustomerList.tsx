@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Edit,
   Trash2,
@@ -12,10 +11,13 @@ import {
   Banknote,
   User
 } from "lucide-react";
+import React from "react";
+
 import { Customer, CustomerSummary, CreditTransaction } from "../../types/credit";
 import { Column } from "../../types/table"; // Import the Column type
-import { Table } from "./Table"; // Import the reusable Table component
 import { useAlert } from "../AlertProvider";
+
+import { Table } from "./Table"; // Import the reusable Table component
 
 // Tooltip bileşeni için TypeScript interface
 interface TooltipProps {
@@ -108,11 +110,11 @@ const CustomerList: React.FC<CustomerListProps> = ({
 
   // Yaklaşan vadeler için kontrol fonksiyonu
   const hasApproachingDueDate = (customerId: number) => {
-    if (!transactions || !transactions[customerId]) return false;
+    if (!transactions || !transactions[customerId]) {return false;}
     
     // Müşteri borcu 0 ise yaklaşan vade göstermeyelim
     const customer = customers.find(c => c.id === customerId);
-    if (customer && customer.currentDebt === 0) return false;
+    if (customer && customer.currentDebt === 0) {return false;}
     
     const customerTransactions = transactions[customerId];
     const now = new Date();
@@ -134,11 +136,11 @@ const CustomerList: React.FC<CustomerListProps> = ({
 
   // Yaklaşan vadeleri olan işlem sayısını hesapla
   const getApproachingDueCount = (customerId: number) => {
-    if (!transactions || !transactions[customerId]) return 0;
+    if (!transactions || !transactions[customerId]) {return 0;}
     
     // Müşteri borcu 0 ise sıfır dön
     const customer = customers.find(c => c.id === customerId);
-    if (customer && customer.currentDebt === 0) return 0;
+    if (customer && customer.currentDebt === 0) {return 0;}
     
     const customerTransactions = transactions[customerId];
     const now = new Date();
@@ -160,11 +162,11 @@ const CustomerList: React.FC<CustomerListProps> = ({
 
   // Yakın vadelerdeki en yakın tarihi bulma
   const getNextDueDate = (customerId: number) => {
-    if (!transactions || !transactions[customerId]) return null;
+    if (!transactions || !transactions[customerId]) {return null;}
     
     // Müşteri borcu 0 ise null dön
     const customer = customers.find(c => c.id === customerId);
-    if (customer && customer.currentDebt === 0) return null;
+    if (customer && customer.currentDebt === 0) {return null;}
     
     const customerTransactions = transactions[customerId];
     const now = new Date();
@@ -184,7 +186,11 @@ const CustomerList: React.FC<CustomerListProps> = ({
       )
       .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime());
     
-    return approachingDues.length > 0 ? new Date(approachingDues[0].dueDate!) : null;
+    const first = approachingDues[0];
+    if (first && first.dueDate) {
+      return new Date(first.dueDate);
+    }
+    return null;
   };
 
   // Define columns for the Table component
@@ -248,7 +254,7 @@ const CustomerList: React.FC<CustomerListProps> = ({
         const summary = summaries[customer.id];
 
         // İndirim varsa hesapla
-        const hasDiscount = summary?.discountedSalesCount > 0;
+        const hasDiscount = (summary?.discountedSalesCount ?? 0) > 0;
 
         return (
           <div>
@@ -260,8 +266,8 @@ const CustomerList: React.FC<CustomerListProps> = ({
             {hasDiscount && (
               <div className="flex items-center text-xs text-green-600 my-1">
                 <Tag size={12} className="mr-1" />
-                {summary.discountedSalesCount} işlemde{" "}
-                {formatCurrency(summary.totalDiscount || 0)} indirim
+                {(summary?.discountedSalesCount ?? 0)} işlemde{" "}
+                {formatCurrency(summary?.totalDiscount ?? 0)} indirim
               </div>
             )}
 
@@ -277,16 +283,16 @@ const CustomerList: React.FC<CustomerListProps> = ({
       title: "Vadesi Geçen",
       render: (customer) => {
         const summary = summaries[customer.id];
-        const hasOverdue = summary?.overdueTransactions > 0;
+        const hasOverdue = (summary?.overdueTransactions ?? 0) > 0;
 
         return hasOverdue ? (
           <div className="text-red-600">
             <div className="flex items-center gap-1">
               <AlertTriangle size={16} />
-              <span>{formatCurrency(summary.totalOverdue)}</span>
+              <span>{formatCurrency(summary?.totalOverdue ?? 0)}</span>
             </div>
             <div className="text-xs mt-1">
-              {summary.overdueTransactions} işlem geçmiş
+              {(summary?.overdueTransactions ?? 0)} işlem geçmiş
             </div>
           </div>
         ) : (

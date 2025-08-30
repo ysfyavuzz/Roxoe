@@ -1,10 +1,13 @@
 import { openDB } from 'idb';
-import { encryptionService } from './encryptionService';
+
 import DBVersionHelper from '../helpers/DBVersionHelper';
 
+import { encryptionService } from './encryptionService';
+
 export const createEncryptedDB = (dbName: string) => {
+  type EncryptedRow = { data: string };
   return {
-    async add(storeName: string, data: any) {
+    async add<T>(storeName: string, data: T) {
       const db = await openDB(dbName, DBVersionHelper.getVersion(dbName), {
         upgrade(db, oldVersion, newVersion) {
           console.log(`Upgrading ${dbName} from ${oldVersion} to ${newVersion}`);
@@ -18,19 +21,19 @@ export const createEncryptedDB = (dbName: string) => {
       return db.add(storeName, { data: encryptedData });
     },
 
-    async get(storeName: string, id: number) {
+    async get<T>(storeName: string, id: number): Promise<T | null> {
       const db = await openDB(dbName, DBVersionHelper.getVersion(dbName));
-      const result = await db.get(storeName, id);
-      return result ? encryptionService.decrypt(result.data) : null;
+      const result = (await db.get(storeName, id)) as EncryptedRow | undefined;
+      return result ? encryptionService.decrypt<T>(result.data) : null;
     },
 
-    async getAll(storeName: string) {
+    async getAll<T>(storeName: string): Promise<T[]> {
       const db = await openDB(dbName, DBVersionHelper.getVersion(dbName));
-      const results = await db.getAll(storeName);
-      return results.map(result => encryptionService.decrypt(result.data));
+      const results = (await db.getAll(storeName)) as EncryptedRow[];
+      return results.map(result => encryptionService.decrypt<T>(result.data));
     },
 
-    async put(storeName: string, data: any, id?: number) {
+    async put<T>(storeName: string, data: T, id?: number) {
       const db = await openDB(dbName, DBVersionHelper.getVersion(dbName));
       const encryptedData = encryptionService.encrypt(data);
       return db.put(storeName, { data: encryptedData }, id);

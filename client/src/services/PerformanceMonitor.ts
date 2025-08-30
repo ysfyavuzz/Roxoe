@@ -16,7 +16,7 @@ export interface PerformanceMetric {
   timestamp: Date;
   success: boolean;
   errorMessage?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface PerformanceStats {
@@ -133,10 +133,10 @@ export class PerformanceMonitor {
    * Start monitoring database operations
    */
   private startMonitoring(): void {
-    if (this.isMonitoring) return;
+    if (this.isMonitoring) {return;}
     
     const config = this.getConfig();
-    if (!config.enabled) return;
+    if (!config.enabled) {return;}
 
     this.isMonitoring = true;
     console.log('📊 Performance monitoring started');
@@ -164,7 +164,7 @@ export class PerformanceMonitor {
    */
   recordMetric(metric: Omit<PerformanceMetric, 'id' | 'timestamp'>): void {
     const config = this.getConfig();
-    if (!config.enabled) return;
+    if (!config.enabled) {return;}
 
     const fullMetric: PerformanceMetric = {
       ...metric,
@@ -223,7 +223,7 @@ export class PerformanceMonitor {
               duration,
               queryType: 'INSERT',
               success: false,
-              errorMessage: result.error?.message
+              ...(result.error?.message ? { errorMessage: result.error.message } : {})
             });
           });
         }
@@ -258,7 +258,7 @@ export class PerformanceMonitor {
               duration,
               queryType: 'SELECT',
               success: false,
-              errorMessage: result.error?.message
+              ...(result.error?.message ? { errorMessage: result.error.message } : {})
             });
           });
         }
@@ -294,7 +294,7 @@ export class PerformanceMonitor {
               duration,
               queryType: 'SELECT',
               success: false,
-              errorMessage: result.error?.message
+              ...(result.error?.message ? { errorMessage: result.error.message } : {})
             });
           });
         }
@@ -334,7 +334,7 @@ export class PerformanceMonitor {
         duration,
         queryType,
         success,
-        errorMessage
+        ...(errorMessage !== undefined ? { errorMessage } : {})
       });
     }
 
@@ -363,25 +363,21 @@ export class PerformanceMonitor {
     });
 
     // Database stats
-    const databaseStats: Record<string, any> = {};
+    const databaseStats: Record<string, { queryCount: number; totalTime: number; avgTime: number }> = {};
     recentMetrics.forEach(m => {
-      if (!databaseStats[m.database]) {
-        databaseStats[m.database] = { queryCount: 0, totalTime: 0 };
-      }
-      databaseStats[m.database].queryCount++;
-      databaseStats[m.database].totalTime += m.duration;
-      databaseStats[m.database].avgTime = databaseStats[m.database].totalTime / databaseStats[m.database].queryCount;
+      const entry = databaseStats[m.database] ?? (databaseStats[m.database] = { queryCount: 0, totalTime: 0, avgTime: 0 });
+      entry.queryCount++;
+      entry.totalTime += m.duration;
+      entry.avgTime = entry.totalTime / entry.queryCount;
     });
 
     // Table stats
-    const tableStats: Record<string, any> = {};
+    const tableStats: Record<string, { queryCount: number; totalTime: number; avgTime: number }> = {};
     recentMetrics.forEach(m => {
-      if (!tableStats[m.table]) {
-        tableStats[m.table] = { queryCount: 0, totalTime: 0 };
-      }
-      tableStats[m.table].queryCount++;
-      tableStats[m.table].totalTime += m.duration;
-      tableStats[m.table].avgTime = tableStats[m.table].totalTime / tableStats[m.table].queryCount;
+      const entry = tableStats[m.table] ?? (tableStats[m.table] = { queryCount: 0, totalTime: 0, avgTime: 0 });
+      entry.queryCount++;
+      entry.totalTime += m.duration;
+      entry.avgTime = entry.totalTime / entry.queryCount;
     });
 
     // Hourly stats
@@ -612,8 +608,11 @@ export class PerformanceMonitor {
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY);
       if (stored) {
-        const data = JSON.parse(stored);
-        this.metrics = data.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) }));
+        const data = JSON.parse(stored) as unknown;
+        this.metrics = (Array.isArray(data) ? data : []).map((m) => {
+          const raw = m as Partial<PerformanceMetric> & { timestamp: string | number | Date };
+          return { ...(raw as PerformanceMetric), timestamp: new Date(raw.timestamp) };
+        });
       }
     } catch (error) {
       console.error('Error loading performance metrics:', error);
@@ -639,8 +638,11 @@ export class PerformanceMonitor {
     try {
       const stored = localStorage.getItem(this.ALERTS_KEY);
       if (stored) {
-        const data = JSON.parse(stored);
-        this.alerts = data.map((a: any) => ({ ...a, timestamp: new Date(a.timestamp) }));
+        const data = JSON.parse(stored) as unknown;
+        this.alerts = (Array.isArray(data) ? data : []).map((a) => {
+          const raw = a as Partial<PerformanceAlert> & { timestamp: string | number | Date };
+          return { ...(raw as PerformanceAlert), timestamp: new Date(raw.timestamp) };
+        });
       }
     } catch (error) {
       console.error('Error loading performance alerts:', error);

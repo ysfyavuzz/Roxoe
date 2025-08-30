@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+
 import { useAlert } from "../../../components/AlertProvider";
-import { formatCurrency } from "../../../utils/vatUtils";
-import { CashRegisterStatus, CashTransactionType } from "../../../types/cashRegister";
 import { cashRegisterService } from "../../../services/cashRegisterDB";
 import { creditService } from "../../../services/creditServices";
+import { CashRegisterStatus, CashTransactionType, CashTransaction } from "../../../types/cashRegister";
+import { Customer } from "../../../types/credit";
 import eventBus from "../../../utils/eventBus";
+import { formatCurrency } from "../../../utils/vatUtils";
 
 export function useCashRegisterPage() {
   const { showSuccess, showError, confirm } = useAlert();
@@ -39,13 +41,13 @@ export function useCashRegisterPage() {
   const [countingInputAmount, setCountingInputAmount] = useState<string>("");
 
   // İşlem geçmişi ve yükleme
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<CashTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Veresiye tahsilatı
   const [showCreditCollectionModal, setShowCreditCollectionModal] = useState<boolean>(false);
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-  const [customers, setCustomers] = useState<any[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [customers, setCustomers] = useState<Customer[]>([]);
 
   // Türev değerler
   const theoreticalBalance = useMemo(() => {
@@ -276,7 +278,7 @@ export function useCashRegisterPage() {
 
   const handleCloseDay = useCallback(async () => {
     const confirmed = await confirm("Günü kapatmak istediğinize emin misiniz? Bu işlem geri alınamaz.");
-    if (!confirmed) return;
+    if (!confirmed) {return;}
 
     if (countingAmount === 0) {
       const proceedWithoutCounting = await confirm("Kasa sayımı yapılmamış. Sayım yapmadan devam etmek istiyor musunuz?");

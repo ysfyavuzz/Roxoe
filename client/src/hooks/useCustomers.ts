@@ -1,6 +1,7 @@
 // hooks/useCustomers.ts - Yeni fonksiyon ekleyelim
 
 import { useState, useEffect, useCallback } from "react";
+
 import { creditService } from "../services/creditServices";
 import { Customer } from "../types/credit";
 import { normalizedSearch } from "../utils/turkishSearch"; // normalizedSearch fonksiyonunu import edin
@@ -72,7 +73,7 @@ export function useCustomers() {
 
   // Müşteri arama (Türkçe karakter desteği ile)
   const searchCustomers = useCallback((term: string) => {
-    if (!term.trim()) return customers;
+    if (!term.trim()) {return customers;}
     
     return customers.filter(
       customer => 

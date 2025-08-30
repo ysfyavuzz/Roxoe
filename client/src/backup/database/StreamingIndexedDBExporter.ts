@@ -3,7 +3,7 @@
  * Veri çoğaldığında kasma sorununu çözüm için optimize edilmiştir
  */
 
-import { openDB, IDBPDatabase, IDBPTransaction } from 'idb';
+import { openDB, IDBPDatabase } from 'idb';
 
 export interface StreamingExportOptions {
   chunkSize?: number; // Her parçada kaç kayıt (varsayılan: 1000)
@@ -13,7 +13,7 @@ export interface StreamingExportOptions {
 }
 
 export interface StreamingExportResult {
-  databases: Record<string, any>;
+  databases: Record<string, Record<string, unknown[]>>;
   exportInfo: {
     databases: DatabaseExportInfo[];
     totalRecords: number;
@@ -28,6 +28,8 @@ export interface DatabaseExportInfo {
   recordCounts: Record<string, number>;
 }
 
+type SimpleCursor = { value: unknown; continue: () => Promise<unknown> } | null;
+
 export class StreamingIndexedDBExporter {
   private defaultChunkSize = 1000; // Bellek optimizasyonu için chunk boyutu
 
@@ -39,7 +41,7 @@ export class StreamingIndexedDBExporter {
     console.log('Streaming export başlatılıyor - büyük veri setleri için optimize edilmiş...');
     
     const databaseNames = ['posDB', 'salesDB', 'creditDB'];
-    const result: Record<string, any> = {};
+    const result: Record<string, Record<string, unknown[]>> = {};
     const dbInfoList: DatabaseExportInfo[] = [];
     let totalRecords = 0;
     
@@ -72,13 +74,13 @@ export class StreamingIndexedDBExporter {
   async exportDatabaseStreaming(
     dbName: string, 
     options?: StreamingExportOptions
-  ): Promise<{ data: Record<string, any[]>, info: DatabaseExportInfo }> {
+  ): Promise<{ data: Record<string, unknown[]>, info: DatabaseExportInfo }> {
     console.log(`${dbName} streaming export başlatılıyor...`);
     
     const db = await openDB(dbName);
     const storeNames = Array.from(db.objectStoreNames);
     
-    const data: Record<string, any[]> = {};
+    const data: Record<string, unknown[]> = {};
     const recordCounts: Record<string, number> = {};
     
     for (const storeName of storeNames) {
@@ -106,11 +108,11 @@ export class StreamingIndexedDBExporter {
     db: IDBPDatabase, 
     tableName: string, 
     options?: StreamingExportOptions
-  ): Promise<{ records: any[], count: number }> {
+  ): Promise<{ records: unknown[], count: number }> {
     console.log(`${tableName} tablosu streaming export başlatılıyor...`);
     
     const chunkSize = options?.chunkSize || this.defaultChunkSize;
-    const allRecords: any[] = [];
+    const allRecords: unknown[] = [];
     let totalCount = 0;
     let processedCount = 0;
 
@@ -126,10 +128,10 @@ export class StreamingIndexedDBExporter {
       // Cursor kullanarak kayıtları parçalar halinde işle
       const transaction = db.transaction(tableName, 'readonly');
       const objectStore = transaction.objectStore(tableName);
-      let cursor: any = await objectStore.openCursor();
+      let cursor: SimpleCursor = (await objectStore.openCursor()) as unknown as SimpleCursor;
 
       while (cursor) {
-        const chunk: any[] = [];
+        const chunk: unknown[] = [];
         let chunkCount = 0;
 
         // Bir chunk dolusu kayıt topla
@@ -140,7 +142,7 @@ export class StreamingIndexedDBExporter {
           processedCount++;
           
           // Sonraki kayıta geç
-          cursor = await cursor.continue();
+          cursor = (await (cursor as unknown as { continue: () => Promise<unknown> }).continue()) as unknown as SimpleCursor;
         }
 
         // Chunk'ı sonuçlara ekle
@@ -189,7 +191,7 @@ export class StreamingIndexedDBExporter {
   /**
    * Kayıtlardaki Date alanlarını işle
    */
-  private processDateFields(data: any): any {
+  private processDateFields(data: unknown): unknown {
     if (data === null || data === undefined) {
       return data;
     }
@@ -202,14 +204,15 @@ export class StreamingIndexedDBExporter {
     }
     
     if (Array.isArray(data)) {
-      return data.map(item => this.processDateFields(item));
+      return data.map((item) => this.processDateFields(item));
     }
     
     if (typeof data === 'object') {
-      const result: any = {};
-      for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(data, key)) {
-          result[key] = this.processDateFields(data[key]);
+      const result: Record<string, unknown> = {};
+      const obj = data as Record<string, unknown>;
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          result[key] = this.processDateFields(obj[key]);
         }
       }
       return result;

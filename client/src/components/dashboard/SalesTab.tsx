@@ -14,6 +14,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+
 import Card from "../ui/Card";
 
 interface SalesTabProps {

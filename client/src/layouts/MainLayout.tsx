@@ -1,6 +1,4 @@
 // MainLayout.tsx - Ana Layout Bileşeni
-import React, { ReactNode, useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import {
   Home,
   ShoppingCart,
@@ -22,9 +20,12 @@ import {
   ClipboardList,
   Search,
 } from "lucide-react";
-import { useNotifications } from "../contexts/NotificationContext";
-import NotificationPopup from "../components/NotificationPopup";
+import React, { ReactNode, useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import Icon from "../assets/icon.png"; 
+import NotificationPopup from "../components/NotificationPopup";
+import { useNotifications } from "../contexts/NotificationContext";
 
 // Sayfa başlıkları için arayüz
 interface PageTitle {
@@ -486,7 +487,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
 };
 
 const Backdrop = ({ isOpen, toggleSidebar }: BackdropProps) => {
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <div

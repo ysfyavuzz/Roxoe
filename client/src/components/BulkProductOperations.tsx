@@ -1,10 +1,11 @@
-import React, { useState } from "react";
 import { Upload, Download, AlertTriangle, FileDown, RefreshCw } from "lucide-react";
-import { Product } from "../types/product";
+import React, { useState } from "react";
+
+import { useAlert } from "../components/AlertProvider";
+import ColumnMappingModal from "../components/modals/ColumnMappingModal";
 import { importExportService } from "../services/importExportServices";
 import { productService } from "../services/productDB";
-import ColumnMappingModal from "../components/modals/ColumnMappingModal";
-import { useAlert } from "../components/AlertProvider";
+import { Product } from "../types/product";
 
 interface BulkProductOperationsProps {
   onImport: (products: Product[]) => void;
@@ -37,7 +38,7 @@ const BulkProductOperations: React.FC<BulkProductOperationsProps> = ({
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {return;}
 
     if (
       !file.name.endsWith(".xlsx") &&
@@ -193,7 +194,7 @@ const BulkProductOperations: React.FC<BulkProductOperationsProps> = ({
         // Show up to 3 examples of products being updated with their price changes
         const exampleCount = Math.min(3, updatedProducts.length);
         for (let i = 0; i < exampleCount; i++) {
-          const updated = updatedProducts[i];
+          const updated = updatedProducts[i]!;
           const existing = existingProductsMap.get(updated.barcode)!;
           
           // Format price change information

@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
 import { Search, Filter, RefreshCw, X, Loader2, Scan, CheckCircle, Tag, Settings, ChevronDown, XCircle } from "lucide-react";
+import React, { useEffect, useState, useRef } from "react";
 
 interface SearchFilterPanelProps {
   searchTerm: string;
@@ -160,7 +160,7 @@ const SearchFilterPanel: React.FC<SearchFilterPanelProps> = ({
   };
   
   // Filtre rengine bağlı CSS sınıflarını belirle
-  const getFilterTagClasses = (color: string) => {
+  const getFilterTagClasses = (color: string): string => {
     const colorMap: Record<string, {bg: string, text: string, hoverText: string}> = {
       'blue': {bg: 'bg-blue-50', text: 'text-blue-700', hoverText: 'hover:text-blue-600'},
       'emerald': {bg: 'bg-emerald-50', text: 'text-emerald-700', hoverText: 'hover:text-emerald-600'},
@@ -169,7 +169,7 @@ const SearchFilterPanel: React.FC<SearchFilterPanelProps> = ({
       'indigo': {bg: 'bg-indigo-50', text: 'text-indigo-700', hoverText: 'hover:text-indigo-600'},
     };
     
-    const colorClasses = colorMap[color] || colorMap.indigo;
+    const colorClasses = (colorMap[color] ?? colorMap.indigo) as { bg: string; text: string; hoverText: string };
     return `${colorClasses.bg} ${colorClasses.text}`;
   };
 
@@ -283,8 +283,8 @@ const SearchFilterPanel: React.FC<SearchFilterPanelProps> = ({
         <div className="flex flex-wrap gap-2 mt-4">
           {/* Filtreleri etiketler olarak göster */}
           {activeFilters.map((filter, index) => {
-            const color = filter.color || getFilterTagColor(filter.key);
-            const tagClasses = getFilterTagClasses(color);
+            const color: string = (filter.color || getFilterTagColor(filter.key)) as string;
+            const tagClasses = getFilterTagClasses(color as string);
             
             return (
               <span 

@@ -13,7 +13,7 @@ describe('[performance] arama benchmark', () => {
     const t0 = performance.now()
     let hits = 0
     for (let i = 0; i < names.length; i++) {
-      if (normalizedSearch(names[i], 'cig')) hits++
+      if (normalizedSearch(names[i] || '', 'cig')) {hits++}
     }
     const t1 = performance.now()
     // Hedef: < 600ms (CI ortamı için esnek)

@@ -1,8 +1,9 @@
 // hooks/useProducts.ts
 
 import { useState, useEffect, useMemo } from "react";
-import { Product, Category } from "../types/product";
+
 import { productService } from "../services/productDB";
+import { Product, Category } from "../types/product";
 import { normalizedSearch } from "../utils/turkishSearch";
 
 /**

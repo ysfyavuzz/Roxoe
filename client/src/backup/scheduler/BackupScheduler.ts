@@ -2,10 +2,12 @@
  * Otomatik yedeklemeyi yönetecek zamanlayıcı
  */
 
-import { BackupManager } from '../core/BackupManager';
 import fs from 'fs';
 import path from 'path';
+
 import { app } from 'electron';
+
+import { BackupManager } from '../core/BackupManager';
 
 export interface BackupSchedule {
   frequency: 'daily' | 'weekly' | 'monthly' | 'custom';

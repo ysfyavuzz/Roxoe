@@ -1,8 +1,9 @@
 // hooks/useSales.ts
 
 import { useState, useEffect } from "react";
-import { Sale } from "../types/sales";
+
 import { salesDB } from "../services/salesDB";
+import { Sale } from "../types/sales";
 
 /**
  * Satış kayıtlarını çekmek ve isterseniz belirli aralıklarla yenilemek için
@@ -31,7 +32,7 @@ export function useSales(autoRefreshInterval?: number) {
       intervalId = setInterval(loadSales, autoRefreshInterval);
     }
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      if (intervalId) {clearInterval(intervalId);}
     };
   }, [autoRefreshInterval]);
 

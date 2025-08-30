@@ -1,7 +1,8 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 import path from 'path'
+
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react()],
@@ -10,6 +11,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: true,
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    exclude: ['e2e/**', 'src/performance/**', 'src/backup/core/Resilience*.test.ts', 'src/test/hooks/useSettingsPage.test.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

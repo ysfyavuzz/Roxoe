@@ -1,6 +1,5 @@
 // pages/CreditPage.tsx
 
-import React, { useState, useEffect } from "react";
 import {
   DollarSign,
   Users,
@@ -9,24 +8,25 @@ import {
   UserPlus,
   Clock,
 } from "lucide-react";
-import { Customer, CreditTransaction } from "../types/credit";
-import CustomerList from "../components/ui/CustomerList";
+import React, { useState, useEffect } from "react";
+
+import { useAlert } from "../components/AlertProvider";
+import PageLayout from "../components/layout/PageLayout";
+import CustomerDetailModal from "../components/modals/CustomerDetailModal";
 import CustomerModal from "../components/modals/CustomerModal";
 import TransactionModal from "../components/modals/TransactionModal";
-import CustomerDetailModal from "../components/modals/CustomerDetailModal";
 import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import CustomerList from "../components/ui/CustomerList";
+import FilterPanel from "../components/ui/FilterPanel";
 import { Pagination } from "../components/ui/Pagination";
-import PageLayout from "../components/layout/PageLayout";
-import { useAlert } from "../components/AlertProvider";
 import { useCustomers } from "../hooks/useCustomers";
-import { creditService } from "../services/creditServices";
-import { CustomerSummary } from "../types/credit";
 import {
   cashRegisterService,
   CashTransactionType,
 } from "../services/cashRegisterDB"; // Kasa entegrasyonu için
-import Card from "../components/ui/Card";
-import FilterPanel from "../components/ui/FilterPanel";
+import { creditService } from "../services/creditServices";
+import { Customer, CreditTransaction, CustomerSummary } from "../types/credit";
 import { normalizedSearch } from "../utils/turkishSearch";
 
 // Yaklaşan vade için gün sayısı (örn: 7 gün içinde vadesi dolacaklar)
@@ -228,7 +228,7 @@ const CreditPage: React.FC = () => {
 
     // Ek filtreler
     if (filters.hasOverdue) {
-      result = result.filter((c) => summaries[c.id]?.overdueTransactions > 0);
+      result = result.filter((c) => (summaries[c.id]?.overdueTransactions ?? 0) > 0);
     }
     if (filters.hasDebt) {
       result = result.filter((c) => c.currentDebt > 0);
@@ -310,17 +310,18 @@ const CreditPage: React.FC = () => {
     description: string;
     dueDate?: Date;
   }) => {
-    if (!selectedTransactionCustomer) return;
+    if (!selectedTransactionCustomer) {return;}
     try {
       // 1. Veresiye işlemini kaydet
-      await creditService.addTransaction({
+      const txPayload: Omit<CreditTransaction, "id" | "status"> = {
         customerId: selectedTransactionCustomer.id,
         type: transactionType,
         amount: data.amount,
         date: new Date(),
-        dueDate: data.dueDate,
         description: data.description,
-      });
+        ...(data.dueDate ? { dueDate: data.dueDate } : {}),
+      };
+      await creditService.addTransaction(txPayload);
   
       // 2. Eğer ödeme işlemi ise, kasaya kaydet
       if (transactionType === "payment") {
@@ -641,7 +642,7 @@ const CreditPage: React.FC = () => {
           setSelectedCustomer(undefined);
         }}
         onSave={handleSaveCustomer}
-        customer={selectedCustomer}
+        {...(selectedCustomer ? { customer: selectedCustomer } : {})}
       />
 
       {/* İşlem Modalı */}

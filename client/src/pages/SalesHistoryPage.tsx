@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from "react";
 import {
   FileText,
   XCircle,
@@ -9,23 +8,24 @@ import {
   Percent,
   Tag,
 } from "lucide-react";
-import { Sale, SalesFilter, SalesSummary } from "../types/sales";
-import { salesDB } from "../services/salesDB";
-import ReasonModal from "../components/modals/ReasonModal";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { VatRate } from "../types/product";
-import { Table } from "../components/ui/Table";
-import { Column } from "../types/table";
-import { Pagination } from "../components/ui/Pagination";
+
 import { useAlert } from "../components/AlertProvider";
 import PageLayout from "../components/layout/PageLayout";
+import ReasonModal from "../components/modals/ReasonModal";
 // Eski bileşeni kaldırıp, yeni birleştirilmiş bileşeni import ediyoruz
 import FilterPanel from "../components/ui/FilterPanel";
+import { Pagination } from "../components/ui/Pagination";
+import { Table } from "../components/ui/Table";
 import {
   cashRegisterService,
   CashTransactionType,
 } from "../services/cashRegisterDB";
-import { SalesHelper } from "../types/sales";
+import { salesDB } from "../services/salesDB";
+import { VatRate } from "../types/product";
+import { Sale, SalesFilter, SalesSummary, SalesHelper } from "../types/sales";
+import { Column } from "../types/table";
 
 const SalesHistoryPage: React.FC = () => {
   const navigate = useNavigate();
@@ -249,10 +249,10 @@ const SalesHistoryPage: React.FC = () => {
     }
 
     // Min / Max Tutar
-    if (filter.minAmount != null) {
+if (filter.minAmount !== null && filter.minAmount !== undefined) {
       result = result.filter((sale) => sale.total >= filter.minAmount!);
     }
-    if (filter.maxAmount != null) {
+    if (filter.maxAmount !== null && filter.maxAmount !== undefined) {
       result = result.filter((sale) => sale.total <= filter.maxAmount!);
     }
 
@@ -373,7 +373,7 @@ const SalesHistoryPage: React.FC = () => {
   };
 
   const handleCancelConfirm = async (reason: string) => {
-    if (!selectedSaleId) return;
+    if (!selectedSaleId) {return;}
     try {
       // Önce satış bilgilerini alalım - fiyat bilgilerine ihtiyaç var
       const saleToCancel = await salesDB.getSaleById(selectedSaleId);
@@ -430,7 +430,7 @@ const SalesHistoryPage: React.FC = () => {
   };
 
   const handleRefundConfirm = async (reason: string) => {
-    if (!selectedSaleId) return;
+    if (!selectedSaleId) {return;}
     try {
       // Önce satış bilgilerini alalım - fiyat bilgilerine ihtiyaç var
       const saleToRefund = await salesDB.getSaleById(selectedSaleId);
@@ -529,7 +529,7 @@ const SalesHistoryPage: React.FC = () => {
           searchTerm={searchTerm}
           onSearchTermChange={setSearchTerm}
           filter={filter}
-          onFilterChange={setFilter}
+          onFilterChange={(f) => setFilter(f as SalesFilter)}
           onReset={resetFilters}
           isLoading={isLoading}
           onRefresh={handleRefresh}

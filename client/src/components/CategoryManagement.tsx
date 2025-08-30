@@ -1,10 +1,13 @@
-import React, { useState } from "react";
 import { Plus, Edit2, Trash2, AlertTriangle, X } from "lucide-react";
-import { Category } from "../types/product";
-import { productService } from "../services/productDB";
-import ColumnMappingModal from "./modals/ColumnMappingModal";
-// AlertProvider'dan gelen fonksiyonları import ediyoruz
+import React, { useState } from "react";
+
 import { useAlert } from "../components/AlertProvider";
+import { productService } from "../services/productDB";
+import { Category } from "../types/product";
+
+import ColumnMappingModal from "./modals/ColumnMappingModal";
+
+// AlertProvider'dan gelen fonksiyonları import ediyoruz
 
 interface CategoryManagementProps {
   categories: Category[];

@@ -2,13 +2,14 @@
  * .roxoe dosyasını veri yapısına dönüştürecek modül
  */
 
-import { CompressionUtils } from "../utils/compressionUtils";
 import { ChecksumUtils } from "../utils/checksumUtils";
+import { CompressionUtils } from "../utils/compressionUtils";
+
 import { BackupMetadata } from "./BackupSerializer";
 
 export interface DeserializedBackup {
   metadata: BackupMetadata;
-  data: any;
+  data: unknown;
   isValid: boolean;
   error?: string;
 }
@@ -85,12 +86,12 @@ export class BackupDeserializer {
   /**
    * JSON string'i parse eder ve ISO tarih formatında olan alanları Date objelerine dönüştürür
    */
-  private parseWithDateReviver(jsonString: string): any {
+  private parseWithDateReviver(jsonString: string): unknown {
     return JSON.parse(jsonString, (key, value) => {
       // ISO tarih formatını kontrol et
       if (
         typeof value === "string" &&
-        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(.\d{3})?Z$/.test(value)
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/.test(value)
       ) {
         return new Date(value);
       }
@@ -101,40 +102,39 @@ export class BackupDeserializer {
   /**
    * Özel işaretlenmiş Date nesnelerini geri yükler
    */
-  private restoreDataFromBackup(data: any): any {
+  private restoreDataFromBackup(data: unknown): unknown {
     if (data === null || data === undefined) {
       return data;
     }
 
     // Özel tarih nesnesini kontrol et (format: { __isDate: true, value: "ISO-string" })
-    if (
-      data &&
-      typeof data === "object" &&
-      data.__isDate === true &&
-      data.value
-    ) {
-      try {
-        const date = new Date(data.value);
-        // Debug için log
-        console.log(`Tarih dönüştürüldü: ${data.value} -> ${date}`);
-        return date;
-      } catch (e) {
-        console.error(`Tarih dönüştürme hatası:`, e, data);
-        return new Date(); // Fallback - geçerli tarih döndür
+    if (typeof data === "object") {
+      const marker = data as { __isDate?: unknown; value?: unknown };
+      if (marker.__isDate === true && typeof marker.value === "string") {
+        try {
+          const date = new Date(marker.value);
+          // Debug için log
+          console.log(`Tarih dönüştürüldü: ${marker.value} -> ${date}`);
+          return date;
+        } catch (e) {
+          console.error(`Tarih dönüştürme hatası:`, e, data);
+          return new Date(); // Fallback - geçerli tarih döndür
+        }
       }
     }
 
     // Dizi kontrolü
     if (Array.isArray(data)) {
-      return data.map((item) => this.restoreDataFromBackup(item));
+      return (data as unknown[]).map((item) => this.restoreDataFromBackup(item));
     }
 
     // Nesne kontrolü
     if (typeof data === "object") {
-      const result: any = {};
-      for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(data, key)) {
-          result[key] = this.restoreDataFromBackup(data[key]);
+      const src = data as Record<string, unknown>;
+      const result: Record<string, unknown> = {};
+      for (const key in src) {
+        if (Object.prototype.hasOwnProperty.call(src, key)) {
+          result[key] = this.restoreDataFromBackup(src[key]);
         }
       }
       return result;

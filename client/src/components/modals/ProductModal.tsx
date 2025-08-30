@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+
 import { Product, Category, VatRate } from "../../types/product";
 import { calculatePriceWithoutVat } from "../../utils/vatUtils";
 
@@ -59,7 +60,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     }
   }, [isOpen, product, categories]);
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -143,6 +144,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                       }
                       className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       placeholder="Ürün adı girin"
+                      data-testid="product-name-input"
                       required
                     />
                   </div>
@@ -178,6 +180,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                         }
                         className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="Barkod girin"
+                        data-testid="product-barcode-input"
                         required
                       />
                     </div>
@@ -205,6 +208,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                           }
                           className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                           placeholder="0.00"
+                          data-testid="product-purchase-price-input"
                           required
                         />
                         <div className="absolute inset-y-0 right-3 flex items-center text-gray-500">
@@ -251,6 +255,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                         }
                         className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="0.00"
+                        data-testid="product-sale-price-input"
                         required
                       />
                       <div className="absolute inset-y-0 right-3 flex items-center text-gray-500">
@@ -278,6 +283,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     placeholder="0"
                     min="0"
+                    data-testid="product-stock-input"
                     required
                   />
                 </div>
@@ -348,6 +354,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
             <button
               onClick={handleSubmit}
               className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              data-testid="product-save-button"
             >
               {product ? "Güncelle" : "Kaydet"}
             </button>

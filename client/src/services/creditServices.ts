@@ -1,13 +1,14 @@
 // creditService.ts
 import { openDB } from "idb";
-import { Customer, CreditTransaction, CustomerSummary } from "../types/credit";
+
 import DBVersionHelper from '../helpers/DBVersionHelper';
+import { Customer, CreditTransaction, CustomerSummary } from "../types/credit";
 
 const DB_NAME = "creditDB";
 
 class CreditService {
   private dbPromise = openDB(DB_NAME, DBVersionHelper.getVersion(DB_NAME), {
-    upgrade(db, oldVersion, newVersion) {
+    upgrade(db, oldVersion, newVersion, transaction) {
       console.log(`Upgrading ${DB_NAME} from ${oldVersion} to ${newVersion}`);
       
       if (!db.objectStoreNames.contains("customers")) {
@@ -17,6 +18,19 @@ class CreditService {
       if (!db.objectStoreNames.contains("transactions")) {
         db.createObjectStore("transactions", { keyPath: "id", autoIncrement: true });
         console.log("Created transactions store");
+      }
+
+      // Ensure useful indexes on transactions store
+      try {
+        const txStore = transaction.objectStore("transactions") as unknown as IDBObjectStore;
+        const idxNames = txStore.indexNames as unknown as DOMStringList;
+        if (!idxNames.contains("by_customer")) { txStore.createIndex("by_customer", "customerId", { unique: false }); }
+        if (!idxNames.contains("by_status")) { txStore.createIndex("by_status", "status", { unique: false }); }
+        if (!idxNames.contains("by_type")) { txStore.createIndex("by_type", "type", { unique: false }); }
+        if (!idxNames.contains("by_due")) { txStore.createIndex("by_due", "dueDate", { unique: false }); }
+        console.log("Ensured transaction indexes");
+      } catch (e) {
+        console.warn("Index creation skipped for transactions store", e);
       }
     },
   });
@@ -78,7 +92,7 @@ class CreditService {
     const db = await this.dbPromise;
     const existingCustomer = await this.getCustomerById(customerId);
 
-    if (!existingCustomer) return null;
+    if (!existingCustomer) {return null;}
 
     const updatedCustomer = { ...existingCustomer, ...updates };
     await db.put("customers", updatedCustomer);
@@ -90,7 +104,7 @@ class CreditService {
     const db = await this.dbPromise;
     const customer = await this.getCustomerById(customerId);
     
-    if (!customer) return false;
+    if (!customer) {return false;}
     
     // Müşterinin gerçek borç durumunu kontrol et
     if (customer.currentDebt > 0) {
@@ -131,10 +145,37 @@ class CreditService {
   }
 
   async getTransactionsByCustomerId(customerId: number): Promise<CreditTransaction[]> {
-    const transactions = await this.getAllTransactions();
-    return transactions
-      .filter((t) => t.customerId === customerId)
-      .sort((a, b) => b.date.getTime() - a.date.getTime());
+    const db = await this.dbPromise;
+    try {
+      const tx = db.transaction('transactions', 'readonly');
+      const store = tx.objectStore('transactions') as unknown as IDBObjectStore;
+      let items: CreditTransaction[];
+      const idxNames = store.indexNames as unknown as DOMStringList;
+      if (idxNames.contains('by_customer')) {
+        const idx = store.index('by_customer');
+        const raw = await (idx as unknown as { getAll: (query: unknown) => Promise<unknown[]> }).getAll(customerId);
+        items = (raw as CreditTransaction[]).map((transaction) => ({
+          ...transaction,
+          date: new Date(transaction.date),
+          dueDate: transaction.dueDate ? new Date(transaction.dueDate) : undefined,
+        })) as CreditTransaction[];
+      } else {
+        const all = await db.getAll('transactions');
+        items = (all as CreditTransaction[]).map((transaction) => ({
+          ...transaction,
+          date: new Date(transaction.date),
+          dueDate: transaction.dueDate ? new Date(transaction.dueDate) : undefined,
+        })) as CreditTransaction[];
+        items = items.filter((t) => t.customerId === customerId);
+      }
+      return items.sort((a, b) => b.date.getTime() - a.date.getTime());
+    } catch {
+      // Fallback
+      const transactions = await this.getAllTransactions();
+      return transactions
+        .filter((t) => t.customerId === customerId)
+        .sort((a, b) => b.date.getTime() - a.date.getTime());
+    }
   }
 
   // Ödeme işlemi yaparken borçları otomatik olarak işleyen yeni metot
@@ -161,7 +202,7 @@ class CreditService {
       const paidDebts = [];
       
       for (const debt of activeDebts) {
-        if (remainingPayment <= 0) break;
+        if (remainingPayment <= 0) {break;}
         
         // Bu borç ne kadar ödenebilir?
         const paymentForThisDebt = Math.min(debt.amount, remainingPayment);
@@ -207,7 +248,7 @@ class CreditService {
     const db = await this.dbPromise;
 
     const customer = await this.getCustomerById(transaction.customerId);
-    if (!customer) throw new Error("Müşteri bulunamadı");
+    if (!customer) {throw new Error("Müşteri bulunamadı");}
 
     // Borç ekleme işlemi için limit kontrolü
     if (transaction.type === "debt") {
@@ -246,7 +287,7 @@ class CreditService {
     const db = await this.dbPromise;
     const transaction = await db.get("transactions", transactionId);
 
-    if (!transaction) return null;
+    if (!transaction) {return null;}
 
     const updatedTransaction = { ...transaction, status };
     await db.put("transactions", updatedTransaction);
@@ -272,7 +313,7 @@ class CreditService {
       (sum, t) => sum + (t.discountAmount || 0), 0
     );
 
-    const summary: CustomerSummary = {
+    const summaryBase = {
       totalDebt: activeTransactions.reduce(
         (sum, t) => sum + (t.type === "debt" ? t.amount : -t.amount),
         0
@@ -280,17 +321,21 @@ class CreditService {
       totalOverdue: activeTransactions
         .filter((t) => t.status === "overdue")
         .reduce((sum, t) => sum + t.amount, 0),
-      lastTransactionDate: transactions[0]?.date,
       activeTransactions: activeTransactions.length,
       overdueTransactions: activeTransactions.filter(
         (t) => t.status === "overdue"
       ).length,
       // Eksik alanları ekle
       discountedSalesCount: discountedTransactions.length,
-      totalDiscount: totalDiscount
-    };
+      totalDiscount: totalDiscount,
+    } as CustomerSummary;
 
-    return summary;
+    const lastTxDate = transactions[0]?.date;
+    if (lastTxDate) {
+      summaryBase.lastTransactionDate = lastTxDate;
+    }
+
+    return summaryBase;
   }
 }
 

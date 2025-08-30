@@ -1,7 +1,8 @@
 // salesDB.ts
-import { Sale, DiscountInfo } from "../types/sales";
-import { discountService } from "../services/discountService";
 import DBVersionHelper from '../helpers/DBVersionHelper';
+import { discountService } from "../services/discountService";
+import { Sale, DiscountInfo } from "../types/sales";
+import { IndexTelemetry } from "../diagnostics/indexTelemetry";
 
 const DB_NAME = "salesDB";
 const STORE_NAME = "sales";
@@ -104,26 +105,99 @@ class SalesService {
     paymentMethod?: string;
     hasDiscount?: boolean;
   }): Promise<Sale[]> {
+    // Hızlı yol: indeksler mevcutsa daraltılmış okuma
+    try {
+      const db = await initSalesDB();
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const idxNames: DOMStringList | undefined = (store as unknown as { indexNames?: DOMStringList }).indexNames;
+
+      const needStatus = !!filter.status;
+      const needPayment = !!filter.paymentMethod;
+      const needDate = !!(filter.startDate || filter.endDate);
+
+      // Telemetri/log (indeks yoksa)
+      if (needStatus && !(idxNames && idxNames.contains('status'))) {
+        console.warn("[IndexedDB] 'sales.status' indeksi bulunamadı, filtre JS fallback ile uygulanacak.");
+        IndexTelemetry.recordFallback({ db: 'salesDB', store: 'sales', index: 'status', operation: 'query', reason: "index missing: 'status'" });
+      }
+      if (needPayment && !(idxNames && idxNames.contains('paymentMethod'))) {
+        console.warn("[IndexedDB] 'sales.paymentMethod' indeksi bulunamadı, filtre JS fallback ile uygulanacak.");
+        IndexTelemetry.recordFallback({ db: 'salesDB', store: 'sales', index: 'paymentMethod', operation: 'query', reason: "index missing: 'paymentMethod'" });
+      }
+      if (needDate && !(idxNames && idxNames.contains('date'))) {
+        console.warn("[IndexedDB] 'sales.date' indeksi bulunamadı, tarih aralığı JS fallback ile uygulanacak.");
+        IndexTelemetry.recordFallback({ db: 'salesDB', store: 'sales', index: 'date', operation: 'query', reason: "index missing: 'date'" });
+      }
+
+      // Eğer en az bir uygun indeks varsa, daraltılmış okuma yapalım
+      if (idxNames && (needStatus || needPayment || needDate)) {
+        let candidate: Sale[] | null = null
+
+        async function getAllFromIndex(indexName: string, query: IDBKeyRange | unknown): Promise<Sale[]> {
+          return new Promise((resolve, reject) => {
+            try {
+              const idx = store.index(indexName)
+              const req = (query instanceof IDBKeyRange) ? (idx as any).getAll(query) : (idx as any).getAll(query)
+              req.onsuccess = () => resolve((req.result || []) as Sale[])
+              req.onerror = () => reject(req.error)
+            } catch (e) {
+              reject(e)
+            }
+          })
+        }
+
+        if (needStatus && idxNames.contains('status')) {
+          const byStatus = await getAllFromIndex('status', filter.status as unknown)
+          candidate = byStatus
+        }
+        if (needPayment && idxNames.contains('paymentMethod')) {
+          const byPayment = await getAllFromIndex('paymentMethod', filter.paymentMethod as unknown)
+          candidate = candidate ? candidate.filter(s => byPayment.some(p => p.id === s.id)) : byPayment
+        }
+        if (needDate && idxNames.contains('date') && (filter.startDate || filter.endDate)) {
+          const range = IDBKeyRange.bound(
+            filter.startDate ?? new Date(0),
+            filter.endDate ? new Date(new Date(filter.endDate).setHours(23,59,59,999)) : new Date(8640000000000000)
+          )
+          const byDate = await getAllFromIndex('date', range)
+          candidate = candidate ? candidate.filter(s => byDate.some(p => p.id === s.id)) : byDate
+        }
+
+        // JS tarafında kalan filtreleri uygula (hasDiscount gibi)
+        if (candidate) {
+          return candidate.filter(sale => {
+            if (filter.hasDiscount === true && !sale.discount) {return false}
+            if (filter.hasDiscount === false && sale.discount) {return false}
+            return true
+          })
+        }
+      }
+    } catch (e) {
+      console.warn('[IndexedDB] salesDB indeks kontrolü veya hızlı yol hatası, JS fallback kullanılacak:', e)
+    }
+
+    // Yavaş ama güvenli yol: tüm kayıtları al ve filtrele
     const sales = await this.getAllSales();
     
     return sales.filter(sale => {
       // Tarih filtresi
-      if (filter.startDate && new Date(sale.date) < filter.startDate) return false;
+      if (filter.startDate && new Date(sale.date) < filter.startDate) {return false;}
       if (filter.endDate) {
         const endDateCopy = new Date(filter.endDate);
         endDateCopy.setHours(23, 59, 59, 999);
-        if (new Date(sale.date) > endDateCopy) return false;
+        if (new Date(sale.date) > endDateCopy) {return false;}
       }
       
       // Durum filtresi
-      if (filter.status && sale.status !== filter.status) return false;
+      if (filter.status && sale.status !== filter.status) {return false;}
       
       // Ödeme yöntemi filtresi
-      if (filter.paymentMethod && sale.paymentMethod !== filter.paymentMethod) return false;
+      if (filter.paymentMethod && sale.paymentMethod !== filter.paymentMethod) {return false;}
       
       // İndirim filtresi
-      if (filter.hasDiscount === true && !sale.discount) return false;
-      if (filter.hasDiscount === false && sale.discount) return false;
+      if (filter.hasDiscount === true && !sale.discount) {return false;}
+      if (filter.hasDiscount === false && sale.discount) {return false;}
       
       return true;
     });

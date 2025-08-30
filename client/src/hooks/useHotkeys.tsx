@@ -172,15 +172,15 @@ export const useHotkeys = ({
           // Hotkey ID eşleşmesini bul
           // Burada biraz tahmin gerekiyor çünkü hotkey objeleri ile savedHotkey objeleri arasında 
           // direkt bir ID ilişkisi yok. Kısayol açıklamasına veya fonksiyonuna göre eşleştirme yapılabilir.
-          if (h.id === "new_sale" && hotkey.callback.name.includes("startNewSale")) return true;
-          if (h.id === "payment" && hotkey.ctrlKey && hotkey.key === "p") return true;
-          if (h.id === "cancel" && hotkey.key === "Escape") return true;
-          if (h.id === "search_focus" && hotkey.ctrlKey && hotkey.key === "k") return true;
-          if (h.id === "new_tab" && hotkey.ctrlKey && hotkey.key === "t") return true;
-          if (h.id === "close_tab" && hotkey.ctrlKey && hotkey.key === "w") return true;
-          if (h.id === "switch_tab" && hotkey.ctrlKey && hotkey.key === "Tab") return true;
-          if (h.id === "quick_cash_payment" && hotkey.key === "F7") return true;
-          if (h.id === "quick_card_payment" && hotkey.key === "F8") return true;
+          if (h.id === "new_sale" && hotkey.callback.name.includes("startNewSale")) {return true;}
+          if (h.id === "payment" && hotkey.ctrlKey && hotkey.key === "p") {return true;}
+          if (h.id === "cancel" && hotkey.key === "Escape") {return true;}
+          if (h.id === "search_focus" && hotkey.ctrlKey && hotkey.key === "k") {return true;}
+          if (h.id === "new_tab" && hotkey.ctrlKey && hotkey.key === "t") {return true;}
+          if (h.id === "close_tab" && hotkey.ctrlKey && hotkey.key === "w") {return true;}
+          if (h.id === "switch_tab" && hotkey.ctrlKey && hotkey.key === "Tab") {return true;}
+          if (h.id === "quick_cash_payment" && hotkey.key === "F7") {return true;}
+          if (h.id === "quick_card_payment" && hotkey.key === "F8") {return true;}
           return false;
         });
         

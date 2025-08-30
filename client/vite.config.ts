@@ -1,8 +1,9 @@
-import { defineConfig } from 'vite'
 import path from 'node:path'
-import electron from 'vite-plugin-electron/simple'
+
 import react from '@vitejs/plugin-react'
 import dotenv from 'dotenv'
+import { defineConfig } from 'vite'
+import electron from 'vite-plugin-electron/simple'
 
 // .env dosyasını manuel yükle
 dotenv.config()
@@ -11,6 +12,13 @@ dotenv.config()
 export default defineConfig({
   build: {
     sourcemap: true,
+  },
+  resolve: {
+    alias: process.env.NODE_ENV === 'test' ? [
+      // Stub Electron/Node-heavy backup modules in web/E2E build
+      { find: /^\.{1,2}\/utils\/fileUtils$/, replacement: '/src/backup/utils/fileUtils.web.ts' },
+      { find: /^\.{1,2}\/scheduler\/BackupScheduler$/, replacement: '/src/backup/scheduler/BackupScheduler.web.ts' },
+    ] : [],
   },
   plugins: [
     react(),

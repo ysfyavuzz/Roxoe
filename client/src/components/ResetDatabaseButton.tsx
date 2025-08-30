@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
+
 import { resetDatabases } from '../services/productDB';
 
 const ResetDatabaseButton: React.FC = () => {
   const [resetting, setResetting] = useState(false);
 
   const handleResetDatabases = async () => {
-    if (resetting) return; // İşlem zaten devam ediyor
+    if (resetting) {return;} // İşlem zaten devam ediyor
     
     const confirmed = window.confirm(
       "Veritabanını sıfırlamak istediğinize emin misiniz? Bu işlem, tüm uygulama verilerini sıfırlayacaktır."
     );
     
-    if (!confirmed) return;
+    if (!confirmed) {return;}
     
     try {
       setResetting(true);

@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
-import { machineIdSync } from 'node-machine-id';
 import Store from 'electron-store';
+import { machineIdSync } from 'node-machine-id';
 
 interface SerialData {
   serialNo: string;
@@ -87,7 +87,7 @@ class SerialManager {
     ipcMain.handle('get-serial-info', async () => {
       try {
         const serialData = this.store.get('serialData');
-        if (!serialData) return { exists: false };
+        if (!serialData) {return { exists: false };}
         
         const currentMachineId = machineIdSync();
         if (currentMachineId !== serialData.machineId) {

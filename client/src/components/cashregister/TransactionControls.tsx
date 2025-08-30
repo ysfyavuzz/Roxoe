@@ -1,5 +1,4 @@
 // components/cashregister/TransactionControls.tsx
-import React from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -8,6 +7,7 @@ import {
   FileText,
   Settings
 } from "lucide-react";
+import React from "react";
 
 interface TransactionControlsProps {
   onShowDepositModal: () => void;

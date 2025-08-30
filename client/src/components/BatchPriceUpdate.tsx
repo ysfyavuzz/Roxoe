@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import { Calculator } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Product } from '../types/product';
 
 interface BatchPriceUpdateProps {
@@ -24,7 +25,7 @@ const BatchPriceUpdate: React.FC<BatchPriceUpdateProps> = ({
 
   const handleUpdate = () => {
     const numericValue = parseFloat(value);
-    if (isNaN(numericValue)) return;
+    if (isNaN(numericValue)) {return;}
 
     let productsToUpdate = [...products];
 

@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
-import useSettingsPage from '@/pages/settings/hooks/useSettingsPage'
+import { describe, it, expect } from 'vitest'
+
 import { AlertProvider } from '@/components/AlertProvider'
+import useSettingsPage from '@/pages/settings/hooks/useSettingsPage'
 
 // Wrapper to provide Alert context required by the hook
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (

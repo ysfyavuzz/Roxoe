@@ -1,8 +1,10 @@
-import React, { Suspense, lazy } from "react";
 import { RefreshCw } from "lucide-react";
+import React, { Suspense, lazy } from "react";
+
 import PageLayout from "../components/layout/PageLayout";
-import { CashRegisterStatus } from "../types/cashRegister";
 import { useRegisterStatus } from "../hooks/useRegisterStatus";
+import { CashRegisterStatus } from "../types/cashRegister";
+
 import { useCashRegisterPage } from "./cashregister/hooks/useCashRegisterPage";
 
 // Lazy loaded components
@@ -193,7 +195,7 @@ const CashRegisterPage: React.FC = () => {
             onCreditCollection={handleCreditCollection}
             customers={customers}
             selectedCustomer={selectedCustomer}
-            setSelectedCustomer={setSelectedCustomer}
+            setSelectedCustomer={(customer) => setSelectedCustomer(customer as React.SetStateAction<typeof selectedCustomer>)}
             showCountingModal={showCountingModal}
             setShowCountingModal={setShowCountingModal}
             onCounting={handleCounting}

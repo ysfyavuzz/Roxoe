@@ -1,5 +1,6 @@
-import React from "react";
 import { Tag, Package, DollarSign, LineChart } from "lucide-react";
+import React from "react";
+
 import { ActiveFilter } from "../../ui/FilterPanel";
 
 interface ProductsFilterPanelContentProps {
@@ -25,7 +26,7 @@ const ProductsFilterPanelContent: React.FC<ProductsFilterPanelContentProps> = ({
   onAddRevenue,
   onAddProfit,
 }) => {
-  if (!visible) return null;
+  if (!visible) {return null;}
 
   const getFilterValue = (key: string) => activeFilters.find(f => f.key === key)?.value || "";
 

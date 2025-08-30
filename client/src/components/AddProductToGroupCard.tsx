@@ -1,6 +1,6 @@
 // components/AddProductToGroupCard.tsx
-import React from 'react';
 import { Plus } from 'lucide-react';
+import React from 'react';
 
 interface AddProductToGroupCardProps {
   onAdd: () => void;

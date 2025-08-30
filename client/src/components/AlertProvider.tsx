@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  ReactNode,
-} from "react";
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   CheckCircle2,
   XCircle,
@@ -13,7 +7,13 @@ import {
   X,
   LucideIcon,
 } from "lucide-react";
-import { AnimatePresence, motion } from 'framer-motion';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
 
 // Alert Types
 type AlertType = "success" | "error" | "warning" | "info";
@@ -28,7 +28,7 @@ interface AlertStyle {
 }
 
 // Alert Interface
-interface Alert {
+interface AlertItem {
   id: string;
   message: string;
   type: AlertType;
@@ -54,12 +54,12 @@ interface AlertProviderProps {
 }
 
 interface AlertContainerProps {
-  alerts: Alert[];
+  alerts: AlertItem[];
   onRemove: (id: string) => void;
 }
 
 interface AlertComponentProps {
-  alert: Alert;
+  alert: AlertItem;
   onRemove: (id: string) => void;
 }
 
@@ -150,11 +150,11 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 };
 
 // Alert Component
-const Alert: React.FC<AlertComponentProps> = ({ alert, onRemove }) => {
+const AlertMessage: React.FC<AlertComponentProps> = ({ alert, onRemove }) => {
   const style = ALERT_STYLES[alert.type];
   const Icon = style.icon;
 
-  if (alert.isConfirm) return null;
+  if (alert.isConfirm) {return null;}
 
   return (
     <motion.div
@@ -194,9 +194,9 @@ const AlertContainer: React.FC<AlertContainerProps> = ({
       {/* Normal alerts container */}
       <div className="fixed top-4 right-4 space-y-2 min-w-[280px] max-w-[320px] p-2 z-[9998] pointer-events-none">
         <AnimatePresence>
-          {normalAlerts.map((alert) => (
+{normalAlerts.map((alert) => (
             <div key={alert.id} className="pointer-events-auto">
-              <Alert alert={alert} onRemove={onRemove} />
+              <AlertMessage alert={alert} onRemove={onRemove} />
             </div>
           ))}
         </AnimatePresence>
@@ -224,13 +224,13 @@ const AlertContainer: React.FC<AlertContainerProps> = ({
 
 // Alert Provider Component
 export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
-  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [alerts, setAlerts] = useState<AlertItem[]>([]);
 
   const addAlert = useCallback(
     (message: string, type: AlertType = "info", duration = 5000) => {
       const id = Math.random().toString(36).substring(7);
       setAlerts((prev) => [...prev, { id, message, type }]);
-      if (duration) setTimeout(() => removeAlert(id), duration);
+      if (duration) {setTimeout(() => removeAlert(id), duration);}
       return id;
     },
     []
@@ -315,7 +315,7 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
 export const useAlert = (): AlertContextType => {
   const context = useContext(AlertContext);
   if (!context)
-    throw new Error("useAlert must be used within an AlertProvider");
+    {throw new Error("useAlert must be used within an AlertProvider");}
   return context;
 };
 

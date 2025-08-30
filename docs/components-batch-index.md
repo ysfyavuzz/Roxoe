@@ -1,5 +1,7 @@
 # Components Batch Index — Tüm Batch’lerin Özeti
 
+Bağlantılar: [SUMMARY](SUMMARY.md) · [PROGRESS](PROGRESS.md)
+
 Son Güncelleme: 2025-08-28
 Metrik Kaynağı: docs/docs-metrics.json (generatedAt: 2025-08-28)
 

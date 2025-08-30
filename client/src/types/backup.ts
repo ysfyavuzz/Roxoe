@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/types/backup.ts
 
 // Yedek dosyası için meta veri yapısı

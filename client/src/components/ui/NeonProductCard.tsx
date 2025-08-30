@@ -1,6 +1,6 @@
-import React from "react";
 import clsx from "clsx";
 import { ShoppingCart, AlertTriangle, Tag, Plus, Minus } from "lucide-react";
+import React from "react";
 
 export interface CardProps {
   variant?: "product" | "addProduct";

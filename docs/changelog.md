@@ -110,3 +110,30 @@ Tarih: 2025-08-28
 - BILESENLER_TOPLU_1/5: BYPASS ve serial flag notları işlendi.
 - BILESENLER_TOPLU_13: Dokümantasyon/PR/Kitap/Media/Feature Flags referansları oluşturuldu.
 
+---
+
+Tarih: 2025-08-30
+Sürüm: 0.5.3 (E2E ve Diagnostics iyileştirmeleri)
+
+Öne çıkanlar
+- Diagnostics Tab: indeks önerileri için “Yenile” ve “Uygula” akışları onay diyaloğu ile güvence altına alındı; “dry-run” önizleme listesi eklendi.
+- RBAC/Guard: İndeks uygulama işlemi admin mod ile sınırlandı (VITE_ADMIN_MODE).
+- Telemetri: IndexedDB indeks fallback (index yokken) durumları kayıt altına alınıyor.
+- E2E: Playwright yapılandırması Vite preview ile güncellendi; test modu ortam bayrakları eklendi; yeni POS senaryoları ile kapsam genişletildi.
+
+Ayrıntılar
+- Playwright
+  - client/playwright.config.ts: webServer=`npm run preview`, baseURL=http://localhost:4173; env: NODE_ENV=test, VITE_LICENSE_BYPASS=true, VITE_ADMIN_MODE=true, VITE_E2E_MODE=true.
+  - Yeni/iyileştirilen E2E testleri: 
+    - e2e/pos-sale-flow.spec.ts: placeholder tabanlı seçiciler; arama öncesi "Tümü" grubu aktivasyonu.
+    - e2e/pos-cart-clear.spec.ts: ürünü iki kez sepete ekle, sepeti temizle ve onayla akışı.
+    - e2e/diagnostics.spec.ts ve e2e/backup-flow.spec.ts stabilize edildi.
+    - e2e/visual-regression.spec.ts varsayılan olarak skip.
+- Dokümantasyon
+  - README.md ve client/README.md: Testler/E2E bölümleri eklendi.
+  - WARP.md ve command-guide.md: Playwright ve E2E çalıştırma örnekleri genişletildi.
+  - Yeni: docs/testing/playwright-e2e.md
+- Performans Testi
+  - fake-indexeddb ile örnek kıyas testleri mevcut; süre nedeniyle CI’da skip.
+  - Komut: `npm run test:performance --prefix client`
+

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Save, X, AlertTriangle, Download } from "lucide-react";
 import ExcelJS from "exceljs";
+import { Save, X, AlertTriangle, Download } from "lucide-react";
 import Papa from "papaparse";
+import React, { useState, useEffect } from "react";
+
 import { Product, VatRate } from "../../types/product";
-import { calculatePriceWithoutVat } from "../../utils/vatUtils";
 import { parseTurkishNumber } from "../../utils/numberFormatUtils";
+import { calculatePriceWithoutVat } from "../../utils/vatUtils";
 
 interface ColumnMappingModalProps {
   isOpen: boolean;
@@ -71,7 +72,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
   const [mapping, setMapping] = useState<Record<SystemColumnKey, string>>(
     {} as Record<SystemColumnKey, string>
   );
-  const [previewData, setPreviewData] = useState<any[][]>([]);
+  const [previewData, setPreviewData] = useState<string[][]>([]);
   const [errors, setErrors] = useState<Record<SystemColumnKey, string>>(
     {} as Record<SystemColumnKey, string>
   );
@@ -81,7 +82,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
   const [importSummary, setImportSummary] = useState<ImportSummary | null>(null);
   const [allowPartialImport, setAllowPartialImport] = useState(true);
   const [showAllErrors, setShowAllErrors] = useState(false);
-  const [rawData, setRawData] = useState<Record<string, any>[]>([]);
+  const [rawData, setRawData] = useState<Record<string, unknown>[]>([]);
 
   useEffect(() => {
     if (file) {
@@ -173,7 +174,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
           .replace(/[öÖ]/g, 'o');
 
         Object.entries(SYSTEM_COLUMNS).forEach(([key, value]) => {
-          if (suggestedMapping[key as SystemColumnKey]) return; // Skip if already mapped
+          if (suggestedMapping[key as SystemColumnKey]) {return;} // Skip if already mapped
           
           const normalizedValue = value.toLowerCase()
             .replace(/\s+/g, '')
@@ -203,15 +204,17 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
 
     // Önce Worker ile dene
     try {
-      const headersResult = await new Promise<{ headers: string[]; previewRows: any[][] }>((resolve, reject) => {
+      const headersResult = await new Promise<{ headers: string[]; previewRows: string[][] }>((resolve, reject) => {
         const worker = new Worker(new URL("../../workers/importWorker.ts", import.meta.url), { type: "module" });
         worker.onmessage = (e: MessageEvent) => {
-          const msg = e.data as any;
-          if (msg?.type === "HEADERS") {
+          const data = e.data as unknown;
+          if (data && typeof data === 'object' && (data as { type?: string }).type === "HEADERS") {
+            const msg = data as { type: "HEADERS"; headers: string[]; previewRows: string[][] };
             resolve({ headers: msg.headers, previewRows: msg.previewRows });
             worker.terminate();
-          } else if (msg?.type === "ERROR") {
-            reject(new Error(msg.message));
+          } else if (data && typeof data === 'object' && (data as { type?: string }).type === "ERROR") {
+            const err = data as { type: "ERROR"; message: string };
+            reject(new Error(err.message));
             worker.terminate();
           }
         };
@@ -252,10 +255,11 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
         skipEmptyLines: true,
         complete: (results) => {
           if (results.data.length > 0) {
-            const headers = Object.keys(results.data[0]);
+            const firstRow = results.data[0] as Record<string, string>;
+            const headers = Object.keys(firstRow);
             setHeaders(headers);
             setPreviewData(
-              results.data.slice(0, 3).map((row) => headers.map((h) => row[h]))
+              results.data.slice(0, 3).map((row) => headers.map((h) => row[h] ?? ""))
             );
             suggestMapping(headers);
           } else {
@@ -277,10 +281,10 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
       await workbook.xlsx.load(arrayBuffer);
 
       const worksheet = workbook.getWorksheet(1);
-      if (!worksheet) throw new Error("Excel dosyası boş");
+      if (!worksheet) {throw new Error("Excel dosyası boş");}
 
       const headers: string[] = [];
-      const previewRows: any[][] = [];
+      const previewRows: string[][] = [];
 
       // Read headers
       const headerRow = worksheet.getRow(1);
@@ -299,7 +303,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
       // Read preview rows
       for (let rowNumber = 2; rowNumber <= 4; rowNumber++) {
         const row = worksheet.getRow(rowNumber);
-        const rowData: any[] = [];
+        const rowData: string[] = [];
         
         // Ensure we read all columns even if some cells are empty
         for (let colIndex = 0; colIndex < headers.length; colIndex++) {
@@ -325,17 +329,18 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
     }
   };
 
-  const cleanValue = (value: any): string => {
-    if (value === null || value === undefined) return "";
-    return value.toString().trim();
+  const cleanValue = (value: unknown): string => {
+    if (value === null || value === undefined) {return "";}
+    return String(value).trim();
   };
 
   // Bu fonksiyon parseNumber yerine kullanılacak ve Türkçe sayı formatını (2.065,42 gibi) doğru şekilde işleyecek
-  const parseNumberWithTurkishSupport = (value: any): number | null => {
-    if (value === null || value === undefined || value === "") return null;
+  const parseNumberWithTurkishSupport = (value: unknown): number | null => {
+    if (value === null || value === undefined || value === "") {return null;}
     
     // parseTurkishNumber fonksiyonunu kullan (utils/numberFormatUtils.ts'den import edilmiş)
-    const parsedNumber = parseTurkishNumber(value);
+    const input = typeof value === 'number' ? value : String(value);
+    const parsedNumber = parseTurkishNumber(input);
     
     // Log edilen değerlerin kontrol edilmesi için
     // console.log(`Parsing ${value} (${typeof value}): Result = ${parsedNumber}`);
@@ -343,8 +348,8 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
     return parsedNumber !== undefined ? parsedNumber : null;
   };
 
-  const normalizeVatRate = (value: any): VatRate | null => {
-    if (value === null || value === undefined || value === "") return null;
+  const normalizeVatRate = (value: unknown): VatRate | null => {
+    if (value === null || value === undefined || value === "") {return null;}
     
     // First, clean and normalize the value
     const cleaned = cleanValue(value)
@@ -359,7 +364,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
     
     // Try to convert to a number using the Turkish number parser
     const numValue = parseNumberWithTurkishSupport(cleaned);
-    if (numValue === null) return null;
+    if (numValue === null) {return null;}
     
     // Round to nearest valid VAT rate
     const validRates: VatRate[] = [0, 1, 8, 18, 20];
@@ -371,7 +376,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
   };
 
   const processRow = (
-    row: Record<string, any>,
+    row: Record<string, unknown>,
     rowIndex: number
   ): ProcessResult => {
     const warnings: string[] = [];
@@ -399,7 +404,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
   
       // Process each field with improved error handling
       for (const [systemField, fileField] of Object.entries(mapping)) {
-        if (!fileField) continue; // Skip unmapped fields
+        if (!fileField) {continue;} // Skip unmapped fields
         
         const rawValue = row[fileField];
   
@@ -587,10 +592,13 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
         stock: product.stock,
       };
       
-      return {
+      const out: ProcessResult = {
         product: completeProduct,
-        warning: warnings.length > 0 ? warnings.join("; ") : undefined
       };
+      if (warnings.length > 0) {
+        out.warning = warnings.join("; ");
+      }
+      return out;
     } catch (error) {
       return {
         product: null,
@@ -619,20 +627,22 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
     return isValid;
   };
 
-  const readAllData = async (): Promise<Record<string, any>[]> => {
+  const readAllData = async (): Promise<Record<string, unknown>[]> => {
     const fileType = file.name.endsWith(".csv") ? "csv" : "xlsx";
 
     // Önce Worker ile dene
     try {
-      const rows = await new Promise<Record<string, any>[]>((resolve, reject) => {
+      const rows = await new Promise<Record<string, unknown>[]>((resolve, reject) => {
         const worker = new Worker(new URL("../../workers/importWorker.ts", import.meta.url), { type: "module" });
         worker.onmessage = (e: MessageEvent) => {
-          const msg = e.data as any;
-          if (msg?.type === "ALL_ROWS") {
-            resolve(msg.rows as Record<string, any>[]);
+          const data = e.data as unknown;
+          if (data && typeof data === 'object' && (data as { type?: string }).type === "ALL_ROWS") {
+            const msg = data as { type: "ALL_ROWS"; rows: Record<string, unknown>[] };
+            resolve(msg.rows);
             worker.terminate();
-          } else if (msg?.type === "ERROR") {
-            reject(new Error(msg.message));
+          } else if (data && typeof data === 'object' && (data as { type?: string }).type === "ERROR") {
+            const err = data as { type: "ERROR"; message: string };
+            reject(new Error(err.message));
             worker.terminate();
           }
         };
@@ -662,19 +672,19 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
       await workbook.xlsx.load(arrayBuffer);
 
       const worksheet = workbook.getWorksheet(1);
-      if (!worksheet) throw new Error("Excel dosyası boş");
+      if (!worksheet) {throw new Error("Excel dosyası boş");}
 
       const headers = worksheet.getRow(1).values as string[];
       headers.shift(); // Remove the first empty cell
 
-      const data: Record<string, any>[] = [];
+      const data: Record<string, unknown>[] = [];
       
       worksheet.eachRow((row, rowNumber) => {
-        if (rowNumber === 1) return; // Skip header row
+        if (rowNumber === 1) {return;} // Skip header row
         
-        const rowData: Record<string, any> = {};
-        const values = row.values as any[];
-        values.shift(); // Remove the first empty cell
+        const rowData: Record<string, unknown> = {};
+        const values = row.values as unknown[];
+        (values as unknown[]).shift(); // Remove the first empty cell
         
         // Check if row is not empty
         if (values.some(val => val !== undefined && val !== null && val !== "")) {
@@ -692,7 +702,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
   };
 
   const handleImport = async () => {
-    if (!validateMapping()) return;
+    if (!validateMapping()) {return;}
 
     setIsProcessing(true);
     setProcessingErrors([]);
@@ -707,18 +717,24 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
         const worker = new Worker(new URL("../../workers/importWorker.ts", import.meta.url), { type: "module" });
         workerRef.current = worker;
         worker.onmessage = (e: MessageEvent) => {
-          const msg = e.data as any;
-          if (msg?.type === "PROGRESS") {
-            setProgress({ stage: msg.stage, current: msg.current, total: msg.total, percent: msg.percent });
-          } else if (msg?.type === "RESULT") {
+          const data = e.data as unknown;
+          if (data && typeof data === 'object' && (data as { type?: string }).type === "PROGRESS") {
+            const msg = data as { type: "PROGRESS"; stage: string; current: number; total?: number; percent?: number };
+            const next: { stage: string; current: number; total?: number; percent?: number } = { stage: msg.stage, current: msg.current };
+            if (typeof msg.total === 'number') { next.total = msg.total; }
+            if (typeof msg.percent === 'number') { next.percent = msg.percent; }
+            setProgress(next);
+          } else if (data && typeof data === 'object' && (data as { type?: string }).type === "RESULT") {
+            const msg = data as { type: "RESULT"; products: Product[]; summary: ImportSummary };
             worker.terminate();
             workerRef.current = null;
-            resolve({ products: msg.products as Product[], summary: msg.summary as ImportSummary });
-          } else if (msg?.type === "ERROR") {
+            resolve({ products: msg.products, summary: msg.summary });
+          } else if (data && typeof data === 'object' && (data as { type?: string }).type === "ERROR") {
+            const err = data as { type: "ERROR"; message: string };
             worker.terminate();
             workerRef.current = null;
-            reject(new Error(msg.message));
-          } else if (msg?.type === "CANCELED") {
+            reject(new Error(err.message));
+          } else if (data && typeof data === 'object' && (data as { type?: string }).type === "CANCELED") {
             worker.terminate();
             workerRef.current = null;
             reject(new Error("İşlem iptal edildi"));
@@ -764,17 +780,17 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
           if (result.product) {
             products.push(result.product);
             summary.success++;
-            if (result.warning) summary.warnings.push({ rowIndex: index + 2, message: result.warning });
+            if (result.warning) {summary.warnings.push({ rowIndex: index + 2, message: result.warning });}
           } else {
             summary.skipped++;
-            if (result.warning) summary.errors.push({ rowIndex: index + 2, message: result.warning });
+            if (result.warning) {summary.errors.push({ rowIndex: index + 2, message: result.warning });}
           }
         });
 
         setImportSummary(summary);
         if ((products.length > 0) && (allowPartialImport || products.length === rawData.length)) {
           onImport(products);
-          if (summary.skipped === 0) onClose();
+          if (summary.skipped === 0) {onClose();}
         } else if (products.length === 0) {
           setProcessingErrors(["Hiçbir ürün içe aktarılamadı. Lütfen veri formatını kontrol edin."]);
         }
@@ -790,7 +806,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
   };
 
   const generateErrorReport = () => {
-    if (!importSummary) return;
+    if (!importSummary) {return;}
     
     // Create CSV content
     const headers = ["Satır No", "Hata/Uyarı", "Veri"];
@@ -832,7 +848,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
     window.URL.revokeObjectURL(url);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   // Display a maximum of 10 errors by default
   const displayErrors = showAllErrors 
@@ -1047,7 +1063,7 @@ const ColumnMappingModal: React.FC<ColumnMappingModalProps> = ({
                   onClick={() => {
                     try {
                       workerRef.current?.postMessage({ type: 'CANCEL' });
-                    } catch {}
+                    } catch { /* ignore */ void 0; }
                   }}
                   className="px-4 py-2 border rounded-lg hover:bg-gray-50"
                 >

@@ -1,8 +1,9 @@
 // contexts/NotificationContext.tsx
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Product } from "../types/product";
+
 import { productService } from "../services/productDB";
+import { Product } from "../types/product";
 
 interface StockNotification {
   id: number;

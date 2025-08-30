@@ -1,13 +1,18 @@
-import { app, BrowserWindow, Menu, dialog, ipcMain } from "electron";
-import { createRequire } from "node:module";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
-import { autoUpdater } from "electron-updater";
-import log from "electron-log";
-import { backupManager, optimizedBackupManager, createSmartBackup, FileUtils } from "../src/backup";
 import fs from "fs";
-import { screen } from "electron";
+import { createRequire } from "node:module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import * as Sentry from "@sentry/electron/main";
+import { app, BrowserWindow, Menu, dialog, ipcMain, screen } from "electron";
+import log from "electron-log";
+import { autoUpdater } from "electron-updater";
+
+import { backupManager, optimizedBackupManager, createSmartBackup, FileUtils } from "../src/backup";
+
+import type { BackupCreateOptions, BackupResult, RestoreResult, UpdateProgressPayload, DbImportResponse } from "./ipcTypes";
+
+
 
 // Log ayarları
 log.transports.file.level = "info";
@@ -45,13 +50,14 @@ let closeConfirmed = false;
 const githubToken = process.env.GH_TOKEN;
 
 if (githubToken) {
-  autoUpdater.setFeedURL({
+  const feedOptions = {
     provider: "github",
     owner: "ysfyavuzz",
     repo: "Roxoe",
     token: githubToken,
     private: true,
-  } as any); // 'as any' ile geçici olarak type checking
+  } as unknown as Parameters<typeof autoUpdater.setFeedURL>[0];
+  autoUpdater.setFeedURL(feedOptions);
 
   log.info(
     "GitHub token ile güncelleme ayarları yapılandırıldı (delta güncellemeler etkin)"
@@ -806,8 +812,8 @@ ipcMain.on("test-quit-and-install", () => {
 // YEDEKLEME SİSTEMİ IPC İŞLEYİCİLERİ - OPTİMİZE EDİLMİŞ
 async function handleBackupCreation(
   event: Electron.IpcMainInvokeEvent,
-  options: any
-) {
+  options?: BackupCreateOptions
+): Promise<BackupResult> {
   try {
     log.info("Optimize edilmiş yedekleme isteği alındı:", options);
 
@@ -822,9 +828,10 @@ async function handleBackupCreation(
     };
 
     // Optimize edilmiş backup seçeneklerini hazırla
+    const backupType: 'full' | 'incremental' = options?.backupType === 'incremental' ? 'incremental' : 'full';
     const optimizedOptions = {
       description: options?.description || "Manuel Yedekleme - Optimize",
-      backupType: options?.backupType || "full",
+      backupType,
       onProgress: options?.onProgress || onProgress,
       isAutoBackup: options?.isAutoBackup === true,
       chunkSize: 1000 // Büyük veri setleri için chunk boyutu
@@ -843,13 +850,14 @@ async function handleBackupCreation(
     );
     
     return result;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
     log.error("Main: Optimize backup hatası:", error);
     return {
       success: false,
       backupId: "",
       metadata: {},
-      error: error.message || "Bilinmeyen hata",
+      error: errMsg,
     };
   }
 }
@@ -858,8 +866,8 @@ async function handleBackupCreation(
 async function handleBackupRestoration(
   event: Electron.IpcMainInvokeEvent,
   content: string,
-  options: any
-) {
+  options?: Record<string, unknown>
+): Promise<RestoreResult> {
   try {
     log.info("Renderer üzerinden geri yükleme isteği alındı");
 
@@ -890,7 +898,7 @@ async function handleBackupRestoration(
     // Renderer'a mesaj gönderip cevabını bekle
     return new Promise((resolve, reject) => {
       // İçe aktarma sonucu için bir kerelik dinleyici
-      ipcMain.once("db-import-response", async (_event, response) => {
+      ipcMain.once("db-import-response", async (_event, response: DbImportResponse) => {
         try {
           if (!response.success) {
             reject(new Error(response.error || "İçe aktarma başarısız"));
@@ -901,9 +909,9 @@ async function handleBackupRestoration(
 
           resolve({
             success: true,
-            metadata: deserializedData.metadata,
-          });
-        } catch (error: any) {
+            metadata: deserializedData.metadata as unknown as Record<string, unknown>,
+          } as RestoreResult);
+        } catch (error: unknown) {
           log.error("Geri yükleme işlemi hatası:", error);
           reject(error);
         }
@@ -912,16 +920,18 @@ async function handleBackupRestoration(
       try {
         // Base64 kodlanmış veriyi gönder
         event.sender.send("db-import-base64", base64Data);
-      } catch (error: any) {
-        log.error("Veri gönderme hatası:", error);
-        reject(new Error(`Veri gönderme hatası: ${error.message}`));
-      }
+    } catch (error: unknown) {
+      log.error("Veri gönderme hatası:", error);
+      const errMsg = error instanceof Error ? error.message : String(error);
+      reject(new Error(`Veri gönderme hatası: ${errMsg}`));
+    }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
     log.error("Main: Geri yükleme bridge hatası:", error);
     return {
       success: false,
-      error: error.message || "Bilinmeyen hata",
+      error: errMsg,
     };
   }
 }
@@ -937,13 +947,14 @@ ipcMain.handle("create-backup", async (event, options) => {
       "Eski create-backup API'si kullanılıyor. create-backup-bridge kullanın."
     );
     return await handleBackupCreation(event, options);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
     log.error("Yedekleme hatası (eski API):", error);
     return {
       success: false,
       backupId: "",
       metadata: {},
-      error: error.message,
+      error: errMsg,
     };
   }
 });
@@ -1006,11 +1017,12 @@ ipcMain.handle("restore-backup", async (event, content, options) => {
       "Eski restore-backup API'si kullanılıyor. restore-backup-bridge kullanın."
     );
     return await handleBackupRestoration(event, content, options);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
     log.error("Geri yükleme hatası (eski API):", error);
     return {
       success: false,
-      error: error.message,
+      error: errMsg,
     };
   }
 });
@@ -1020,7 +1032,7 @@ ipcMain.handle("get-backup-history", async () => {
   try {
     const history = backupManager.listBackups();
     return history;
-  } catch (error: any) {
+  } catch (error: unknown) {
     log.error("Yedek geçmişi alma hatası:", error);
     return [];
   }
@@ -1042,7 +1054,7 @@ ipcMain.handle(
   async (event, frequency, hour = 3, minute = 0) => {
     try {
       return backupManager.scheduleBackup(frequency, hour, minute);
-    } catch (error: any) {
+    } catch (error: unknown) {
       log.error("Zamanlama hatası:", error);
       return false;
     }
@@ -1052,7 +1064,7 @@ ipcMain.handle(
 ipcMain.handle("disable-scheduled-backup", async () => {
   try {
     return backupManager.disableScheduledBackup();
-  } catch (error: any) {
+  } catch (error: unknown) {
     log.error("Zamanlama iptal hatası:", error);
     return false;
   }
@@ -1065,8 +1077,9 @@ ipcMain.handle("test-auto-backup", async () => {
     // Gerekli verileri oluştur
     const exportedData = {
       exportInfo: {
-        databases: [{ name: "testDB", recordCounts: { testStore: 5 } }],
+        databases: [{ name: "testDB", version: 1, stores: ["testStore"], recordCounts: { testStore: 5 } }],
         totalRecords: 5,
+        timestamp: new Date().toISOString(),
       },
       databases: {
         testDB: { testStore: [{ id: 1, data: "test" }] },

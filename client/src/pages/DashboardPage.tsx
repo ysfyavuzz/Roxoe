@@ -2,22 +2,22 @@ import React, { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 // Dashboard Bileşenleri
-import OverviewTab from "../components/dashboard/OverviewTab";
 import CashTab from "../components/dashboard/CashTab";
-import SalesTab from "../components/dashboard/SalesTab";
+import OverviewTab from "../components/dashboard/OverviewTab";
 import ProductsTab from "../components/dashboard/ProductsTab";
+import SalesTab from "../components/dashboard/SalesTab";
+import ExportButton from "../components/ExportButton";
 import DateFilter from "../components/ui/DatePicker"; // Yeni DateFilter bileşeni
-
 // Hooks ve Servisler
-import { useDashboardSalesData } from "./dashboard/hooks/useDashboardSalesData";
-import { useCashDashboardData } from "./dashboard/hooks/useCashDashboardData";
 import {
   cashRegisterService,
   CashRegisterSession,
 } from "../services/cashRegisterDB";
 import { exportService } from "../services/exportSevices";
-import ExportButton from "../components/ExportButton";
 import { CashTransaction } from "../types/cashRegister";
+
+import { useCashDashboardData } from "./dashboard/hooks/useCashDashboardData";
+import { useDashboardSalesData } from "./dashboard/hooks/useDashboardSalesData";
 
 // Dashboard sekme tipleri
 type DashboardTabKey = "overview" | "cash" | "sales" | "products";
@@ -71,7 +71,7 @@ const DashboardPage: React.FC = () => {
 
   // Kapanmış oturumları sıralayan useMemo
   const sortedClosedSessions = useMemo(() => {
-    let sessions = [...closedSessions];
+    const sessions = [...closedSessions];
     if (cashSortConfig) {
       sessions.sort((a, b) => {
         const key = cashSortConfig.key;
@@ -97,8 +97,8 @@ const DashboardPage: React.FC = () => {
         }
         aVal = String(aVal).toLowerCase();
         bVal = String(bVal).toLowerCase();
-        if (aVal < bVal) return cashSortConfig.direction === "asc" ? -1 : 1;
-        if (aVal > bVal) return cashSortConfig.direction === "asc" ? 1 : -1;
+        if (aVal < bVal) {return cashSortConfig.direction === "asc" ? -1 : 1;}
+        if (aVal > bVal) {return cashSortConfig.direction === "asc" ? 1 : -1;}
         return 0;
       });
     }
@@ -218,7 +218,7 @@ const DashboardPage: React.FC = () => {
 
   // Tarih formatını güzelleştiren yardımcı fonksiyon
   const formatDate = (date: Date | string | undefined) => {
-    if (!date) return "-";
+    if (!date) {return "-";}
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "short",

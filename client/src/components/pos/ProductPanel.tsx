@@ -1,11 +1,13 @@
 // components/pos/ProductPanel.tsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Plus } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { FixedSizeList as List, ListChildComponentProps, FixedSizeGrid as Grid, GridChildComponentProps } from "react-window";
+
+import { Product, ProductGroup } from "../../types/product";
+import { formatCurrency } from "../../utils/vatUtils";
 import ProductGroupTabs from "../ProductGroupTabs";
 import Card from "../ui/Card";
-import { formatCurrency } from "../../utils/vatUtils";
-import { Product, ProductGroup } from "../../types/product";
-import { FixedSizeList as List, ListChildComponentProps, FixedSizeGrid as Grid, GridChildComponentProps } from "react-window";
+
 
 interface ProductPanelProps {
   // Product Groups
@@ -203,8 +205,8 @@ const ProductListView: React.FC<{
   const ITEM_SIZE = 64; // px
   const THRESHOLD = 100;
 
-  const Row = ({ index, style }: ListChildComponentProps) => {
-    const product = products[index] as Product;
+  const Row = ({ index, style, data }: ListChildComponentProps<Product[]>) => {
+    const product = data[index] as Product;
     return (
       <div
         style={style}
@@ -376,6 +378,7 @@ const ProductListView: React.FC<{
           itemSize={ITEM_SIZE}
           width={"100%"}
           className="divide-y"
+          itemData={products}
         >
           {Row}
         </List>
@@ -383,7 +386,7 @@ const ProductListView: React.FC<{
         <div className="divide-y">
           {products.map((_, idx) => (
             // Row bileşenini aynı görünümle kullanıyoruz
-            <Row key={(products[idx] as Product).id} index={idx} style={{}} />
+            <Row key={(products[idx] as Product).id} index={idx} style={{}} data={products} />
           ))}
         </div>
       )}
@@ -451,7 +454,7 @@ function useElementSize<T extends HTMLElement>() {
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current) {return;}
     const el = ref.current;
     const obs = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -501,8 +504,8 @@ const ProductGridVirtualized: React.FC<{
 
   const Cell = ({ columnIndex, rowIndex, style }: GridChildComponentProps) => {
     const index = rowIndex * columnCount + columnIndex;
-    if (index >= products.length) return null;
-    const product = products[index];
+    if (index >= products.length) {return null;}
+    const product = products[index] as Product;
 
     const inGroup = !!productGroups
       .find((g) => g.id === activeGroupId)

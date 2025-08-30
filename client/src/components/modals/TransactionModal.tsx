@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import { X, AlertTriangle, Calendar, DollarSign } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Customer } from '../../types/credit';
 
 interface TransactionModalProps {
@@ -55,11 +56,14 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
       }
     }
 
-    onSave({
+    const payload: { amount: number; description: string; dueDate?: Date } = {
       amount: numAmount,
       description,
-      dueDate: dueDate ? new Date(dueDate) : undefined
-    });
+    };
+    if (dueDate) {
+      payload.dueDate = new Date(dueDate);
+    }
+    onSave(payload);
 
     // Formu temizle
     setAmount('');
@@ -67,7 +71,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
     setDueDate('');
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">

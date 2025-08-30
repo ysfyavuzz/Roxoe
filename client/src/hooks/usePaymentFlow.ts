@@ -1,18 +1,21 @@
 import { useCallback } from "react";
-import { PaymentMethod } from "../types/pos";
-import { Sale } from "../types/sales";
-import { salesDB } from "../services/salesDB";
+
 import { cashRegisterService } from "../services/cashRegisterDB";
 import { creditService } from "../services/creditServices";
 import { productService } from "../services/productDB";
+import { salesDB } from "../services/salesDB";
+import { Customer } from "../types/credit";
+import { PaymentMethod, PaymentResult, CartItem } from "../types/pos";
+import { Product } from "../types/product";
+import { Sale } from "../types/sales";
 
 interface UsePaymentFlowParams {
-  activeTab: { cart: any[] } | undefined;
+  activeTab: { cart: CartItem[] } | undefined;
   cartTotals: { subtotal: number; vatAmount: number; total: number };
-  products: any[];
-  selectedCustomer: any | null;
+  products: Product[];
+  selectedCustomer: Customer | null;
   clearCart: () => void;
-  setSelectedCustomer: (c: any | null) => void;
+  setSelectedCustomer: (c: Customer | null) => void;
   showSuccess: (msg: string) => void;
   showError: (msg: string) => void;
 }
@@ -27,8 +30,8 @@ export function usePaymentFlow({
   showSuccess,
   showError,
 }: UsePaymentFlowParams) {
-  const handlePaymentComplete = useCallback(async (paymentResult: any) => {
-    if (!activeTab) return;
+  const handlePaymentComplete = useCallback(async (paymentResult: PaymentResult) => {
+    if (!activeTab) {return;}
     const { subtotal, vatAmount, total } = cartTotals;
 
     let paymentMethodForSale: PaymentMethod = "nakit";
@@ -53,11 +56,11 @@ export function usePaymentFlow({
       splitDetails = {
         productPayments: paymentResult.productPayments || [],
         equalPayments: paymentResult.equalPayments || [],
-      } as any;
+      } as Sale["splitDetails"];
     }
 
     const saleData: Omit<Sale, "id"> = {
-      items: activeTab.cart.map((item: any) => ({
+      items: activeTab.cart.map((item: CartItem) => ({
         ...item,
         salePrice: item.salePrice,
         priceWithVat: item.priceWithVat,
@@ -173,8 +176,8 @@ export function usePaymentFlow({
       clearCart();
       setSelectedCustomer(null);
 
-      products.forEach((product: any) => {
-        const cartItem = activeTab.cart.find((item: any) => item.id === product.id);
+      products.forEach((product: Product) => {
+        const cartItem = activeTab.cart.find((item: CartItem) => item.id === product.id);
         if (cartItem) {
           product.stock -= cartItem.quantity;
         }

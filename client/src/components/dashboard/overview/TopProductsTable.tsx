@@ -1,6 +1,7 @@
 import React from "react";
-import { Table } from "../../ui/Table";
+
 import type { ProductStats } from "../../../types/product";
+import { Table } from "../../ui/Table";
 
 interface TopProductsTableProps {
   productStats: ProductStats[];

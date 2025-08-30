@@ -3,15 +3,17 @@
  * Integrates all future improvement features into the Settings page
  */
 
-import React, { useState, useEffect } from 'react';
 import { 
   Brain, Cloud, Smartphone, Zap, TrendingUp, Settings, 
   CheckCircle, AlertTriangle, Activity, Database
 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
 import { aiIndexAnalyzer } from '../services/AIIndexAnalyzer';
+import { cloudSyncManager } from '../services/CloudSyncManager';
 import { smartArchiveManager } from '../services/SmartArchiveManager';
 import { mobilePerformanceOptimizer } from '../utils/MobilePerformanceOptimizer';
-import { cloudSyncManager } from '../services/CloudSyncManager';
+
 import { PerformanceDashboard } from './PerformanceDashboard';
 
 interface AdvancedFeatureStatus {
@@ -266,17 +268,17 @@ export const AdvancedFeaturesTab: React.FC = () => {
       {/* Feature Navigation */}
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
-          {[
+          {([
             { key: 'overview', label: 'Overview', icon: Activity },
             { key: 'ai', label: 'AI Optimizer', icon: Brain },
             { key: 'archiving', label: 'Smart Archiving', icon: Database },
             { key: 'mobile', label: 'Mobile Optimization', icon: Smartphone },
             { key: 'cloud', label: 'Cloud Sync', icon: Cloud },
             { key: 'dashboard', label: 'Performance Dashboard', icon: TrendingUp }
-          ].map(({ key, label, icon: Icon }) => (
+          ] as const).map(({ key, label, icon: Icon }) => (
             <button
               key={key}
-              onClick={() => setActiveFeature(key as any)}
+              onClick={() => setActiveFeature(key)}
               className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                 activeFeature === key
                   ? 'border-blue-500 text-blue-600'

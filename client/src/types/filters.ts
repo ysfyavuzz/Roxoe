@@ -7,7 +7,7 @@ export interface SalesFilter {
     minAmount?: number;
     maxAmount?: number;
     hasDiscount?: boolean;
-    [key: string]: any;
+    [key: string]: unknown;
   }
   
   export interface ActiveFilter {

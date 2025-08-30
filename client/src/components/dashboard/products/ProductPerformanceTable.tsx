@@ -1,8 +1,9 @@
-import React from "react";
-import { Table } from "../../ui/Table";
-import { Pagination } from "../../ui/Pagination";
-import type { ProductStats } from "../../../types/product";
 import { Download } from "lucide-react";
+import React from "react";
+
+import type { ProductStats } from "../../../types/product";
+import { Pagination } from "../../ui/Pagination";
+import { Table } from "../../ui/Table";
 
 interface ProductPerformanceTableProps {
   currentProducts: ProductStats[];

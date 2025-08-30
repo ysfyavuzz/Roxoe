@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
 import { Download, ChevronDown } from 'lucide-react';
-import { exportService } from '../services/exportSevices'; // Doğru dosya yolu
-import { Sale } from '../types/sales';
-import { ProductStats } from '../types/product';
-import { CashRegisterSession, CashTransaction } from '../types/cashRegister'; // Doğru tip tanımlamaları
+import React, { useState, useEffect } from 'react';
+
 import { cashRegisterService } from '../services/cashRegisterDB';
+import { exportService } from '../services/exportSevices'; // Doğru dosya yolu
+import { CashRegisterSession, CashTransaction } from '../types/cashRegister'; // Doğru tip tanımlamaları
+import { ProductStats } from '../types/product';
+import { Sale } from '../types/sales';
 
 // Dışa aktarma tiplerini tanımlayalım
 export type FileType = 'excel' | 'pdf';
@@ -78,7 +79,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({
 const handleExport = async (fileType: FileType, reportType: ReportType) => {
   setShowExportMenu(false);
 
-  if (isLoading) return;
+  if (isLoading) {return;}
 
   try {
     const dateRangeString = exportService.formatDateRange(startDate, endDate);

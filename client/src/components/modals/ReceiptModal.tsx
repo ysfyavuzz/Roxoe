@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
 import { Printer, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
+import { receiptService } from "../../services/receiptService";
 import {
   ReceiptConfig,
   ReceiptInfo,
   ReceiptModalProps,
 } from "../../types/receipt";
 import { formatCurrency, formatVatRate } from "../../utils/vatUtils";
-import { receiptService } from "../../services/receiptService";
 
 const ReceiptModal: React.FC<ReceiptModalProps> = ({
   isOpen,
@@ -37,7 +38,7 @@ const ReceiptModal: React.FC<ReceiptModalProps> = ({
     }
   }, []);
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   const handlePrint = async () => {
     try {

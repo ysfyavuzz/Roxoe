@@ -1,5 +1,6 @@
 // src/components/LicenseActivation.tsx (SerialActivation implementation)
 import React, { useState } from 'react';
+
 import { useAlert } from "./AlertProvider";
 
 interface SerialActivationProps {

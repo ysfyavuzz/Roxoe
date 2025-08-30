@@ -1,5 +1,5 @@
-import React from "react";
 import { Filter, RefreshCw } from "lucide-react";
+import React from "react";
 
 interface POSHeaderProps {
   isRegisterOpen: boolean;

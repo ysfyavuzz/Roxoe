@@ -15,11 +15,40 @@ export interface CloudConfig {
   maxBackupSize: number; // MB
 }
 
+export interface PerformanceMetric {
+  timestamp: string;
+  queryTime: number;
+  database: string;
+  operation: string;
+  deviceId: string;
+}
+
+export interface OptimizationRecord {
+  timestamp: string;
+  type: 'index_optimization';
+  table: string;
+  improvement: number;
+  deviceId: string;
+}
+
+export interface ArchivingRule {
+  ruleId: string;
+  name: string;
+  criteria: string;
+  lastRun?: string;
+}
+
+export interface SettingsData {
+  cloudSync: CloudConfig;
+  lastUpdate: string;
+  deviceId: string;
+}
+
 export interface SyncData {
-  performanceMetrics: any[];
-  indexOptimizations: any[];
-  archivingRules: any[];
-  settings: any;
+  performanceMetrics: PerformanceMetric[];
+  indexOptimizations: OptimizationRecord[];
+  archivingRules: ArchivingRule[];
+  settings: SettingsData;
   lastSync: Date;
   deviceId: string;
   version: string;
@@ -123,7 +152,7 @@ export class CloudSyncManager {
    */
   private generateDeviceId(): string {
     const stored = localStorage.getItem('deviceId');
-    if (stored) return stored;
+    if (stored) {return stored;}
     
     const deviceId = 'RoxoePOS_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
     localStorage.setItem('deviceId', deviceId);
@@ -256,7 +285,11 @@ export class CloudSyncManager {
       performanceMetrics: [],
       indexOptimizations: [],
       archivingRules: [],
-      settings: {},
+      settings: {
+        cloudSync: this.config,
+        lastUpdate: new Date().toISOString(),
+        deviceId: this.deviceId
+      },
       lastSync: new Date(),
       deviceId: this.deviceId,
       version: '0.5.3'
@@ -283,7 +316,7 @@ export class CloudSyncManager {
   /**
    * Gets performance metrics for sync
    */
-  private async getPerformanceMetrics(): Promise<any[]> {
+  private async getPerformanceMetrics(): Promise<PerformanceMetric[]> {
     // This would collect actual performance data
     return [
       {
@@ -299,7 +332,7 @@ export class CloudSyncManager {
   /**
    * Gets optimization data for sync
    */
-  private async getOptimizationData(): Promise<any[]> {
+  private async getOptimizationData(): Promise<OptimizationRecord[]> {
     return [
       {
         timestamp: new Date().toISOString(),
@@ -314,7 +347,7 @@ export class CloudSyncManager {
   /**
    * Gets settings data for sync
    */
-  private async getSettingsData(): Promise<any> {
+  private async getSettingsData(): Promise<SettingsData> {
     return {
       cloudSync: this.config,
       lastUpdate: new Date().toISOString(),

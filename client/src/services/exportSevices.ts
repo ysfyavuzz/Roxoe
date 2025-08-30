@@ -1,12 +1,13 @@
-import { Sale } from "../types/sales";
 import ExcelJS from "exceljs";
-import { getPaymentMethodDisplay } from "../helpers/paymentMethodDisplay";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+
+import { getPaymentMethodDisplay } from "../helpers/paymentMethodDisplay";
 import {
   CashTransaction,
   CashTransactionType,
   CashRegisterSession,
 } from "../types/cashRegister";
+import { Sale } from "../types/sales";
 
 // Fiş bazlı rapor için interface
 interface SaleReportData {
@@ -68,6 +69,12 @@ interface CashExportData {
 type ReportType = "sale" | "product" | "cash";
 
 class ExportService {
+  // Güvenli opsiyonel string alma yardımcı metodu
+  private getOptionalString(obj: object, key: string): string | undefined {
+    const value = (obj as Record<string, unknown>)[key];
+    return typeof value === "string" ? value : undefined;
+  }
+
   // Fiş bazlı veri hazırlama
   private prepareSaleData(sales: Sale[]): SaleReportData[] {
     return sales.map((sale) => ({
@@ -91,7 +98,7 @@ class ExportService {
   // Ürün bazlı veri hazırlama
   private prepareProductData(sales: Sale[]): ProductReportData[] {
     const productStats = sales.reduce((acc, sale) => {
-      if (sale.status !== "completed") return acc; // Sadece tamamlanan satışları dahil et
+      if (sale.status !== "completed") {return acc;} // Sadece tamamlanan satışları dahil et
 
       sale.items.forEach((item) => {
         if (!acc[item.name]) {
@@ -108,11 +115,11 @@ class ExportService {
           };
         }
 
-        acc[item.name]["Satış Adedi"] += item.quantity;
-        acc[item.name]["Toplam Ciro"] += item.priceWithVat * item.quantity;
+        const entry = acc[item.name]!;
+        entry["Satış Adedi"] += item.quantity;
+        entry["Toplam Ciro"] += item.priceWithVat * item.quantity;
         // KDV'li fiyat ile alış fiyatı arasındaki fark üzerinden kar hesaplanmalı
-        acc[item.name]["Toplam Kâr"] +=
-          (item.priceWithVat - item.purchasePrice) * item.quantity;
+        entry["Toplam Kâr"] += (item.priceWithVat - item.purchasePrice) * item.quantity;
       });
       return acc;
     }, {} as Record<string, ProductReportData>);
@@ -128,16 +135,16 @@ class ExportService {
   // Kasa verilerini Excel formatına export etme - GELİŞTİRİLMİŞ VERSİYON
   async exportCashDataToExcel(data: CashExportData, title: string) {
     // Eksik verilere karşı koruma
-    if (!data.dailyData || !Array.isArray(data.dailyData)) data.dailyData = [];
+    if (!data.dailyData || !Array.isArray(data.dailyData)) {data.dailyData = [];}
     if (!data.transactions || !Array.isArray(data.transactions))
-      data.transactions = [];
+      {data.transactions = [];}
     if (!data.closedSessions || !Array.isArray(data.closedSessions))
-      data.closedSessions = [];
+      {data.closedSessions = [];}
     if (!data.veresiyeTransactions || !Array.isArray(data.veresiyeTransactions))
-      data.veresiyeTransactions = [];
-    if (!data.salesData || !Array.isArray(data.salesData)) data.salesData = [];
+      {data.veresiyeTransactions = [];}
+    if (!data.salesData || !Array.isArray(data.salesData)) {data.salesData = [];}
     if (!data.productSummary || !Array.isArray(data.productSummary))
-      data.productSummary = [];
+      {data.productSummary = [];}
 
     console.log("Excel'e aktarılacak veri boyutları:");
     console.log("- Günlük veriler:", data.dailyData.length);
@@ -527,10 +534,10 @@ class ExportService {
 
         // Geçici özellikleri kontrol et ve kullan
         const formattedDate =
-          (transaction as any).formattedDate ||
+          this.getOptionalString(transaction, "formattedDate") ??
           new Date(transaction.date).toLocaleString("tr-TR");
         const sessionName =
-          (transaction as any).sessionName || "Oturum Bilgisi Yok";
+          this.getOptionalString(transaction, "sessionName") ?? "Oturum Bilgisi Yok";
 
         // Satır oluştur
         const row = transactionsSheet.addRow([
@@ -837,7 +844,7 @@ class ExportService {
 
         // Geçici özellikleri kontrol et ve kullan
         const formattedDate =
-          (transaction as any).formattedDate ||
+          this.getOptionalString(transaction, "formattedDate") ??
           new Date(transaction.date).toLocaleString("tr-TR");
 
         // Satır oluştur
@@ -947,8 +954,8 @@ class ExportService {
             };
           }
 
-          summary[customerName].count++;
-          summary[customerName].total += tx.amount;
+          summary[customerName]!.count++;
+          summary[customerName]!.total += tx.amount;
 
           return summary;
         },

@@ -9,7 +9,7 @@ interface CashMovementsChartProps {
 const CashMovementsChart: React.FC<CashMovementsChartProps> = ({ dailyData, period }) => {
   const isSameDay = (dateStr: string) => dateStr.includes(":");
   const formatXAxis = (value: string) => {
-    if (isSameDay(value)) return value;
+    if (isSameDay(value)) {return value;}
     return new Date(value).toLocaleDateString("tr-TR", { day: "2-digit", month: "short" });
   };
 

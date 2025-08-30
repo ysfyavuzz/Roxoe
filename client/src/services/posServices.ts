@@ -53,7 +53,7 @@ export class POSService {
       }
 
       const config = this.DEFAULT_CONFIGS[posType];
-      if (!config) throw new Error(`POS tipi desteklenmiyor: ${posType}`);
+      if (!config) {throw new Error(`POS tipi desteklenmiyor: ${posType}`);}
 
       const port = await window.serialAPI.requestPort();
       await port.open({ baudRate: config.baudRate });
@@ -97,7 +97,7 @@ export class POSService {
       return true;
     }
 
-    if (!this.port || !this.currentConfig) return false;
+    if (!this.port || !this.currentConfig) {return false;}
     try {
       const writer = this.port.writable.getWriter();
       const command = new TextEncoder().encode(
@@ -126,18 +126,18 @@ export class POSService {
   }
 
   private formatPaymentCommand(amount: number): Uint8Array {
-    if (!this.currentConfig) throw new Error("POS yapılandırması yok");
+    if (!this.currentConfig) {throw new Error("POS yapılandırması yok");}
     const amountStr = amount.toFixed(2).replace(".", "");
     const command = `${this.currentConfig.commandSet.payment}${amountStr}`;
     return new TextEncoder().encode(command);
   }
 
   private async waitForResponse(): Promise<Uint8Array> {
-    if (!this.port) throw new Error("POS bağlantısı yok");
+    if (!this.port) {throw new Error("POS bağlantısı yok");}
     const reader = this.port.readable.getReader();
     const { value, done } = await reader.read();
     reader.releaseLock();
-    if (done || !value) throw new Error("POS yanıt vermedi");
+    if (done || !value) {throw new Error("POS yanıt vermedi");}
     return value;
   }
 

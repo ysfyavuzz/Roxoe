@@ -22,6 +22,12 @@ log.transports.file.level = 'info' // prod
 - src/error-handler/ altında ErrorBoundary + reportError + global error/promise yakalama (setupGlobalErrorHandlers) ETKİN.
 - Kullanıcı bildirimleri: NotificationContext üzerinden toast/inline mesajlar.
 
+4) IndexTelemetry ve Performans Gözlemi
+- Amaç: IndexedDB indeks eksikliğinde fallback (JS filtre) kullanımlarını saymak ve gözlemlemek.
+- Kayıt: IndexTelemetry.recordFallback({ db, store, index, operation, reason })
+- Raporlama: Geliştirme/test ortamında konsolda özet; E2E/perf testlerinde [perf] ve telemetry logları.
+- Alarm: Üretimde belirli eşik üzerinde fallback görülürse uyarı üretilebilir (ileride Sentry/metrics entegrasyonuyle).
+
 4) Sentry Entegrasyonu (Electron - etkin)
 - Paket: @sentry/electron
 - Kurulum:

@@ -1,5 +1,9 @@
 # Batch 4 — Dashboard (Türkçe)
 
+Son Gözden Geçirme: 2025-08-28T22:50Z
+
+Navigasyon: [SUMMARY.md](SUMMARY.md) • [PROGRESS.md](PROGRESS.md)
+
 Hedef Metrikler (Özet, P95)
 - Tarih değişimi → grafik güncellemesi (cache’li) ≤ 200 ms; hesaplamalı ≤ 500 ms
 - ProductsTab ağır filtre/sıralama (10k) ≤ 350 ms
@@ -73,4 +77,17 @@ Dosya Haritası (Batch 4)
 - client/src/pages/DashboardPage.tsx
 - client/src/components/dashboard/SalesTab.tsx
 - client/src/components/dashboard/ProductsTab.tsx
+
+## Kod Kalitesi (Code Quality)
+- DashboardPage kabuk bileşeni state dağıtımı ve lazy yükleme için uygun; tarih/period ve export işlemleri net ayrışmış. Memos/callbacks ile prop istikrarı güçlendirilmeli.
+- SalesTab tamamen sunumsal; veri dönüşümü katmanda değil üstte yapılması iyi bir ayrım.
+- ProductsTab filtre/sıralama/sayfalama mantığı memola ayrıştırılmalı; grafik verisi ile tablo hesapları ayrık hesaplanmalı.
+
+## Bilinen Sorunlar (Known Issues)
+- DashboardPage import yolu yazım hatası şüphesi: import path "../services/exportSevices" görünüyor. Doğrusu muhtemelen "../services/exportServices". Eylem: İçe aktarılan modül adı ve dosya yolunu eşleyip yazım hatasını düzeltin; gerekli ise dosyayı/ismi yeniden adlandırın.
+
+## İyileştirme Önerileri
+- Export işlemlerini Web Worker/async kanala taşıyarak UI donmalarını önleyin.
+- Recharts veri serilerini useMemo ile cache’leyin; responsive yeniden boyutlamayı requestAnimationFrame ile gruplayın.
+- ProductsTab için 10k+ veri setlerinde türetilmiş sonuçları (filtre/sıralama) memoize edin; sayfa başı görünür dilimi hesaplayın.
 

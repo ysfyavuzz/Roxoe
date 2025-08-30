@@ -21,7 +21,7 @@ interface UpdateStatus {
 
 // Bayt boyutunu insan tarafından okunabilir formata dönüştürme
 const formatBytes = (bytes: number, decimals = 2) => {
-  if (bytes === 0) return "0 Bytes";
+  if (bytes === 0) {return "0 Bytes";}
 
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
@@ -75,7 +75,7 @@ const UpdateNotification: React.FC = () => {
     }
   }, []); // Sadece bir kere çalıştır
 
-  if (!isVisible || !updateStatus) return null;
+  if (!isVisible || !updateStatus) {return null;}
 
   const progressPercent =
     updateStatus.status === "downloading" && updateStatus.progress

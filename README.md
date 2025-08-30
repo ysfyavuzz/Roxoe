@@ -240,6 +240,44 @@ npm run validate:schemas --prefix client
 npm run validate:samples --prefix client
 ```
 
+## 🧪 Testler
+
+- Birim/Entegrasyon: Vitest (+ RTL)
+- Uçtan uca (E2E): Playwright (Vite preview ile otomatik başlatılır)
+
+Komutlar:
+```bash
+# Unit / Integration / Coverage
+npm --prefix client run test
+npm --prefix client run test:coverage
+
+# E2E (tam suite)
+npm --prefix client run e2e
+
+# E2E (tek dosya)
+npm --prefix client run e2e -- e2e/pos-sale-flow.spec.ts
+
+# E2E (başlığa göre filtre)
+npm --prefix client run e2e -- -g "POS satış akışı"
+
+# Headed/Debug çalıştırma
+npm --prefix client run e2e -- --headed -g "POS"
+PWDEBUG=1 npm --prefix client run e2e -- e2e/diagnostics.spec.ts
+```
+
+Notlar:
+- E2E testlerinde baseURL: http://localhost:4173 ve webServer: `npm run preview` kullanılır (client/playwright.config.ts).
+- Test ortamı bayrakları otomatik set edilir: NODE_ENV=test, VITE_LICENSE_BYPASS=true, VITE_ADMIN_MODE=true, VITE_E2E_MODE=true.
+- Görsel regresyon testi (visual-regression.spec.ts) varsayılan olarak skip edilmiştir.
+- POS E2E için stabil seçiciler: data-testid tercih edin (örn. pos-search-input, pay-button, clear-cart-button vb.).
+
+## 🧰 Diagnostics ve Admin Modu (Özet)
+- Diagnostics sekmesi eksik indeks adaylarını listeler (dry-run önizleme).
+- “Önerilen indeksleri uygula” işlemi admin guard ile korunur (VITE_ADMIN_MODE=true → etkin; prod’da önerilen false).
+- İndeks uygulaması onay diyaloğu ile güvence altındadır; işlem sonrası refresh ile güncel durum gösterilir.
+- Telemetri: IndexedDB indeks fallback (index yokken) kullanımları IndexTelemetry ile kayıt altına alınır.
+- Ayrıntılı rehber: docs/diagnostics/guide.md ve docs/db/indexeddb-indexing.md
+
 ---
 
 ## 🎨 Ekran Görüntüleri

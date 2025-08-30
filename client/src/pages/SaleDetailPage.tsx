@@ -1,7 +1,5 @@
 // pages/SaleDetailPage.tsx
 
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Printer,
@@ -11,20 +9,22 @@ import {
   RotateCcw,
   Tag,
 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+
+import { useAlert } from "../components/AlertProvider";
 import PageLayout from "../components/layout/PageLayout";
-import ReceiptModal from "../components/modals/ReceiptModal";
 import ReasonModal from "../components/modals/ReasonModal";
+import ReceiptModal from "../components/modals/ReceiptModal";
 import Button from "../components/ui/Button";
 import { Table } from "../components/ui/Table";
-import { Column } from "../types/table";
-import { CartItem } from "../types/pos";
-import { formatCurrency, formatVatRate } from "../utils/vatUtils";
-import { salesDB } from "../services/salesDB";
 import { creditService } from "../services/creditServices";
-import { useAlert } from "../components/AlertProvider";
-import { Sale } from "../types/sales";
+import { salesDB } from "../services/salesDB";
+import { CartItem } from "../types/pos";
 import { ReceiptInfo } from "../types/receipt";
-import { SalesHelper } from "../types/sales";
+import { Sale, SalesHelper } from "../types/sales";
+import { Column } from "../types/table";
+import { formatCurrency, formatVatRate } from "../utils/vatUtils";
 
 const SaleDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // route param
@@ -47,7 +47,7 @@ const SaleDetailPage: React.FC = () => {
   // 1) Tekil satışı yükleme
   useEffect(() => {
     async function fetchSale() {
-      if (!id) return;
+      if (!id) {return;}
       try {
         setLoading(true);
         const saleData = await salesDB.getSaleById(id); // ID'ye göre çekiyoruz
@@ -107,16 +107,16 @@ const SaleDetailPage: React.FC = () => {
 
   // 3) Fişi görüntüleme fonksiyonu
   const handleOpenReceiptModal = () => {
-    if (!sale) return;
+    if (!sale) {return;}
     const receiptData: ReceiptInfo = {
       ...sale,
       subtotal: sale.subtotal,
       vatAmount: sale.vatAmount,
       total: sale.total,
-      originalTotal: sale.originalTotal, // İndirim öncesi tutarı ekle
-      discount: sale.discount, // İndirim bilgisini ekle
       items: sale.items,
       date: sale.date,
+      ...(sale.originalTotal !== undefined ? { originalTotal: sale.originalTotal } : {}),
+      ...(sale.discount !== undefined ? { discount: sale.discount } : {}),
     };
     setCurrentReceipt(receiptData);
     setShowReceiptModal(true);
@@ -124,7 +124,7 @@ const SaleDetailPage: React.FC = () => {
 
   // 4) Satış iptal (Cancel)
   const handleCancelConfirm = async (reason: string) => {
-    if (!sale) return;
+    if (!sale) {return;}
     try {
       const updatedSale = await salesDB.cancelSale(sale.id, reason);
       if (updatedSale) {
@@ -143,7 +143,7 @@ const SaleDetailPage: React.FC = () => {
 
   // 5) Satış iade (Refund)
   const handleRefundConfirm = async (reason: string) => {
-    if (!sale) return;
+    if (!sale) {return;}
     try {
       const updatedSale = await salesDB.refundSale(sale.id, reason);
       if (updatedSale) {

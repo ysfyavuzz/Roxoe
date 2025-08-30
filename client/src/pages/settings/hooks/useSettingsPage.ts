@@ -1,9 +1,10 @@
 // pages/settings/hooks/useSettingsPage.ts
 import { useState, useCallback } from "react";
-import { POSConfig, SerialOptions } from "../../../types/pos";
-import { BarcodeConfig } from "../../../types/barcode";
-import { ReceiptConfig } from "../../../types/receipt";
+
 import { useAlert } from "../../../components/AlertProvider";
+import { BarcodeConfig } from "../../../types/barcode";
+import { POSConfig, SerialOptions } from "../../../types/pos";
+import { ReceiptConfig } from "../../../types/receipt";
 
 export type ConnectionStatus = "connected" | "disconnected" | "unknown";
 
@@ -148,8 +149,8 @@ const useSettingsPage = () => {
         return;
       }
 
-      const ok = await confirm(`\"${backup.filename}\" geri yüklensin mi?`);
-      if (!ok) return;
+const ok = await confirm(`"${backup.filename}" geri yüklensin mi?`);
+      if (!ok) {return;}
 
       setRestoreLoading(true);
       setBackupProgress({ stage: "Yedek geri yükleniyor", progress: 100 });
@@ -164,9 +165,9 @@ const useSettingsPage = () => {
   const onDeleteBackup = useCallback(
     async (backupId: string) => {
       const backup = backups.find((b) => b.id === backupId);
-      if (!backup) return;
-      const ok = await confirm(`\"${backup.filename}\" silinsin mi?`);
-      if (!ok) return;
+      if (!backup) {return;}
+const ok = await confirm(`"${backup.filename}" silinsin mi?`);
+      if (!ok) {return;}
       setBackups((prev) => prev.filter((b) => b.id !== backupId));
       showSuccess("Yedek silindi");
     },
@@ -193,7 +194,11 @@ const useSettingsPage = () => {
       serialNo: newSerialNo,
       activatedAt: now,
       isActive: true,
-      machineId: (navigator as any).hardwareConcurrency ? `MCH-${(navigator as any).hardwareConcurrency}` : "MCH-UNKNOWN",
+      machineId: (() => {
+        type NavHC = Navigator & { hardwareConcurrency?: number };
+        const hc = (navigator as unknown as NavHC).hardwareConcurrency;
+        return hc ? `MCH-${hc}` : "MCH-UNKNOWN";
+      })(),
     });
     setNewSerialNo("");
     setSerialStatus({ loading: false, error: null });
@@ -201,7 +206,7 @@ const useSettingsPage = () => {
   }, [newSerialNo, showSuccess]);
 
   const onDeactivateSerial = useCallback(() => {
-    if (!serialInfo) return;
+    if (!serialInfo) {return;}
     setSerialStatus({ loading: true, error: null });
     setSerialInfo({ ...serialInfo, isActive: false });
     setSerialStatus({ loading: false, error: null });

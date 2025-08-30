@@ -1,10 +1,12 @@
 import React from "react";
-import type { ProductStats } from "../../types/product";
+
 import type { CashRegisterSession } from "../../services/cashRegisterDB";
-import OverviewSummaryCards from "./overview/OverviewSummaryCards";
-import SalesTrendChart from "./overview/SalesTrendChart";
+import type { ProductStats } from "../../types/product";
+
 import CategoryDistributionPie from "./overview/CategoryDistributionPie";
 import LastClosedSessionCard from "./overview/LastClosedSessionCard";
+import OverviewSummaryCards from "./overview/OverviewSummaryCards";
+import SalesTrendChart from "./overview/SalesTrendChart";
 import TopProductsTable from "./overview/TopProductsTable";
 
 interface OverviewTabProps {
