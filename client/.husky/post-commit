@@ -1,3 +1,8 @@
+#!/usr/bin/env sh
+# Husky v9 post-commit hook
+# Çalışma dizinini client köküne al
+cd "$(dirname -- "$0")/.."
+
 node scripts/update-tech-book-metadata.js
 node scripts/analyze-project.js
 node scripts/update-api-docs.js
