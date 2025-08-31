@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 
-import { BackupSerializer } from './BackupSerializer'
 import { BackupDeserializer } from './BackupDeserializer'
+import { BackupSerializer } from './BackupSerializer'
 
 function tamperChecksum(content: string): string {
   // Oku ilk 4 byte

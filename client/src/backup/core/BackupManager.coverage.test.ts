@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+import { BackupDeserializer } from './BackupDeserializer'
 import { BackupManager } from './BackupManager'
 import { BackupSerializer } from './BackupSerializer'
-import { BackupDeserializer } from './BackupDeserializer'
 
 // FileUtils ve BackupScheduler mock'ları
 vi.mock('../utils/fileUtils', () => {

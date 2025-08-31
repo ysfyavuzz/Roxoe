@@ -1,5 +1,5 @@
-import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
 import { openDB, type IDBPDatabase } from 'idb'
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
 import 'fake-indexeddb/auto'
 
 // window.indexedDB -> fake

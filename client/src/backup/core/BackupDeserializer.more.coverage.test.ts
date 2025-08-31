@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { BackupDeserializer } from './BackupDeserializer';
-import { CompressionUtils } from '../utils/compressionUtils';
+
 import { ChecksumUtils } from '../utils/checksumUtils';
+import { CompressionUtils } from '../utils/compressionUtils';
+
+import { BackupDeserializer } from './BackupDeserializer';
 
 function makeHeader(len: number): string {
   // 4 byte little-endian uzunluk başlığı oluştur

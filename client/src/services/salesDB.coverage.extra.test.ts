@@ -2,10 +2,13 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import 'fake-indexeddb/auto'
 
-import { salesDB } from './salesDB'
-import { discountService } from './discountService'
-import DBVersionHelper from '../helpers/DBVersionHelper'
 import { vi } from 'vitest'
+
+import DBVersionHelper from '../helpers/DBVersionHelper'
+
+import { discountService } from './discountService'
+import { salesDB } from './salesDB'
+
 
 // JSDOM ortamında window.indexedDB -> fake-indexeddb
 Object.defineProperty(window, 'indexedDB', { value: globalThis.indexedDB, writable: true })

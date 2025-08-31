@@ -30,9 +30,9 @@ async function initSalesDB(): Promise<IDBDatabase> {
       const newVersion = (event as IDBVersionChangeEvent).newVersion ?? 0;
       if (newVersion >= 8) {
         const idxNames = Array.from((store as unknown as { indexNames?: DOMStringList }).indexNames || []) as string[];
-        if (!idxNames.includes('status')) store.createIndex('status', 'status');
-        if (!idxNames.includes('paymentMethod')) store.createIndex('paymentMethod', 'paymentMethod');
-        if (!idxNames.includes('date')) store.createIndex('date', 'date');
+        if (!idxNames.includes('status')) {store.createIndex('status', 'status');}
+        if (!idxNames.includes('paymentMethod')) {store.createIndex('paymentMethod', 'paymentMethod');}
+        if (!idxNames.includes('date')) {store.createIndex('date', 'date');}
       }
     };
 

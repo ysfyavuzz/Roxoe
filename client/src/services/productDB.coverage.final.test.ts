@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { productService, emitStockChange, repairDatabase, __deps, resetDatabases } from './productDB';
+
 import type { Product } from '@/types/product';
+
+import { productService, emitStockChange, repairDatabase, __deps, resetDatabases } from './productDB';
 
 describe('[coverage] productService ek kapsam (final)', () => {
   beforeEach(() => {

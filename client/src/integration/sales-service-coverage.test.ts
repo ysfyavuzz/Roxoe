@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import 'fake-indexeddb/auto'
 
-import { salesDB } from '../services/salesDB'
 import DBVersionHelper from '../helpers/DBVersionHelper'
+import { salesDB } from '../services/salesDB'
 
 Object.defineProperty(window, 'indexedDB', { value: globalThis.indexedDB, writable: true })
 
@@ -68,7 +68,7 @@ describe('[coverage] salesDB geniş kapsam', () => {
     // Bu testte salesDB için versiyonu 8'e mock'layıp init sırasında indekslerin oluşturulmasını sağlıyoruz
     const originalGetVersion = DBVersionHelper.getVersion.bind(DBVersionHelper)
     const spy = vi.spyOn(DBVersionHelper, 'getVersion').mockImplementation((name: string) => {
-      if (name === 'salesDB') return 8
+      if (name === 'salesDB') {return 8}
       return originalGetVersion(name)
     })
 
@@ -114,7 +114,7 @@ describe('[coverage] salesDB geniş kapsam', () => {
     // 2) Versiyonu 8'e mock'la ve indeks gerektiren bir filtre çalıştır
     const originalGetVersion = DBVersionHelper.getVersion.bind(DBVersionHelper)
     const spy = vi.spyOn(DBVersionHelper, 'getVersion').mockImplementation((name: string) => {
-      if (name === 'salesDB') return 8
+      if (name === 'salesDB') {return 8}
       return originalGetVersion(name)
     })
 

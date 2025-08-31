@@ -9,9 +9,10 @@ import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 
 import { backupManager, optimizedBackupManager, createSmartBackup, FileUtils } from "../src/backup";
-import SerialManager from "./license";
 
 import type { BackupCreateOptions, BackupResult, RestoreResult, UpdateProgressPayload, DbImportResponse } from "./ipcTypes";
+import SerialManager from "./license";
+
 
 
 

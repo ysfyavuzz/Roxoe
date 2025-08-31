@@ -1,5 +1,6 @@
 import 'fake-indexeddb/auto';
 import { describe, it, expect } from 'vitest';
+
 import { productService } from './productDB';
 
 describe('[coverage] productService ek kapsam (final-2)', () => {
