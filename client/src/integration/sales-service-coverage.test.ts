@@ -103,4 +103,30 @@ describe('[coverage] salesDB geniş kapsam', () => {
       spy.mockRestore()
     }
   })
+
+  it('(upgrade->indexed) mevcut store v7 iken v8 upgrade ile indeksler eklenir', async () => {
+    // 1) v7 ile DB ve store oluştur (indeksler yok)
+    await salesDB.addSale({
+      items: [], subtotal: 50, vatAmount: 9, total: 59,
+      paymentMethod: 'nakit', date: new Date('2025-01-12'), status: 'completed', receiptNo: 'R-U1'
+    } as any)
+
+    // 2) Versiyonu 8'e mock'la ve indeks gerektiren bir filtre çalıştır
+    const originalGetVersion = DBVersionHelper.getVersion.bind(DBVersionHelper)
+    const spy = vi.spyOn(DBVersionHelper, 'getVersion').mockImplementation((name: string) => {
+      if (name === 'salesDB') return 8
+      return originalGetVersion(name)
+    })
+
+    try {
+      const rows = await salesDB.getSalesWithFilter({
+        status: 'completed', startDate: new Date('2025-01-10'), endDate: new Date('2025-01-20')
+      })
+      expect(Array.isArray(rows)).toBe(true)
+      // Upgrade sırasında indeksler oluşturulduğundan, hızlı yol devreye girer ve sonuç döner
+      expect(rows.length).toBeGreaterThan(0)
+    } finally {
+      spy.mockRestore()
+    }
+  })
 })
