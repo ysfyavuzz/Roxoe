@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import 'fake-indexeddb/auto'
 
 import { salesDB } from '../services/salesDB'
+import DBVersionHelper from '../helpers/DBVersionHelper'
 
 Object.defineProperty(window, 'indexedDB', { value: globalThis.indexedDB, writable: true })
 
@@ -64,48 +65,37 @@ describe('[coverage] salesDB geniş kapsam', () => {
   })
 
   it('(indexed) indeksleri başta kurup filtre akışını kapsar', async () => {
-    // Indeksleri kur: verileri eklemeden ÖNCE DB'yi upgrade ederek index oluştur
-    await new Promise<void>((res, rej) => {
-      const req = indexedDB.open('salesDB', 8)
-      req.onupgradeneeded = () => {
-        const db = req.result
-        if (!db.objectStoreNames.contains('sales')) {
-          const store = db.createObjectStore('sales', { keyPath: 'id' })
-          store.createIndex('status', 'status')
-          store.createIndex('paymentMethod', 'paymentMethod')
-          store.createIndex('date', 'date')
-        } else {
-          const store = (req.transaction as IDBTransaction).objectStore('sales')
-          const idxNames = Array.from((store as any).indexNames || [])
-          if (!idxNames.includes('status')) store.createIndex('status', 'status')
-          if (!idxNames.includes('paymentMethod')) store.createIndex('paymentMethod', 'paymentMethod')
-          if (!idxNames.includes('date')) store.createIndex('date', 'date')
-        }
-      }
-      req.onsuccess = () => { req.result.close(); res() }
-      req.onerror = () => rej(req.error)
+    // Bu testte salesDB için versiyonu 8'e mock'layıp init sırasında indekslerin oluşturulmasını sağlıyoruz
+    const originalGetVersion = DBVersionHelper.getVersion.bind(DBVersionHelper)
+    const spy = vi.spyOn(DBVersionHelper, 'getVersion').mockImplementation((name: string) => {
+      if (name === 'salesDB') return 8
+      return originalGetVersion(name)
     })
 
-    // Seed (artık indeksler mevcut)
-    await salesDB.addSale({
-      items: [], subtotal: 100, vatAmount: 18, total: 118,
-      paymentMethod: 'nakit', date: new Date('2025-01-11'), status: 'completed', receiptNo: 'R-I1'
-    } as any)
-    const disc2 = salesDB.applyDiscount({
-      id: 'TMP', items: [], subtotal: 200, vatAmount: 36, total: 236,
-      paymentMethod: 'kart', date: new Date('2025-01-15'), status: 'completed', receiptNo: 'R-I2'
-    } as any, 'amount', 20)
-    await salesDB.addSale({ ...disc2, id: undefined } as any)
-
-    // Indexed okuma: tüm filtre alanlarını ver (status, paymentMethod, date)
-    const rows = await salesDB.getSalesWithFilter({
-      status: 'completed', paymentMethod: 'kart', startDate: new Date('2025-01-10'), endDate: new Date('2025-01-20')
-    })
-    expect(Array.isArray(rows)).toBe(true)
-    expect(rows.some(s => s.paymentMethod === 'kart')).toBe(true)
-
-    // Özet de index yolunu kullanır (status='completed')
-    const summary2 = await salesDB.getSalesSummary(new Date('2025-01-10'), new Date('2025-01-20'))
-    expect(summary2.totalSales).toBeGreaterThan(0)
+    try {
+      // Seed (indeksler init sırasında oluşacak)
+      await salesDB.addSale({
+        items: [], subtotal: 100, vatAmount: 18, total: 118,
+        paymentMethod: 'nakit', date: new Date('2025-01-11'), status: 'completed', receiptNo: 'R-I1'
+      } as any)
+      const disc2 = salesDB.applyDiscount({
+        id: 'TMP', items: [], subtotal: 200, vatAmount: 36, total: 236,
+        paymentMethod: 'kart', date: new Date('2025-01-15'), status: 'completed', receiptNo: 'R-I2'
+      } as any, 'amount', 20)
+      await salesDB.addSale({ ...disc2, id: undefined } as any)
+  
+      // Indexed okuma: tüm filtre alanlarını ver (status, paymentMethod, date)
+      const rows = await salesDB.getSalesWithFilter({
+        status: 'completed', paymentMethod: 'kart', startDate: new Date('2025-01-10'), endDate: new Date('2025-01-20')
+      })
+      expect(Array.isArray(rows)).toBe(true)
+      expect(rows.some(s => s.paymentMethod === 'kart')).toBe(true)
+  
+      // Özet de index yolunu kullanır (status='completed')
+      const summary2 = await salesDB.getSalesSummary(new Date('2025-01-10'), new Date('2025-01-20'))
+      expect(summary2.totalSales).toBeGreaterThan(0)
+    } finally {
+      spy.mockRestore()
+    }
   })
 })

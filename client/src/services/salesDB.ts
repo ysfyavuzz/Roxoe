@@ -17,9 +17,22 @@ async function initSalesDB(): Promise<IDBDatabase> {
       const db = request.result;
       console.log(`Upgrading ${DB_NAME} from ${event.oldVersion} to ${event.newVersion}`);
       
+      // Store'ı oluştur veya mevcut store'u al
+      let store: IDBObjectStore;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: "id" });
+        store = db.createObjectStore(STORE_NAME, { keyPath: "id" });
         console.log(`Created ${STORE_NAME} store`);
+      } else {
+        store = (request.transaction as IDBTransaction).objectStore(STORE_NAME);
+      }
+
+      // Yalnızca yeni versiyon 8 veya üzeriyse indeksleri oluştur (testlerde kontrollü kullanılacak)
+      const newVersion = (event as IDBVersionChangeEvent).newVersion ?? 0;
+      if (newVersion >= 8) {
+        const idxNames = Array.from((store as unknown as { indexNames?: DOMStringList }).indexNames || []) as string[];
+        if (!idxNames.includes('status')) store.createIndex('status', 'status');
+        if (!idxNames.includes('paymentMethod')) store.createIndex('paymentMethod', 'paymentMethod');
+        if (!idxNames.includes('date')) store.createIndex('date', 'date');
       }
     };
 
@@ -41,6 +54,11 @@ class SalesService {
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(STORE_NAME, "readwrite");
       const store = transaction.objectStore(STORE_NAME);
+
+      // Transaction lifecycle: always close DB to prevent upgrade deadlocks in tests
+      transaction.oncomplete = () => { try { db.close(); } catch {} };
+      transaction.onabort = () => { try { db.close(); } catch {} };
+      transaction.onerror = () => { try { db.close(); } catch {} };
 
       // İndirimsiz durumu önce kontrol et
       let finalData: Omit<Sale, "id"> = { ...saleData };
@@ -85,6 +103,11 @@ class SalesService {
       const transaction = db.transaction(STORE_NAME, "readonly");
       const store = transaction.objectStore(STORE_NAME);
 
+      // Always close DB after readonly transaction too
+      transaction.oncomplete = () => { try { db.close(); } catch {} };
+      transaction.onabort = () => { try { db.close(); } catch {} };
+      transaction.onerror = () => { try { db.close(); } catch {} };
+
       const request = store.getAll();
 
       request.onsuccess = () => {
@@ -111,6 +134,10 @@ class SalesService {
       const tx = db.transaction(STORE_NAME, 'readonly');
       const store = tx.objectStore(STORE_NAME);
       const idxNames: DOMStringList | undefined = (store as unknown as { indexNames?: DOMStringList }).indexNames;
+      // Ensure connection closes after this attempt (even if we fall back)
+      tx.oncomplete = () => { try { db.close(); } catch {} };
+      tx.onabort = () => { try { db.close(); } catch {} };
+      tx.onerror = () => { try { db.close(); } catch {} };
 
       const needStatus = !!filter.status;
       const needPayment = !!filter.paymentMethod;
@@ -211,6 +238,10 @@ class SalesService {
       const transaction = db.transaction(STORE_NAME, "readonly");
       const store = transaction.objectStore(STORE_NAME);
 
+      transaction.oncomplete = () => { try { db.close(); } catch {} };
+      transaction.onabort = () => { try { db.close(); } catch {} };
+      transaction.onerror = () => { try { db.close(); } catch {} };
+
       const request = store.get(id);
 
       request.onsuccess = () => {
@@ -230,6 +261,10 @@ class SalesService {
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(STORE_NAME, "readwrite");
       const store = transaction.objectStore(STORE_NAME);
+
+      transaction.oncomplete = () => { try { db.close(); } catch {} };
+      transaction.onabort = () => { try { db.close(); } catch {} };
+      transaction.onerror = () => { try { db.close(); } catch {} };
 
       const getRequest = store.get(saleId);
 
