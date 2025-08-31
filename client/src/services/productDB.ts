@@ -710,6 +710,8 @@ export const productService = {
         error
       );
       try { tx.abort(); } catch { /* ignore abort error */ }
+      // Swallow aborted tx rejection to prevent unhandled promise rejection in tests
+      try { await tx.done; } catch { /* ignore */ }
       throw error;
     }
   },
