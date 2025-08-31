@@ -344,7 +344,7 @@ export const productService = {
       const store = tx.objectStore("categories") as unknown as { getAll: () => Promise<unknown[]> };
       const categories = await store.getAll() as Category[];
       const exists = categories.some(
-        (c) => (c.name || '').toLowerCase() === (category.name || '').toLowerCase()
+        (c) => (c.name || '').toLocaleLowerCase('tr-TR') === (category.name || '').toLocaleLowerCase('tr-TR')
       );
 
       if (exists) {
