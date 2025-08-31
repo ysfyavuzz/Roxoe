@@ -122,4 +122,15 @@ describe('BackupManager kapsam', () => {
     mgr.startScheduler()
     mgr.stopScheduler()
   })
+
+  it('createBackup ve restoreBackup destek dışı yollarını kapsar ve normalizeString çalışır', async () => {
+    const mgr = new BackupManager()
+    const unsupported = await mgr.createBackup()
+    expect(unsupported.success).toBe(false)
+    const restored = await mgr.restoreBackup('')
+    expect(restored.success).toBe(false)
+    // private normalizeString
+    const out = (mgr as any).normalizeString('ĞğŞşİıÖöÜü Çç!?')
+    expect(out).toMatch(/GgSsIiOoUu Cc/)
+  })
 })

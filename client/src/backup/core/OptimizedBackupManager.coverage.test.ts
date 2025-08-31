@@ -62,4 +62,10 @@ describe('OptimizedBackupManager kapsam', () => {
     expect(res.success).toBe(false)
     expect(res.error).toMatch(/yazma hatası/i)
   })
+
+  it('private yardımcıları kapsar: formatFileSize(0) ve calculateRecordCounts([])', () => {
+    const obm = new OptimizedBackupManager() as any
+    expect(obm.formatFileSize(0)).toBe('0 Bytes')
+    expect(obm.calculateRecordCounts([])).toEqual({})
+  })
 })
