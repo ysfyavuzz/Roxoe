@@ -133,4 +133,17 @@ describe('BackupManager kapsam', () => {
     const out = (mgr as any).normalizeString('ĞğŞşİıÖöÜü Çç!?')
     expect(out).toMatch(/GgSsIiOoUu Cc/)
   })
+
+  it('schedule/disable/getBackupSchedule/start/stop hata yolunu kapsar', () => {
+    const mgr = new BackupManager() as any
+    mgr.scheduler.enableAutoBackup = () => { throw new Error('fail') }
+    expect((mgr as any).scheduleBackup('daily', 1, 0)).toBe(false)
+    mgr.scheduler.disableAutoBackup = () => { throw new Error('fail') }
+    expect((mgr as any).disableScheduledBackup()).toBe(false)
+    ;(mgr as any).scheduler = undefined
+    expect((mgr as any).getBackupSchedule()).toBe(null)
+    ;(mgr as any).scheduler = { startScheduling: () => { throw new Error('x') }, stopScheduling: () => { throw new Error('y') } }
+    ;(mgr as any).startScheduler()
+    ;(mgr as any).stopScheduler()
+  })
 })

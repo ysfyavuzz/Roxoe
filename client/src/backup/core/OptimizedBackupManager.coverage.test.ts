@@ -68,4 +68,12 @@ describe('OptimizedBackupManager kapsam', () => {
     expect(obm.formatFileSize(0)).toBe('0 Bytes')
     expect(obm.calculateRecordCounts([])).toEqual({})
   })
+
+  it('exporter hata yolunu kapsar', async () => {
+    const obm = new OptimizedBackupManager() as any
+    obm.exporter = { exportAllDatabases: async () => { throw new Error('export fail') } }
+    const res = await (obm as any).createOptimizedBackup({})
+    expect(res.success).toBe(false)
+    expect(res.error).toMatch(/export fail/i)
+  })
 })

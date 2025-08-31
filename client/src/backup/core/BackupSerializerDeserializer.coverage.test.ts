@@ -78,4 +78,16 @@ describe('BackupSerializer/Deserializer kapsam', () => {
     const cs = ser.calculateChecksum('ABC')
     expect(deser.verifyChecksum('ABC', cs)).toBe(true)
   })
+
+  it('parseWithDateReviver ve __isDate marker yollarını kapsar', () => {
+    const deser: any = new BackupDeserializer() as any
+    const parsed = deser.parseWithDateReviver('{"d":"2025-01-01T00:00:00.000Z"}')
+    expect(parsed.d instanceof Date).toBe(true)
+
+    const restoredOk = deser.restoreDataFromBackup({ __isDate: true, value: '2025-02-02T00:00:00.000Z' })
+    expect(restoredOk instanceof Date).toBe(true)
+
+    const restoredErr = deser.restoreDataFromBackup({ __isDate: true, value: 'NOT_A_DATE' })
+    expect(restoredErr instanceof Date).toBe(true)
+  })
 })
