@@ -369,6 +369,8 @@ export const productService = {
     } catch (error) {
       console.error("Error in add category transaction:", error);
       try { tx.abort(); } catch { /* ignore abort error */ }
+      // Swallow possible abort rejection from idb/fake-indexeddb to avoid unhandled rejections in tests
+      try { await tx.done; } catch { /* ignore */ }
       throw error;
     }
   },
