@@ -70,23 +70,23 @@ describe('[coverage] salesDB geniş kapsam', () => {
     })
     expect(f2.some(s => s.paymentMethod === 'kart')).toBe(true)
 
-    // 5) Güncelleme: iade ve iptal
-    const refunded = await salesDB.refundSale(s2.id, 'Sebep')
-    expect(refunded?.status).toBe('refunded')
-
-    const cancelled = await salesDB.cancelSale(s1.id, 'Vazgeçildi')
-    expect(cancelled?.status).toBe('cancelled')
-
-    // 6) getSaleById
-    const found = await salesDB.getSaleById(s1.id)
-    expect(found?.id).toBe(s1.id)
-
-    // 7) Günlük satış ve özet
+    // 5) Günlük satış ve özet (güncel statüler completed iken)
     const daily = await salesDB.getDailySales(new Date('2025-01-11'))
     expect(Array.isArray(daily)).toBe(true)
 
     const summary = await salesDB.getSalesSummary(new Date('2025-01-10'), new Date('2025-01-20'))
     expect(summary.totalSales).toBeGreaterThan(0)
     expect(summary.totalAmount).toBeGreaterThan(0)
+
+    // 6) Güncelleme: iade ve iptal (statüler değişir)
+    const refunded = await salesDB.refundSale(s2.id, 'Sebep')
+    expect(refunded?.status).toBe('refunded')
+
+    const cancelled = await salesDB.cancelSale(s1.id, 'Vazgeçildi')
+    expect(cancelled?.status).toBe('cancelled')
+
+    // 7) getSaleById
+    const found = await salesDB.getSaleById(s1.id)
+    expect(found?.id).toBe(s1.id)
   })
 })
