@@ -63,6 +63,15 @@ describe('OptimizedBackupManager kapsam', () => {
     expect(res.error).toMatch(/yazma hatası/i)
   })
 
+  it('createOptimizedBackup: non-Error throw edildiğinde "Bilinmeyen hata" döner', async () => {
+    const obm = new OptimizedBackupManager()
+    const { FileUtils } = await import('../utils/fileUtils')
+    ;(FileUtils.downloadFile as any).mockRejectedValueOnce('boom')
+    const res = await obm.createOptimizedBackup()
+    expect(res.success).toBe(false)
+    expect(res.error).toMatch(/Bilinmeyen hata/i)
+  })
+
   it('private yardımcıları kapsar: formatFileSize(0) ve calculateRecordCounts([])', () => {
     const obm = new OptimizedBackupManager() as any
     expect(obm.formatFileSize(0)).toBe('0 Bytes')

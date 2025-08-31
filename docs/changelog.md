@@ -2,20 +2,18 @@
 
 [← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
-Tarih: 2025-08-27
-Sürüm: 0.5.3 (dokümantasyon ve test altyapısı güncellemeleri)
+Tarih: 2025-08-31
+Sürüm: 0.5.3 (dokümantasyon ve test stabilizasyonu)
 
 Ek: RoxoePOS Kitabı (Yatırımcı + Kullanıcı + Geliştirici)
 - docs/BOOK/roxoepos-book.md eklendi.
 - PDF üretimi için docs/BOOK/BUILD-PDF.ps1 sağlandı (Pandoc ile).
 
 Öne çıkanlar
-- Test altyapısı güçlendirildi: global kapsam eşiği (≥%80) ve kritik modüller için (≥%95) satır kapsamı zorunluluğu eklendi.
-- Gelişmiş testler eklendi: IPC Contract (Ajv+JSON Schema), Visual Regression (Playwright snapshot), Synthetic Monitoring (nightly cron), Chaos/Resilience (backup hata yolları), Performance Benchmark (50k arama).
-- Merkezi hata yönetimi uygulandı: ErrorBoundary + global error/promise yakalama; Sentry ile entegre çalışır.
-- Yedekleme stratejisi tekilleştirildi: createSmartBackup artık daima OptimizedBackupManager kullanır; BackupManager deprecated.
-- Onboarding ve KOMUT REHBERİ dokümanları güncellendi; E2E, entegrasyon ve performans testleri için komutlar eklendi.
-- Diyagramlar genişletildi: Hata Yönetimi sequence diyagramı eklendi.
+- Test stabilizasyonu: addProductToGroup duplicate ilişkide idb AbortError → Unhandled Rejection sorunu giderildi (tx.abort + tx.done swallow).
+- test:critical kapısı: Windows PowerShell için MIN_CRITICAL_COVERAGE örnekleri belgelendi.
+- Runbook (db-inconsistency): repairDatabase/db_force_reset detayları eklendi.
+- Doküman güncellemesi: test-coverage.md, command-guide.md, runbooks/db-inconsistency.md.
 
 Ayrıntılar
 - Test

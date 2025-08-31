@@ -91,6 +91,14 @@ describe('BackupManager kapsam', () => {
     expect(result.isValid).toBe(true)
   })
 
+  it('deserializeBackup: deserializer hata fırlatırsa isValid=false döner', async () => {
+    vi.spyOn(BackupDeserializer.prototype, 'deserializeFromRoxoeFormat').mockImplementation(() => { throw 'boom' })
+    const mgr = new BackupManager()
+    const result = await mgr.deserializeBackup('BAD')
+    expect(result.isValid).toBe(false)
+    expect(result.error).toMatch(/Bilinmeyen hata/i)
+  })
+
   it('listBackups ve deleteBackup başarı/hata yolları', async () => {
     const mgr = new BackupManager()
     const { FileUtils } = await import('../utils/fileUtils')

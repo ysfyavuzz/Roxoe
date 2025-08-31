@@ -49,7 +49,7 @@ export const initProductDB = async (): Promise<IDBPDatabase<PosDBSchema>> => {
       const forceReset = localStorage.getItem('db_force_reset');
       if (forceReset === 'true') {
         console.log("Zorla sıfırlama talep edildi");
-        await resetDatabases();
+        await __deps.resetDatabases();
         localStorage.removeItem('db_force_reset');
       }
       
@@ -119,15 +119,31 @@ export const initProductDB = async (): Promise<IDBPDatabase<PosDBSchema>> => {
 };
 
 // Hata durumunda veritabanını sıfırlama ve sayfayı yeniden yükleme
+// Testlerde güvenli şekilde izlenebilmesi için sayfa yenilemeyi ayrı bir fonksiyona aldık
+export const reloadWindow = () => {
+  window.location.reload();
+};
+
+// Testlerin kolayca mock'layabilmesi için bağımlılıkları dışa aktar
+export const __deps = {
+  resetDatabases,
+  reloadWindow,
+};
+
 export const repairDatabase = async () => {
   try {
-    await resetDatabases();
+    await __deps.resetDatabases();
     
     // DB sürüm yükseltme işareti koy (yeni)
     localStorage.setItem('db_version_upgraded', 'true');
     
     console.log("Veritabanı başarıyla sıfırlandı, sayfa yenileniyor...");
-    window.location.reload();
+    // JSDOM gibi ortamlarda reload desteklenmeyebilir; yine de true döndürmek istiyoruz
+    try {
+      __deps.reloadWindow();
+    } catch (e) {
+      console.warn('window.location.reload desteklenmiyor (test ortamı olabilir):', e);
+    }
     return true;
   } catch (error) {
     console.error("Veritabanı onarım hatası:", error);
@@ -260,6 +276,8 @@ export const productService = {
     } catch (error) {
       console.error("Error in update product transaction:", error);
       try { tx.abort(); } catch { /* ignore abort error */ }
+      // Swallow possible abort rejection from idb/fake-indexeddb to avoid unhandled rejections in tests
+      try { await tx.done; } catch { /* ignore */ }
       throw error;
     }
   },
@@ -318,6 +336,8 @@ export const productService = {
     } catch (error) {
       console.error("Error in delete product transaction:", error);
       try { tx.abort(); } catch { /* ignore abort error */ }
+      // Swallow aborted tx rejection to prevent unhandled promise rejection in tests
+      try { await tx.done; } catch { /* ignore */ }
       throw error;
     }
   },
@@ -396,6 +416,8 @@ export const productService = {
     } catch (error) {
       console.error("Error in update category transaction:", error);
       try { tx.abort(); } catch { /* ignore abort error */ }
+      // Swallow possible abort rejection from idb/fake-indexeddb to avoid unhandled rejections in tests
+      try { await tx.done; } catch { /* ignore */ }
       throw error;
     }
   },
@@ -441,6 +463,8 @@ export const productService = {
     } catch (error) {
       console.error("Error in delete category transaction:", error);
       try { tx.abort(); } catch { /* ignore abort error */ }
+      // Swallow possible abort rejection from idb/fake-indexeddb to avoid unhandled rejections in tests
+      try { await tx.done; } catch { /* ignore */ }
       throw error;
     }
   },
@@ -528,6 +552,8 @@ export const productService = {
     } catch (error) {
       console.error("Error in bulk insert transaction:", error);
       try { tx.abort(); } catch { /* ignore abort error */ }
+      // Swallow aborted tx rejection to prevent unhandled promise rejection in tests
+      try { await tx.done; } catch { /* ignore */ }
       throw error;
     }
   },
@@ -637,6 +663,8 @@ export const productService = {
         error
       );
       try { tx.abort(); } catch { /* ignore abort error */ }
+      // Swallow possible abort rejection from idb/fake-indexeddb to avoid unhandled rejections in tests
+      try { await tx.done; } catch { /* ignore */ }
       throw error;
     }
   },
@@ -758,6 +786,8 @@ export const productService = {
           // ConstraintError'u normal durum olarak ele al
           if (tx.error && tx.error.name === "ConstraintError") {
             console.log(`Product ${productId} is already in group ${groupId}`);
+            // Prevent unhandled rejection from idb's internal tx.done promise
+            try { (tx.done as unknown as Promise<unknown>).catch(() => {}); } catch { /* ignore */ }
             resolve(undefined);
           } else {
             console.error("Transaction error:", tx.error);
@@ -768,6 +798,9 @@ export const productService = {
     } catch (error) {
       if ((error as Error).name === "ConstraintError") {
         console.log(`Product ${productId} is already in group ${groupId}`);
+        // Ensure no unhandled rejection from the (now aborted) transaction
+        try { tx.abort(); } catch { /* ignore abort error */ }
+        try { await tx.done; } catch { /* ignore */ }
         return; // İlişki zaten varsa hata fırlatma
       }
       console.error(
@@ -775,6 +808,8 @@ export const productService = {
         error
       );
       try { tx.abort(); } catch { /* ignore abort error */ }
+      // Swallow possible abort rejection from idb/fake-indexeddb to avoid unhandled rejections in tests
+      try { await tx.done; } catch { /* ignore */ }
       throw error;
     }
   },
@@ -822,6 +857,8 @@ export const productService = {
         error
       );
       try { tx.abort(); } catch { /* ignore abort error */ }
+      // Swallow possible abort rejection from idb/fake-indexeddb to avoid unhandled rejections in tests
+      try { await tx.done; } catch { /* ignore */ }
       throw error;
     }
   },

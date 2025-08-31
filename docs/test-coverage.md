@@ -17,6 +17,13 @@ npm run test:coverage   # kapsam raporu (html/text/json)
 npm run test:critical   # global + kritik dosyalar (≥%95)
 ```
 
+### Windows PowerShell (eşik özelleştirme)
+```powershell
+$env:MIN_CRITICAL_COVERAGE = "97"; npm run test:critical --prefix client
+# geri almak için
+Remove-Item Env:MIN_CRITICAL_COVERAGE
+```
+
 ## 3) Kritik Dosya Listesi (örnek)
 - client/src/services/productDB.ts
 - client/src/services/salesDB.ts
@@ -36,4 +43,5 @@ Kaynak: client/scripts/check-coverage.js
 - Büyük akışlar için integration/E2E testleri yazın
 - UI’da kritik yollar için görsel regresyon testleri (Playwright toHaveScreenshot)
 - Contract Testing: IPC payloadlarını Ajv ile şemaya göre doğrulayın
+- Test ortamı (jsdom + fake-indexeddb) notu: IndexedDB indeksleri gerçek tarayıcıdan farklı davranabilir; konsolda "index missing" fallback uyarıları görülebilir. Bu uyarılar senaryoların bir parçası olarak beklenebilir.
 

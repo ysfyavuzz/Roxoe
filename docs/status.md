@@ -20,6 +20,7 @@ Sürüm: 0.5.3
 
 ## 🚀 Son Değişiklikler (Özet)
 - Son 7 gün commit özeti:
+- 2025-08-31 docs/test: coverage ve komut rehberi güncellendi (Windows PowerShell çevresel değişken örnekleri); runbook (db-inconsistency) repairDatabase/db_force_reset notları eklendi; addProductToGroup duplicate yolunda idb AbortError yakalanarak Unhandled Rejection giderildi.
 - 2025-08-28 6874f3a docs: add Components Batch Index links; mark Batch 13 complete; rename FEATURE-FLAGS.md -> feature-flags.md and update references; refresh docs metrics
 - 2025-08-28 75064f1 docs: link components-batch-index in components.md and BOOK; mark Batch 13 complete in status; standardize archive filename to kebab-case and update references
 - 2025-08-28 3e58a16 docs: add components-batch-index (master list + metrics link)
@@ -41,6 +42,11 @@ Sürüm: 0.5.3
 - Onboarding/Diagram/Monitoring dokümanları genişletildi
 
 Ayrıntı: docs/changelog.md
+
+Güncel Notlar (2025-08-31)
+- addProductToGroup duplicate ilişki yolunda idb AbortError kaynaklı Unhandled Rejection giderildi (test stabilitesi ↑).
+- test:critical gate’i Windows PowerShell ortam değişkeni örnekleri ile belgelendi; test-coverage.md ve command-guide.md güncellendi.
+- Runbook (db-inconsistency) repairDatabase ve db_force_reset akışlarıyla genişletildi.
 
 Güncel Notlar (2025-08-30)
 - E2E suite genişletildi: POS satış akışı iyileştirildi, sepet temizleme senaryosu eklendi; Diagnostics ve Backup akışları stabilize edildi.

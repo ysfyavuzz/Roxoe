@@ -7,7 +7,7 @@ Bu belge, IndexedDB üzerinde indeks tasarımı, eksik indekslerin tespiti, fall
 - İndeks yoksa, getAll() + JS filtre yoluna düşülür; bu fallback yavaştır ve büyük veri setlerinde sorun yaratır.
 
 ## Uygulamadaki Mağazalar ve İndeksler (Özet)
-- posDB
+- posDB (Birleştirilmiş veritabanı; ürün/kategori/grup tek DB altında)
   - products (keyPath: id)
     - index: barcode (önerilen; benzersizlik uygulama düzeyinde kontrol edilir)
   - productGroups (keyPath: id)
@@ -31,6 +31,10 @@ Bu belge, IndexedDB üzerinde indeks tasarımı, eksik indekslerin tespiti, fall
 - onupgradeneeded/upgrade callback’inde indeksler yoksa oluşturulur (idempotent yaklaşım).
 - Mevcut store üzerinde createIndex denemeleri indexNames kontrolü ile koşullu yapılır.
 - Büyük değişikliklerde “kopyala-yarat” deseni: yeni store → veriyi dönüştür → eskiyi kaldır → yeniyi kalıcı isimle oluştur.
+
+## Uygulama Notları
+- initProductDB başlatma sırasında varsayılan grup bakımı yapar: default grup yoksa oluşturur; birden fazla default varsa fazlasını siler.
+- addProductToGroup duplicate ilişkilerde ConstraintError üretir; bu durum uygulamada normal kabul edilir ve transaction abort + tx.done swallow ile yakalanarak testlerde “Unhandled Rejection” engellenir.
 
 ## Test Ortamı Notları (fake-indexeddb)
 - indexNames davranışı gerçek tarayıcıya göre farklı olabilir; telemetry’de ‘indexed’ senaryoda dahi fallback görülebilir.

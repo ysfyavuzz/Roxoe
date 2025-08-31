@@ -50,7 +50,8 @@ Testler (Vitest/Playwright)
   - Başlık filtresi: `npm run e2e -- -g "POS satış akışı"`
   - Headed/Debug: `npm run e2e -- --headed -g "POS"` veya `PWDEBUG=1 npm run e2e -- e2e/diagnostics.spec.ts`
 - Kritik kapsam (≥%95): `npm run test:critical`
-  - Eşik özelleştirme: `MIN_CRITICAL_COVERAGE=97 npm run test:critical`
+  - Eşik özelleştirme (POSIX): `MIN_CRITICAL_COVERAGE=97 npm run test:critical`
+  - Eşik özelleştirme (Windows PowerShell): `$env:MIN_CRITICAL_COVERAGE = "97"; npm run test:critical`
 - Tek test dosyası: `npm run test -- src/test/Button.test.tsx`
 - İsim filtresiyle tek test: `npm run test -- -t "başlık parçası"`
 
