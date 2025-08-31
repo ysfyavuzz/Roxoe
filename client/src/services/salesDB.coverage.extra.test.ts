@@ -4,6 +4,8 @@ import 'fake-indexeddb/auto'
 
 import { salesDB } from './salesDB'
 import { discountService } from './discountService'
+import DBVersionHelper from '../helpers/DBVersionHelper'
+import { vi } from 'vitest'
 
 // JSDOM ortamında window.indexedDB -> fake-indexeddb
 Object.defineProperty(window, 'indexedDB', { value: globalThis.indexedDB, writable: true })
@@ -67,5 +69,27 @@ describe('salesDB ek kapsam (ek testler)', () => {
     expect(r1).toMatch(/^F\d{8}-[A-Z0-9]+$/)
     expect(r2).toMatch(/^F\d{8}-[A-Z0-9]+$/)
     expect(r1).not.toBe(r2)
+  })
+
+  it('getSalesWithFilter: hızlı yol hatasında catch çalışır ve fallback sonuç döner', async () => {
+    // Seed a simple sale
+    await salesDB.addSale({
+      items: [], subtotal: 10, vatAmount: 1.8, total: 11.8,
+      paymentMethod: 'nakit', date: new Date('2025-01-07'), status: 'completed', receiptNo: 'R-CATCH'
+    } as any)
+
+    const orig = DBVersionHelper.getVersion.bind(DBVersionHelper)
+    // First call to initSalesDB will get invalid version (0) to trigger error inside fast path try
+    const spy = vi.spyOn(DBVersionHelper, 'getVersion')
+      .mockImplementationOnce((name: string) => name === 'salesDB' ? 0 : orig(name))
+      .mockImplementation((name: string) => orig(name))
+
+    try {
+      const rows = await salesDB.getSalesWithFilter({ status: 'completed' })
+      expect(Array.isArray(rows)).toBe(true)
+      expect(rows.length).toBeGreaterThan(0)
+    } finally {
+      spy.mockRestore()
+    }
   })
 })
