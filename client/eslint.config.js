@@ -122,7 +122,7 @@ export default [
   },
   // Test and e2e files - simple parsing without project
   {
-    files: ['src/**/*.{test,spec}.{ts,tsx}', 'e2e/**/*.ts', 'playwright.config.ts'],
+    files: ['src/**/*.{test,spec}.{ts,tsx}', 'e2e/**/*.ts', 'playwright.config.ts', 'src/integration/**/*.ts'],
     languageOptions: {
       parserOptions: {
         // Intentionally no "project" to avoid parser error for non-tsconfig-included files
@@ -130,6 +130,9 @@ export default [
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      'no-empty': 'off',
+      'no-duplicate-imports': 'off',
+      'import/order': 'off'
     },
   },
 ];

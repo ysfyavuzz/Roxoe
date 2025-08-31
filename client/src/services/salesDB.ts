@@ -56,9 +56,9 @@ class SalesService {
       const store = transaction.objectStore(STORE_NAME);
 
       // Transaction lifecycle: always close DB to prevent upgrade deadlocks in tests
-      transaction.oncomplete = () => { try { db.close(); } catch {} };
-      transaction.onabort = () => { try { db.close(); } catch {} };
-      transaction.onerror = () => { try { db.close(); } catch {} };
+transaction.oncomplete = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
+transaction.onabort = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
+transaction.onerror = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
 
       // İndirimsiz durumu önce kontrol et
       let finalData: Omit<Sale, "id"> = { ...saleData };
@@ -104,9 +104,9 @@ class SalesService {
       const store = transaction.objectStore(STORE_NAME);
 
       // Always close DB after readonly transaction too
-      transaction.oncomplete = () => { try { db.close(); } catch {} };
-      transaction.onabort = () => { try { db.close(); } catch {} };
-      transaction.onerror = () => { try { db.close(); } catch {} };
+      transaction.oncomplete = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
+      transaction.onabort = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
+      transaction.onerror = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
 
       const request = store.getAll();
 
@@ -135,9 +135,9 @@ class SalesService {
       const store = tx.objectStore(STORE_NAME);
       const idxNames: DOMStringList | undefined = (store as unknown as { indexNames?: DOMStringList }).indexNames;
       // Ensure connection closes after this attempt (even if we fall back)
-      tx.oncomplete = () => { try { db.close(); } catch {} };
-      tx.onabort = () => { try { db.close(); } catch {} };
-      tx.onerror = () => { try { db.close(); } catch {} };
+tx.oncomplete = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
+tx.onabort = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
+tx.onerror = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
 
       const needStatus = !!filter.status;
       const needPayment = !!filter.paymentMethod;
@@ -238,9 +238,9 @@ class SalesService {
       const transaction = db.transaction(STORE_NAME, "readonly");
       const store = transaction.objectStore(STORE_NAME);
 
-      transaction.oncomplete = () => { try { db.close(); } catch {} };
-      transaction.onabort = () => { try { db.close(); } catch {} };
-      transaction.onerror = () => { try { db.close(); } catch {} };
+transaction.oncomplete = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
+transaction.onabort = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
+transaction.onerror = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
 
       const request = store.get(id);
 
@@ -262,9 +262,9 @@ class SalesService {
       const transaction = db.transaction(STORE_NAME, "readwrite");
       const store = transaction.objectStore(STORE_NAME);
 
-      transaction.oncomplete = () => { try { db.close(); } catch {} };
-      transaction.onabort = () => { try { db.close(); } catch {} };
-      transaction.onerror = () => { try { db.close(); } catch {} };
+      transaction.oncomplete = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
+      transaction.onabort = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
+      transaction.onerror = () => { try { db.close(); } catch (_e) { /* ignore close error */ } };
 
       const getRequest = store.get(saleId);
 

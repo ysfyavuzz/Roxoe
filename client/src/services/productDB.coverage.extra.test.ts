@@ -15,7 +15,7 @@ async function resetPOSDB() {
       req.onerror = () => rej(req.error)
       req.onblocked = () => res()
     })
-  } catch {}
+  } catch (_err) { /* test cleanup no-op */ }
 }
 
 beforeEach(async () => {
@@ -98,7 +98,7 @@ describe('[coverage] productService ek kapsam', () => {
       barcode: 'STOCK-001',
     } as any)
 
-    await new Promise<void>(async (resolve) => {
+    await new Promise<void>((resolve, reject) => {
       const spy = vi.fn((p: any) => {
         if (p?.id === pid && p?.stock === 15) {
           productService.offStockChange(spy)
@@ -106,7 +106,7 @@ describe('[coverage] productService ek kapsam', () => {
         }
       })
       productService.onStockChange(spy)
-      await productService.updateStock(pid, 5)
+      productService.updateStock(pid, 5).catch(reject)
     })
   })
 })

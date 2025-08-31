@@ -34,10 +34,8 @@ let revokeSpy: ReturnType<typeof vi.fn>
 beforeEach(() => {
   createSpy = vi.fn().mockReturnValue('blob:fake-url')
   revokeSpy = vi.fn()
-  // @ts-ignore
-  URL.createObjectURL = createSpy
-  // @ts-ignore
-  URL.revokeObjectURL = revokeSpy
+  ;(URL as any).createObjectURL = createSpy
+  ;(URL as any).revokeObjectURL = revokeSpy
 })
 
 afterEach(() => {
