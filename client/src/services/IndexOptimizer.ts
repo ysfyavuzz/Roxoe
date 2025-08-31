@@ -5,8 +5,8 @@
 
 import { openDB, IDBPDatabase, IDBPTransaction } from 'idb';
 
-import DBVersionHelper from '../helpers/DBVersionHelper';
 import { IndexTelemetry } from '../diagnostics/indexTelemetry';
+import DBVersionHelper from '../helpers/DBVersionHelper';
 
 export interface IndexOptimizationResult {
   success: boolean;

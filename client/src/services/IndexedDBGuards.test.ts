@@ -11,9 +11,10 @@ vi.mock('./UnifiedDBInitializer', () => {
   }
 })
 
-import { productService } from './productDB'
-import { cashRegisterService, CashRegisterStatus, CashTransactionType } from './cashRegisterDB'
 import { IndexTelemetry } from '../diagnostics/indexTelemetry'
+
+import { cashRegisterService, CashRegisterStatus, CashTransactionType } from './cashRegisterDB'
+import { productService } from './productDB'
 
 async function createTestDB(): Promise<IDBPDatabase<any>> {
   // Fresh DB without any indexes (to trigger fallbacks)

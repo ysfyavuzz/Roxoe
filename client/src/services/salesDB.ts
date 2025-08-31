@@ -1,8 +1,8 @@
 // salesDB.ts
+import { IndexTelemetry } from "../diagnostics/indexTelemetry";
 import DBVersionHelper from '../helpers/DBVersionHelper';
 import { discountService } from "../services/discountService";
 import { Sale, DiscountInfo } from "../types/sales";
-import { IndexTelemetry } from "../diagnostics/indexTelemetry";
 
 const DB_NAME = "salesDB";
 const STORE_NAME = "sales";

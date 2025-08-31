@@ -22,7 +22,7 @@ export class BackupScheduler {
   enableAutoBackup(_frequency: BackupSchedule['frequency'] = 'daily', _hour: number = 3, _minute: number = 0): void {
     this.schedule = { frequency: 'daily', hour: 3, minute: 0, enabled: true }
   }
-  disableAutoBackup(): void { if (this.schedule) this.schedule.enabled = false }
+  disableAutoBackup(): void { if (this.schedule) {this.schedule.enabled = false} }
   checkLastBackup(): Date | null { return this.schedule?.lastBackup ? new Date(this.schedule.lastBackup) : null }
   async checkScheduledBackup(): Promise<void> { /* no-op */ }
 }

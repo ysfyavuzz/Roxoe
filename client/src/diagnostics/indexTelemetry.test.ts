@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { IndexTelemetry } from './indexTelemetry'
+
 import { reportMissingIndexCandidates } from '../services/IndexOptimizer'
+
+import { IndexTelemetry } from './indexTelemetry'
 
 beforeEach(() => {
   IndexTelemetry.reset()

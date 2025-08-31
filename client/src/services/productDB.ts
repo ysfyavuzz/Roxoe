@@ -1,11 +1,11 @@
 // productDB.ts
 import { type IDBPDatabase } from "idb";
 
+import { IndexTelemetry } from '../diagnostics/indexTelemetry';
 import type { PosDBSchema } from "../types/db";
 import { Product, Category } from "../types/product";
 
 import initUnifiedPOSDB from './UnifiedDBInitializer';
-import { IndexTelemetry } from '../diagnostics/indexTelemetry';
 
 export interface ProductGroup {
   id: number;

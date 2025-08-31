@@ -1,8 +1,10 @@
 // services/autoCategoryAssignment.ts
-import ProductFeatureExtractor from './productFeatureExtractor';
+import type { Category } from '../types/product';
+
 import CategoryService from './categoryService';
 import { productService } from './productDB';
-import type { Category } from '../types/product';
+import ProductFeatureExtractor from './productFeatureExtractor';
+
 
 class AutoCategoryAssignment {
   static async assignCategory(productName: string): Promise<number> {
@@ -48,7 +50,7 @@ class AutoCategoryAssignment {
     try {
       const categories = await productService.getCategories();
       const defaultCategory = categories.find((cat) => cat.name === 'Diğer') || categories.find((cat) => cat.name === 'Genel');
-      if (defaultCategory) return defaultCategory.id;
+      if (defaultCategory) {return defaultCategory.id;}
 
       const id = await productService.addCategory({ name: 'Genel', icon: '📦' });
       return id;

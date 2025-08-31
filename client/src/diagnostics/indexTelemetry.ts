@@ -27,7 +27,7 @@ class IndexTelemetryImpl {
   }
 
   recordFallback(evt: Omit<FallbackEvent, 'timestamp'>) {
-    if (!this.enabled) return
+    if (!this.enabled) {return}
     const full: FallbackEvent = { ...evt, timestamp: Date.now() }
     this.events.push(full)
     if (this.events.length > this.maxEvents) {
@@ -54,7 +54,7 @@ class IndexTelemetryImpl {
     for (const e of this.events) {
       const idx = e.index ?? this.extractIndexName(e.reason)
       const looksMissing = /index missing|indeks yok|indeksi bulunamadı|index yok/i.test(e.reason)
-      if (!idx && !looksMissing) continue
+      if (!idx && !looksMissing) {continue}
       const indexName = idx ?? 'unknown'
       const key = `${e.db}.${e.store}.${indexName}`
       const cur = candidateCounts.get(key)
@@ -74,7 +74,7 @@ class IndexTelemetryImpl {
 
   startHealthMonitor(opts?: { thresholdPerMinute?: number; onWarning?: (summary: string) => void }) {
     const threshold = Math.max(1, opts?.thresholdPerMinute ?? 20)
-    if (this.monitorTimer) clearInterval(this.monitorTimer)
+    if (this.monitorTimer) {clearInterval(this.monitorTimer)}
     this.monitorTimer = setInterval(() => {
       const now = Date.now()
       const lastMinute = this.events.filter((e) => now - e.timestamp <= 60_000).length

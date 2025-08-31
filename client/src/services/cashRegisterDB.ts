@@ -2,6 +2,7 @@
 import { type IDBPDatabase } from "idb";
 import { v4 as uuidv4 } from "uuid";
 
+import { IndexTelemetry } from '../diagnostics/indexTelemetry';
 import {
   CashRegisterSession,
   CashRegisterStatus,
@@ -11,7 +12,6 @@ import {
 import type { PosDBSchema } from "../types/db";
 
 import initUnifiedPOSDB from './UnifiedDBInitializer';
-import { IndexTelemetry } from '../diagnostics/indexTelemetry';
 
 const DB_NAME = "posDB";
 

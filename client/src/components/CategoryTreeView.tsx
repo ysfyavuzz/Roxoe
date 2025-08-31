@@ -1,5 +1,6 @@
 // components/CategoryTreeView.tsx
 import React, { useState, useEffect } from 'react';
+
 import CategoryService, { CategoryNode } from '../services/categoryService';
 
 interface CategoryTreeViewProps {
@@ -58,7 +59,7 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
 
   const toggleNode = (nodePath: number[]) => {
     setTree(prev => {
-      if (nodePath.length === 0) return prev;
+      if (nodePath.length === 0) {return prev;}
       const newTree = [...prev];
       let current: any = newTree;
       

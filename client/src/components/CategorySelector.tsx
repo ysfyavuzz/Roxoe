@@ -1,7 +1,9 @@
 // components/CategorySelector.tsx
 import React, { useState } from 'react';
-import CategoryTreeView from './CategoryTreeView';
+
 import CategoryService from '../services/categoryService';
+
+import CategoryTreeView from './CategoryTreeView';
 
 interface CategorySelectorProps {
   value?: string;

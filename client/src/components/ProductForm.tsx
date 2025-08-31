@@ -1,6 +1,8 @@
 // components/ProductForm.tsx
 import React, { useState, useEffect } from 'react';
+
 import AutoCategoryAssignment from '../services/autoCategoryAssignment';
+
 import CategorySelector from './CategorySelector';
 
 interface Product {

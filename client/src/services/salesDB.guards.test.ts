@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import 'fake-indexeddb/auto'
 
-import { salesDB } from './salesDB'
 import { IndexTelemetry } from '../diagnostics/indexTelemetry'
+
+import { salesDB } from './salesDB'
 
 function makeSale(dateStr: string, status: 'completed' | 'cancelled' | 'refunded', paymentMethod: 'nakit' | 'kart') {
   return {

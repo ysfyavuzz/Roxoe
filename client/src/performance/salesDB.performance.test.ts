@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import 'fake-indexeddb/auto'
 
-import { salesDB } from '../services/salesDB'
 import { IndexTelemetry } from '../diagnostics/indexTelemetry'
+import { salesDB } from '../services/salesDB'
 
 function randChoice<T>(arr: readonly T[]): T { return arr[Math.floor(Math.random() * arr.length)]! }
 
@@ -73,9 +73,9 @@ describe('[performance] salesDB.getSalesWithFilter', () => {
         } else {
           const store = (req.transaction as IDBTransaction).objectStore('sales')
           const idxNames = Array.from((store as any).indexNames || [])
-          if (!idxNames.includes('status')) store.createIndex('status', 'status', { unique: false })
-          if (!idxNames.includes('paymentMethod')) store.createIndex('paymentMethod', 'paymentMethod', { unique: false })
-          if (!idxNames.includes('date')) store.createIndex('date', 'date', { unique: false })
+          if (!idxNames.includes('status')) {store.createIndex('status', 'status', { unique: false })}
+          if (!idxNames.includes('paymentMethod')) {store.createIndex('paymentMethod', 'paymentMethod', { unique: false })}
+          if (!idxNames.includes('date')) {store.createIndex('date', 'date', { unique: false })}
         }
       }
       req.onsuccess = () => { req.result.close(); res() }

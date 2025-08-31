@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react'
 import { Database, RefreshCw, Wrench, ShieldAlert } from 'lucide-react'
-import { reportMissingIndexCandidates, indexOptimizer } from '../../services/IndexOptimizer'
+import React, { useEffect, useMemo, useState } from 'react'
+
 import { useAlert } from '../../components/AlertProvider'
+import { reportMissingIndexCandidates, indexOptimizer } from '../../services/IndexOptimizer'
 
 interface Candidate { db: string; store: string; index: string; count: number }
 

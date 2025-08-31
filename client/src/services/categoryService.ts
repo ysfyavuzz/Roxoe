@@ -1,5 +1,6 @@
 // services/categoryService.ts
 import { Category } from '../types/product';
+
 import { productService } from './productDB';
 
 export interface CategoryNode {
@@ -40,7 +41,7 @@ class CategoryService {
   static async getSubCategories(parentId: string | number): Promise<Category[]> {
     try {
       const pid = typeof parentId === 'string' ? Number(parentId) : parentId;
-      if (Number.isNaN(pid)) return [];
+      if (Number.isNaN(pid)) {return [];}
       const categories = await productService.getCategories();
       return categories.filter((c) => (c.parentId ?? null) === pid);
     } catch (error) {
@@ -55,14 +56,14 @@ class CategoryService {
   static async getCategoryHierarchy(categoryId: string | number): Promise<Category[]> {
     try {
       const id = typeof categoryId === 'string' ? Number(categoryId) : categoryId;
-      if (Number.isNaN(id)) return [];
+      if (Number.isNaN(id)) {return [];}
       const categories = await productService.getCategories();
       const byId = new Map<number, Category>(categories.map((c) => [c.id, c]));
       const result: Category[] = [];
       let current = byId.get(id);
       while (current) {
         result.unshift(current);
-        if (current.parentId == null) break;
+        if (current.parentId == null) {break;}
         current = byId.get(current.parentId);
       }
       return result;
@@ -96,10 +97,10 @@ const payload: Omit<Category, 'id'> = {
   static async getProductCount(categoryId: string | number): Promise<number> {
     try {
       const id = typeof categoryId === 'string' ? Number(categoryId) : categoryId;
-      if (Number.isNaN(id)) return 0;
+      if (Number.isNaN(id)) {return 0;}
       const categories = await productService.getCategories();
       const cat = categories.find((c) => c.id === id);
-      if (!cat) return 0;
+      if (!cat) {return 0;}
       const products = await productService.getAllProducts();
       const idStr = String(id);
       return products.filter((p) => p.category === cat.name || p.categoryId === idStr).length;
