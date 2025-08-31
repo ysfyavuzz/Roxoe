@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * Enforce higher coverage for critical modules
- * - Global thresholds are set in vitest.config.ts (80%)
- * - This script enforces >=95% line coverage for specified critical paths
+ * En Kritik Modüller için yüksek coverage zorunluluğu
+ * - Global eşikler vitest.config.ts içinde (%80)
+ * - Bu script belirli kritik yollar için satır kapsamını >=%95 zorunlu kılar
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
 const ROOT = process.cwd();
 const COVERAGE_DIR = path.join(ROOT, 'coverage');
@@ -27,7 +27,7 @@ const MIN_COVERAGE = Number(process.env.MIN_CRITICAL_COVERAGE || 95);
 function main() {
   if (!fs.existsSync(SUMMARY_FILE)) {
     console.error(
-      `[check-coverage] coverage summary not found at: ${SUMMARY_FILE}`
+      `[check-coverage] coverage summary bulunamadı: ${SUMMARY_FILE}`
     );
     process.exit(2);
   }
@@ -36,7 +36,7 @@ function main() {
   const failures = [];
 
   for (const critical of CRITICAL_PATHS) {
-    // coverage-summary paths are relative to cwd and may use posix separators
+    // coverage-summary yolları posix ayırıcı kullanabilir
     const foundKey = Object.keys(summary).find(k => {
       const normK = k.replace(/\\/g, '/');
       return (
@@ -46,7 +46,7 @@ function main() {
     });
 
     if (!foundKey) {
-      // If file wasn't included in coverage, treat as failure
+      // Raporlanmamışsa başarısız say
       failures.push({ file: critical, reason: 'not-covered' });
       continue;
     }
@@ -61,22 +61,22 @@ function main() {
 
   if (failures.length) {
     console.error(
-      `\n[check-coverage] Critical coverage check failed (min ${MIN_COVERAGE}% lines):`
+      `\n[check-coverage] Kritik coverage kontrolü başarısız (min ${MIN_COVERAGE}% lines):`
     );
     for (const f of failures) {
       if (f.reason === 'not-covered') {
-        console.error(`  - ${f.file}: not covered by tests`);
+        console.error(`  - ${f.file}: test kapsamına dahil değil`);
       } else {
         console.error(`  - ${f.file}: ${f.linesPct}%`);
       }
     }
     console.error(
-      '\nRun "npm run test:coverage" and add tests for the files above.'
+      '\n"npm run test:coverage" çalıştırın ve yukarıdaki dosyalar için testleri ekleyin.'
     );
     process.exit(1);
   } else {
     console.log(
-      `[check-coverage] Critical coverage OK (>= ${MIN_COVERAGE}% lines)`
+      `[check-coverage] Kritik coverage OK (>= ${MIN_COVERAGE}% lines)`
     );
   }
 }
