@@ -175,11 +175,11 @@ class SalesService {
         }
 
         if (needStatus && idxNames.contains('status')) {
-          const byStatus = await getAllFromIndex('status', filter.status as unknown)
+          const byStatus = await getAllFromIndex('status', filter.status as unknown as IDBValidKey)
           candidate = byStatus
         }
         if (needPayment && idxNames.contains('paymentMethod')) {
-          const byPayment = await getAllFromIndex('paymentMethod', filter.paymentMethod as unknown)
+          const byPayment = await getAllFromIndex('paymentMethod', filter.paymentMethod as unknown as IDBValidKey)
           candidate = candidate ? candidate.filter(s => byPayment.some(p => p.id === s.id)) : byPayment
         }
         if (needDate && idxNames.contains('date') && (filter.startDate || filter.endDate)) {

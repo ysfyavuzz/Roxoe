@@ -355,7 +355,8 @@ export class IndexedDBImporter {
     clearExisting: boolean,
     onProgress?: (processedCount: number) => void
   ): Promise<{ success: boolean; importedCount: number }> {
-    let tx: IDBPTransaction<unknown, string[], 'readwrite'> | null = null;
+    // tx başlangıçta tanımsız; oluşturulduktan sonra non-null olacak
+    let tx: IDBPTransaction<unknown, string[], 'readwrite'> | undefined = undefined;
     let importedCount = 0; // Başarılı olanların sayısı
     let errorCount = 0;    // Hata alanların sayısı
     let processedCount = 0; // Döngüde işlenenlerin sayısı
@@ -373,9 +374,9 @@ export class IndexedDBImporter {
         return { success: true, importedCount: 0 };
       }
 
-      // 3. Yazma işlemi (transaction) başlat
-      tx = db.transaction(tableName, 'readwrite');
-      const store = tx.objectStore(tableName) as unknown as { clear: () => Promise<unknown>; put: (value: unknown) => Promise<unknown> };
+      // 3. Yazma işlemi (transaction) başlat (tür güvenliği için cast ile sabitle)
+      tx = db.transaction(tableName, 'readwrite') as unknown as IDBPTransaction<unknown, string[], 'readwrite'>;
+      const store = (tx as IDBPTransaction<unknown, string[], 'readwrite'>).objectStore(tableName) as unknown as { clear: () => Promise<unknown>; put: (value: unknown) => Promise<unknown> };
 
       // 4. Gerekirse mevcut tabloyu temizle
       if (clearExisting) {
@@ -410,7 +411,7 @@ export class IndexedDBImporter {
       } // Kayıt döngüsü sonu
 
       // 6. İşlemin tamamlanmasını bekle
-      if (tx) { await tx.done; }
+      if (tx) { await (tx as IDBPTransaction<unknown, string[], 'readwrite'>).done; }
 
       console.log(`  -> "${tableName}" için veri aktarımı tamamlandı: Toplam Denenen: ${processedCount}, Başarılı: ${importedCount}, Hata: ${errorCount}`);
 
