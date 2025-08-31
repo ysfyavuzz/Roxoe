@@ -94,6 +94,11 @@ describe('[coverage] salesDB geniş kapsam', () => {
       // Özet de index yolunu kullanır (status='completed')
       const summary2 = await salesDB.getSalesSummary(new Date('2025-01-10'), new Date('2025-01-20'))
       expect(summary2.totalSales).toBeGreaterThan(0)
+
+      // Ek kapsama: indeksler mevcutken sadece hasDiscount filtresi ile (index gerektirmeyen)
+      // yol çalıştığında, hızlı yol atlanıp fallback filtre uygulanır
+      const onlyDisc = await salesDB.getSalesWithFilter({ hasDiscount: true })
+      expect(onlyDisc.every(s => !!s.discount)).toBe(true)
     } finally {
       spy.mockRestore()
     }
