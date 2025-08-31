@@ -24,7 +24,7 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
       // Her biri için alt kategorileri yükle
       const treeNodes = await Promise.all(
         rootCategories.map(async (category) => {
-          const children = await loadSubTree(category.id);
+          const children = await loadSubTree(String(category.id));
           return {
             category,
             children,
@@ -46,7 +46,7 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
     
     return Promise.all(
       subCategories.map(async (category) => {
-        const children = await loadSubTree(category.id);
+        const children = await loadSubTree(String(category.id));
         return {
           category,
           children,
@@ -58,6 +58,7 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
 
   const toggleNode = (nodePath: number[]) => {
     setTree(prev => {
+      if (nodePath.length === 0) return prev;
       const newTree = [...prev];
       let current: any = newTree;
       
@@ -66,7 +67,7 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
         current = current[nodePath[i]].children;
       }
       
-      const lastIndex = nodePath[nodePath.length - 1];
+      const lastIndex = nodePath[nodePath.length - 1]!;
       current[lastIndex] = {
         ...current[lastIndex],
         isOpen: !current[lastIndex].isOpen
@@ -79,7 +80,7 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
   const renderTree = (nodes: CategoryNode[], path: number[] = []) => {
     return nodes.map((node, index) => {
       const currentPath = [...path, index];
-      const isSelected = node.category.id === selectedCategory;
+      const isSelected = String(node.category.id) === selectedCategory;
       
       return (
         <div key={node.category.id} className="ml-4">
@@ -87,7 +88,7 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
             className={`flex items-center p-2 cursor-pointer rounded ${
               isSelected ? 'bg-blue-100' : 'hover:bg-gray-100'
             }`}
-            onClick={() => onSelect(node.category.id)}
+            onClick={() => onSelect(String(node.category.id))}
           >
             {node.children.length > 0 && (
               <button 

@@ -4,7 +4,7 @@ import 'fake-indexeddb/auto'
 import { salesDB } from '../services/salesDB'
 import { IndexTelemetry } from '../diagnostics/indexTelemetry'
 
-function randChoice<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)] }
+function randChoice<T>(arr: readonly T[]): T { return arr[Math.floor(Math.random() * arr.length)]! }
 
 async function resetDB(dbName: string) {
   await new Promise<void>((res, rej) => {
