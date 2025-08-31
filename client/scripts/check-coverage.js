@@ -52,7 +52,7 @@ function main() {
     }
 
     const metrics = summary[foundKey];
-    const linesPct = metrics.total?.lines?.pct ?? 0;
+    const linesPct = (metrics?.lines?.pct ?? metrics?.total?.lines?.pct ?? 0);
 
     if (linesPct < MIN_COVERAGE) {
       failures.push({ file: critical, linesPct });
