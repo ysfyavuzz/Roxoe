@@ -137,11 +137,44 @@ export function useCashRegisterPage() {
 
       showSuccess("Kasa başarıyla açıldı");
       await loadCashRegister();
-    } catch (error) {
+  } catch (error) {
+      // Hata mesajını kullanıcıya daha açıklayıcı ilet
       console.error("Kasa açılırken hata:", error);
-      showError("Kasa açılırken bir hata oluştu!");
+      const message = error instanceof Error ? error.message : "Kasa açılırken bir hata oluştu!";
+
+      // Eğer zaten açık oturum nedeniyle engelleniyorsa kurtarma akışı öner
+      if (typeof message === "string" && message.includes("Zaten açık bir kasa dönemi")) {
+        const proceed = await confirm("Mevcut açık kasa oturumu tespit edildi. Kurtarma modunda önce kapatıp sonra tekrar açmak ister misiniz?");
+        if (proceed) {
+          try {
+            const session = await cashRegisterService.forceOpenRegister(parseFloat(newOpeningBalance));
+            // UI durumlarını güncelle
+            setRegisterStatus(CashRegisterStatus.OPEN);
+            setSessionId(session.id);
+            setOpeningDate(new Date(session.openingDate));
+            setOpeningBalance(session.openingBalance);
+            setDailyCashSales(0);
+            setDailyCardSales(0);
+            setCashWithdrawals(0);
+            setCashDeposits(0);
+            setNewOpeningBalance("");
+            setTransactions([]);
+
+            showSuccess("Kasa kurtarma moduyla açıldı");
+            await loadCashRegister();
+            return;
+          } catch (recoverErr) {
+            console.error("Kurtarma ile kasa açılırken hata:", recoverErr);
+            const recoverMsg = recoverErr instanceof Error ? recoverErr.message : "Kurtarma ile açma başarısız oldu!";
+            showError(recoverMsg);
+            return;
+          }
+        }
+      }
+
+      showError(message);
     }
-  }, [newOpeningBalance, showError, showSuccess, loadCashRegister]);
+  }, [newOpeningBalance, showError, showSuccess, loadCashRegister, confirm]);
 
   const handleCashDeposit = useCallback(async () => {
     if (!transactionAmount || isNaN(parseFloat(transactionAmount)) || parseFloat(transactionAmount) <= 0) {

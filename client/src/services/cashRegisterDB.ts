@@ -335,6 +335,31 @@ class CashRegisterService {
       byCustomer: Array.from(customerMap.values()),
     };
   }
+
+  /**
+   * Kurtarma: Açık bir kasa oturumu varsa güvenli şekilde kapatır.
+   * Not: Bu fonksiyon operasyonel kurtarma amaçlıdır; UI tarafında açık uyarı ile kullanılmalıdır.
+   */
+  async forceCloseActiveSession(): Promise<CashRegisterSession | null> {
+    const active = await this.getActiveSession();
+    if (!active) {
+      return null;
+    }
+    return await this.closeRegister(active.id);
+  }
+
+  /**
+   * Kurtarma: Her durumda yeni bir kasa oturumu açmayı dener.
+   * Eğer açık bir oturum mevcutsa önce kapatır, ardından verilen açılış bakiyesi ile yeni oturum açar.
+   * @param openingBalance Açılış bakiyesi
+   */
+  async forceOpenRegister(openingBalance: number): Promise<CashRegisterSession> {
+    const active = await this.getActiveSession();
+    if (active) {
+      await this.closeRegister(active.id);
+    }
+    return await this.openRegister(openingBalance);
+  }
 }
 
 export const cashRegisterService = new CashRegisterService();

@@ -14,8 +14,8 @@ export default defineConfig({
     sourcemap: true,
   },
   resolve: {
-    alias: process.env.NODE_ENV === 'test' ? [
-      // Stub Electron/Node-heavy backup modules in web/E2E build
+    alias: (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') ? [
+      // Stub Electron/Node-heavy backup modules in tests and dev renderer
       { find: /^\.{1,2}\/utils\/fileUtils$/, replacement: '/src/backup/utils/fileUtils.web.ts' },
       { find: /^\.{1,2}\/scheduler\/BackupScheduler$/, replacement: '/src/backup/scheduler/BackupScheduler.web.ts' },
     ] : [],

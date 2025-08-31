@@ -10,6 +10,7 @@ Ek: RoxoePOS Kitabı (Yatırımcı + Kullanıcı + Geliştirici)
 - PDF üretimi için docs/BOOK/BUILD-PDF.ps1 sağlandı (Pandoc ile).
 
 Öne çıkanlar
+- Kasa: Kasa açma hatasında kullanıcıya ayrıntılı mesaj gösterimi sağlandı. Mevcut açık oturum tespit edilirse isteğe bağlı “kurtarma modunda kapatıp yeniden aç” akışı eklendi.
 - Test stabilizasyonu: addProductToGroup duplicate ilişkide idb AbortError → Unhandled Rejection sorunu giderildi (tx.abort + tx.done swallow).
 - test:critical kapısı: Windows PowerShell için MIN_CRITICAL_COVERAGE örnekleri belgelendi.
 - Runbook (db-inconsistency): repairDatabase/db_force_reset detayları eklendi.

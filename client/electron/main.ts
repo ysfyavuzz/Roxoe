@@ -9,6 +9,7 @@ import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 
 import { backupManager, optimizedBackupManager, createSmartBackup, FileUtils } from "../src/backup";
+import SerialManager from "./license";
 
 import type { BackupCreateOptions, BackupResult, RestoreResult, UpdateProgressPayload, DbImportResponse } from "./ipcTypes";
 
@@ -1136,6 +1137,15 @@ app.whenReady().then(() => {
   if (!app.isPackaged) {
     app.commandLine.appendSwitch("remote-debugging-port", "9222");
   }
+
+  // Initialize license/serial IPC handlers
+  try {
+    new SerialManager();
+    log.info("SerialManager initialized (IPC handlers registered)");
+  } catch (e) {
+    log.error("SerialManager init failed:", e);
+  }
+
   createWindow();
 
   backupManager.startScheduler();
