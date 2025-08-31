@@ -2,8 +2,8 @@
 
 [← Teknik Kitap'a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md) · [Batch Endeksi](components-batch-index.md)
 
-Son Güncelleme: 2025-08-31  
-Sürüm: 0.5.3  
+Son Güncelleme: 2025-08-31
+Sürüm: 0.5.3
 Durum: ✅ Tüm batch'ler tamamlandı (1-16)  
 
 Bu dosya, ana bileşen gruplarını ve önemli notları özetler. Ayrıntılı props arayüzleri için dosya içinde TypeScript interfaceleri takip edin.
