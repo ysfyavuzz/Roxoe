@@ -2701,3 +2701,688 @@ class SalesService {
 ```
 
 ---
+
+25. Stok Sistemi Geliştirmeleri
+
+## 25.1 Hiyerarşik Kategori Yapısı
+
+### Mevcut Durum
+Şu anda RoxoePOS'ta basit kategori yapısı kullanılmaktadır. Tüm ürünler tek seviyeli kategorilerde düzenlenmektedir. Bu yapı, ürün sayısının artmasıyla birlikte yönetimi zorlaştırmaktadır.
+
+### Önerilen Geliştirme
+Hiyerarşik kategori yapısı ile ürünler daha mantıklı gruplara ayrılabilir. Bu yapı kullanıcı deneyimini artırır ve stok yönetimini kolaylaştırır.
+
+#### Kategori Yapısı Örneği
+```
+Ana Kategoriler
+├── Sigara
+├── Yiyecek
+├── İçecek
+└── Diğer
+    ├── Çakmak
+    ├── Şarj Aleti
+    └── Temizlik Malzemeleri
+        ├── Deterjan
+        └── Sabun
+```
+
+### Teknik Uygulama
+
+#### 1. Kategori Veri Modeli
+```typescript
+// types/Category.ts
+interface Category {
+  id: string;
+  name: string;
+  parentId?: string; // Üst kategori ID (null ise ana kategori)
+  level: number; // Kategori seviyesi (0: Ana, 1: Alt, 2: Alt-alt, ...)
+  path: string; // Kategori yolu (örn: "Diğer > Temizlik Malzemeleri > Deterjan")
+  icon?: string; // Görsel ikon
+  color?: string; // Renk kodu
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Product {
+  // ... mevcut alanlar ...
+  categoryId: string; // Artık sadece yaprak kategoriye atanabilir
+  categoryPath: string; // Ürünün tam kategori yolu
+}
+```
+
+#### 2. Kategori Servis Katmanı
+```typescript
+// services/CategoryService.ts
+class CategoryService {
+  // Ana kategorileri getir
+  static async getRootCategories(): Promise<Category[]> {
+    return db.categories.where({ level: 0 }).toArray();
+  }
+
+  // Belirli bir kategorinin alt kategorilerini getir
+  static async getSubCategories(parentId: string): Promise<Category[]> {
+    return db.categories.where({ parentId }).toArray();
+  }
+
+  // Kategori yolu ile tüm hiyerarşiyi getir
+  static async getCategoryHierarchy(categoryId: string): Promise<Category[]> {
+    const category = await db.categories.get(categoryId);
+    if (!category) return [];
+
+    const hierarchy: Category[] = [category];
+    let current = category;
+
+    // Üst kategorileri bul
+    while (current.parentId) {
+      current = await db.categories.get(current.parentId);
+      if (current) {
+        hierarchy.unshift(current);
+      }
+    }
+
+    return hierarchy;
+  }
+
+  // Yeni kategori ekle
+  static async createCategory(data: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>): Promise<Category> {
+    const now = new Date();
+    const category: Category = {
+      ...data,
+      id: generateId(),
+      createdAt: now,
+      updatedAt: now
+    };
+
+    // Path alanını oluştur
+    if (data.parentId) {
+      const parent = await db.categories.get(data.parentId);
+      category.path = parent ? `${parent.path} > ${data.name}` : data.name;
+    } else {
+      category.path = data.name;
+    }
+
+    await db.categories.add(category);
+    return category;
+  }
+
+  // Kategoriye ait ürün sayısını getir
+  static async getProductCount(categoryId: string): Promise<number> {
+    return db.products.where({ categoryId }).count();
+  }
+
+  // Kategori silme (alt kategoriler varsa engelle)
+  static async deleteCategory(categoryId: string): Promise<boolean> {
+    const hasSubCategories = await db.categories.where({ parentId: categoryId }).count() > 0;
+    const hasProducts = await this.getProductCount(categoryId) > 0;
+
+    if (hasSubCategories || hasProducts) {
+      throw new Error('Kategoride alt kategori veya ürün bulunduğu için silinemez');
+    }
+
+    await db.categories.delete(categoryId);
+    return true;
+  }
+}
+```
+
+#### 3. Ürün Servisinde Kategori Entegrasyonu
+```typescript
+// services/ProductService.ts
+class ProductService {
+  // Ürün oluştururken kategori validasyonu
+  static async create(data: ProductCreateData): Promise<Product> {
+    // Kategorinin yaprak kategori (alt kategorisi olmayan) olduğundan emin ol
+    const subCategoryCount = await CategoryService.getSubCategories(data.categoryId).then(c => c.length);
+    if (subCategoryCount > 0) {
+      throw new Error('Ürünler sadece yaprak kategorilere eklenebilir');
+    }
+
+    // Kategori hiyerarşisini al
+    const categoryHierarchy = await CategoryService.getCategoryHierarchy(data.categoryId);
+    const categoryPath = categoryHierarchy.map(c => c.name).join(' > ');
+
+    const product: Product = {
+      ...data,
+      id: generateId(),
+      categoryPath,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    await db.products.add(product);
+    return product;
+  }
+
+  // Kategoriye göre ürün arama
+  static async searchByCategory(categoryId: string): Promise<Product[]> {
+    return db.products.where({ categoryId }).toArray();
+  }
+
+  // Kategori hiyerarşisine göre ürün arama
+  static async searchByCategoryPath(categoryPath: string): Promise<Product[]> {
+    return db.products
+      .filter(product => product.categoryPath?.startsWith(categoryPath))
+      .toArray();
+  }
+}
+```
+
+#### 4. UI Bileşenleri
+
+##### Kategori Ağaç Görünümü
+```tsx
+// components/CategoryTreeView.tsx
+import React, { useState, useEffect } from 'react';
+import { CategoryService } from '@/services/CategoryService';
+
+interface CategoryNode {
+  category: Category;
+  children: CategoryNode[];
+  isOpen: boolean;
+}
+
+const CategoryTreeView: React.FC<{
+  selectedCategory?: string;
+  onSelect: (categoryId: string) => void;
+}> = ({ selectedCategory, onSelect }) => {
+  const [tree, setTree] = useState<CategoryNode[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadCategoryTree();
+  }, []);
+
+  const loadCategoryTree = async () => {
+    setLoading(true);
+    try {
+      // Ana kategorileri yükle
+      const rootCategories = await CategoryService.getRootCategories();
+      
+      // Her biri için alt kategorileri yükle
+      const treeNodes = await Promise.all(
+        rootCategories.map(async (category) => {
+          const children = await loadSubTree(category.id);
+          return {
+            category,
+            children,
+            isOpen: false
+          };
+        })
+      );
+
+      setTree(treeNodes);
+    } catch (error) {
+      console.error('Kategori ağacı yüklenirken hata:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadSubTree = async (parentId: string): Promise<CategoryNode[]> {
+    const subCategories = await CategoryService.getSubCategories(parentId);
+    
+    return Promise.all(
+      subCategories.map(async (category) => {
+        const children = await loadSubTree(category.id);
+        return {
+          category,
+          children,
+          isOpen: false
+        };
+      })
+    );
+  };
+
+  const toggleNode = (nodePath: number[]) => {
+    setTree(prev => {
+      const newTree = [...prev];
+      let current: any = newTree;
+      
+      // Node path'e göre ilgili node'u bul
+      for (let i = 0; i < nodePath.length - 1; i++) {
+        current = current[nodePath[i]].children;
+      }
+      
+      const lastIndex = nodePath[nodePath.length - 1];
+      current[lastIndex] = {
+        ...current[lastIndex],
+        isOpen: !current[lastIndex].isOpen
+      };
+      
+      return newTree;
+    });
+  };
+
+  const renderTree = (nodes: CategoryNode[], path: number[] = []) => {
+    return nodes.map((node, index) => {
+      const currentPath = [...path, index];
+      const isSelected = node.category.id === selectedCategory;
+      
+      return (
+        <div key={node.category.id} className="ml-4">
+          <div 
+            className={`flex items-center p-2 cursor-pointer rounded ${
+              isSelected ? 'bg-blue-100' : 'hover:bg-gray-100'
+            }`}
+            onClick={() => onSelect(node.category.id)}
+          >
+            {node.children.length > 0 && (
+              <button 
+                className="mr-2 w-5 h-5 flex items-center justify-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleNode(currentPath);
+                }}
+              >
+                {node.isOpen ? '−' : '+'}
+              </button>
+            )}
+            <span className="flex-1">{node.category.name}</span>
+            {node.children.length > 0 && (
+              <span className="text-xs text-gray-500 ml-2">
+                ({node.children.length})
+              </span>
+            )}
+          </div>
+          
+          {node.isOpen && node.children.length > 0 && (
+            <div className="border-l-2 border-gray-200 ml-2">
+              {renderTree(node.children, currentPath)}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
+
+  if (loading) {
+    return <div className="p-4">Kategoriler yükleniyor...</div>;
+  }
+
+  return (
+    <div className="category-tree">
+      {renderTree(tree)}
+    </div>
+  );
+};
+
+export default CategoryTreeView;
+```
+
+##### Kategori Seçici Bileşeni
+```tsx
+// components/CategorySelector.tsx
+import React, { useState } from 'react';
+import CategoryTreeView from './CategoryTreeView';
+import { CategoryService } from '@/services/CategoryService';
+
+interface CategorySelectorProps {
+  value?: string;
+  onChange: (categoryId: string) => void;
+  placeholder?: string;
+}
+
+const CategorySelector: React.FC<CategorySelectorProps> = ({
+  value,
+  onChange,
+  placeholder = 'Kategori seçin...'
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCategoryName, setSelectedCategoryName] = useState('');
+
+  const handleSelect = async (categoryId: string) => {
+    onChange(categoryId);
+    setIsOpen(false);
+    
+    // Seçilen kategori adını al
+    try {
+      const category = await CategoryService.getCategoryHierarchy(categoryId);
+      setSelectedCategoryName(category.map(c => c.name).join(' > '));
+    } catch (error) {
+      console.error('Kategori adı alınamadı:', error);
+    }
+  };
+
+  return (
+    <div className="relative">
+      <div 
+        className="w-full p-2 border border-gray-300 rounded cursor-pointer bg-white"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {selectedCategoryName || placeholder}
+        <span className="absolute right-2 top-2">▼</span>
+      </div>
+      
+      {isOpen && (
+        <div className="absolute z-10 w-full mt-1 border border-gray-300 rounded bg-white shadow-lg max-h-60 overflow-y-auto">
+          <CategoryTreeView 
+            selectedCategory={value}
+            onSelect={handleSelect}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default CategorySelector;
+```
+
+#### 5. Avantajlar ve Performans Optimizasyonu
+
+##### Avantajlar:
+1. **Kullanıcı Deneyimi**: Ürünleri mantıklı gruplara ayırarak bulmayı kolaylaştırır
+2. **Stok Yönetimi**: Kategori bazında raporlama ve analiz imkanı sağlar
+3. **Esneklik**: İleri düzey filtreleme ve arama özellikleri
+4. **Organizasyon**: Büyük ürün yelpazelerini yönetmeyi kolaylaştırır
+
+##### Performans Optimizasyonları:
+```typescript
+// Kategori verilerini önbellekleme
+class CategoryCache {
+  private static cache = new Map<string, Category>();
+  private static treeCache = new Map<string, CategoryNode[]>();
+
+  static get(id: string): Category | undefined {
+    return this.cache.get(id);
+  }
+
+  static set(category: Category): void {
+    this.cache.set(category.id, category);
+  }
+
+  static getTree(): CategoryNode[] | undefined {
+    return this.treeCache.get('root');
+  }
+
+  static setTree(tree: CategoryNode[]): void {
+    this.treeCache.set('root', tree);
+  }
+
+  static clear(): void {
+    this.cache.clear();
+    this.treeCache.clear();
+  }
+}
+
+// Kategori servisinde önbellek kullanımı
+class CategoryService {
+  static async getRootCategories(): Promise<Category[]> {
+    const cached = CategoryCache.getTree();
+    if (cached) {
+      return cached.map(node => node.category);
+    }
+
+    // ... veritabanı sorgusu ...
+  }
+}
+```
+
+## 25.2 Tersine Hiyerarşik Kategorileştirme
+
+### Kavram ve Avantajlar
+Tersine hiyerarşik kategorileştirme, ürünlerin özelliklerine göre otomatik olarak kategori hiyerarşisine yerleştirilmesi yöntemidir. Bu yaklaşım, özellikle büyük ürün yelpazelerinde kullanıcıya rehberlik eder ve doğru kategoriye yerleştirmeyi kolaylaştırır.
+
+### Örnek Uygulama: "Efes Tombul Şişe 50cl"
+```
+Ürün: "Efes Tombul Şişe 50cl"
+Tersine Hiyerarşi:
+1. Özellik Analizi:
+   - Marka: Efes
+   - Ürün Türü: Şişe
+   - Hacim: 50cl
+   - Tip: Tombul
+   - Kategori: Bira
+
+2. Otomatik Kategori Ataması:
+   İçecek > Alkollü İçecekler > Bira > Efes Grubu > Efes Tombul Şişe 50cl
+```
+
+### Teknik Uygulama
+
+#### 1. Ürün Özellik Çıkarımı
+```typescript
+// services/ProductFeatureExtractor.ts
+class ProductFeatureExtractor {
+  // Ürün adından özellik çıkarımı
+  static extractFeatures(productName: string): ProductFeatures {
+    const features: ProductFeatures = {
+      brand: '',
+      category: '',
+      type: '',
+      volume: '',
+      packaging: '',
+      alcohol: false
+    };
+
+    // Marka tespiti
+    const brands = ['Efes', 'Tuborg', 'Bomonti', 'Arda', 'Çaykur'];
+    for (const brand of brands) {
+      if (productName.toLowerCase().includes(brand.toLowerCase())) {
+        features.brand = brand;
+        break;
+      }
+    }
+
+    // Kategori tespiti
+    if (productName.toLowerCase().includes('bira')) {
+      features.category = 'Bira';
+      features.alcohol = true;
+    } else if (productName.toLowerCase().includes('raki') || 
+               productName.toLowerCase().includes('votka') ||
+               productName.toLowerCase().includes('cin')) {
+      features.category = 'Sert Alkollü İçecekler';
+      features.alcohol = true;
+    } else if (productName.toLowerCase().includes('gazoz') ||
+               productName.toLowerCase().includes('kola') ||
+               productName.toLowerCase().includes('limonata')) {
+      features.category = 'Gazlı İçecekler';
+      features.alcohol = false;
+    }
+
+    // Tip tespiti
+    if (productName.toLowerCase().includes('tombul')) {
+      features.type = 'Tombul';
+    } else if (productName.toLowerCase().includes('normal')) {
+      features.type = 'Normal';
+    }
+
+    // Hacim tespiti
+    const volumeRegex = /(\d+(?:[.,]\d+)?)\s*(cl|ml|lt|l)/i;
+    const volumeMatch = productName.match(volumeRegex);
+    if (volumeMatch) {
+      features.volume = `${volumeMatch[1]} ${volumeMatch[2]}`;
+    }
+
+    // Ambalaj tespiti
+    if (productName.toLowerCase().includes('şişe')) {
+      features.packaging = 'Şişe';
+    } else if (productName.toLowerCase().includes('kutu')) {
+      features.packaging = 'Kutu';
+    } else if (productName.toLowerCase().includes('pet')) {
+      features.packaging = 'PET';
+    }
+
+    return features;
+  }
+
+  // Özelliklere göre kategori önerisi
+  static async suggestCategory(features: ProductFeatures): Promise<CategoryPath> {
+    const categoryPath: string[] = ['İçecek'];
+    
+    // Alkollü/alkolsüz kategori
+    categoryPath.push(features.alcohol ? 'Alkollü İçecekler' : 'Alkolsüz İçecekler');
+    
+    // Ana kategori
+    if (features.category) {
+      categoryPath.push(features.category);
+    }
+    
+    // Marka grubu
+    if (features.brand) {
+      categoryPath.push(`${features.brand} Grubu`);
+    }
+    
+    return categoryPath;
+  }
+}
+```
+
+#### 2. Otomatik Kategori Atama Servisi
+```typescript
+// services/AutoCategoryAssignment.ts
+class AutoCategoryAssignment {
+  static async assignCategory(productName: string): Promise<string> {
+    try {
+      // Özellik çıkarımı
+      const features = ProductFeatureExtractor.extractFeatures(productName);
+      
+      // Kategori önerisi
+      const suggestedPath = await ProductFeatureExtractor.suggestCategory(features);
+      
+      // Kategori hiyerarşisini oluştur veya bul
+      let parentId: string | null = null;
+      
+      for (const categoryName of suggestedPath) {
+        let category = await this.findOrCreateCategory(categoryName, parentId);
+        parentId = category.id;
+      }
+      
+      return parentId!; // Son kategorinin ID'si
+    } catch (error) {
+      console.error('Otomatik kategori atama hatası:', error);
+      // Varsayılan kategori döndür
+      return await this.getDefaultCategoryId();
+    }
+  }
+
+  private static async findOrCreateCategory(name: string, parentId: string | null): Promise<Category> {
+    // Önce kategoriyi bul
+    let category = await db.categories
+      .filter(cat => cat.name === name && cat.parentId === parentId)
+      .first();
+
+    // Bulamazsa oluştur
+    if (!category) {
+      category = await CategoryService.createCategory({
+        name,
+        parentId: parentId || undefined,
+        level: parentId ? (await db.categories.get(parentId)).level + 1 : 0,
+        path: '' // Path CategoryService.createCategory içinde ayarlanacak
+      });
+    }
+
+    return category;
+  }
+
+  private static async getDefaultCategoryId(): Promise<string> {
+    const defaultCategory = await db.categories
+      .filter(cat => cat.name === 'Diğer')
+      .first();
+    
+    return defaultCategory?.id || '';
+  }
+}
+```
+
+#### 3. UI Entegrasyonu
+```tsx
+// components/ProductForm.tsx
+import React, { useState, useEffect } from 'react';
+import { AutoCategoryAssignment } from '@/services/AutoCategoryAssignment';
+import CategorySelector from './CategorySelector';
+
+interface ProductFormProps {
+  initialData?: Product;
+  onSave: (product: Product) => void;
+}
+
+const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSave }) => {
+  const [productName, setProductName] = useState(initialData?.name || '');
+  const [categoryId, setCategoryId] = useState(initialData?.categoryId || '');
+  const [suggestedCategory, setSuggestedCategory] = useState('');
+
+  // Ürün adı değiştiğinde otomatik kategori öner
+  useEffect(() => {
+    if (productName) {
+      suggestCategory();
+    }
+  }, [productName]);
+
+  const suggestCategory = async () => {
+    try {
+      const suggestedId = await AutoCategoryAssignment.assignCategory(productName);
+      setSuggestedCategory(suggestedId);
+      
+      // Kullanıcıya öneriyi göster
+      if (!categoryId) {
+        setCategoryId(suggestedId);
+      }
+    } catch (error) {
+      console.error('Kategori önerisi alınırken hata:', error);
+    }
+  };
+
+  const handleSave = async () => {
+    const product: Product = {
+      ...initialData,
+      name: productName,
+      categoryId: categoryId || suggestedCategory,
+      // ... diğer alanlar
+    };
+    
+    onSave(product);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium mb-1">Ürün Adı</label>
+        <input
+          type="text"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+          placeholder="Ürün adını girin"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Kategori</label>
+        <CategorySelector
+          value={categoryId}
+          onChange={setCategoryId}
+          placeholder="Kategori seçin veya otomatik öneriyi kullanın"
+        />
+        {suggestedCategory && !categoryId && (
+          <p className="text-sm text-blue-600 mt-1">
+            Önerilen kategori: Otomatik olarak atandı
+          </p>
+        )}
+      </div>
+
+      <button
+        onClick={handleSave}
+        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        Kaydet
+      </button>
+    </div>
+  );
+};
+
+export default ProductForm;
+```
+
+### Avantajlar
+
+1. **Kullanıcı Dostu**: Kullanıcılar için kategori seçimi kolaylaşır
+2. **Tutarlılık**: Benzer ürünler aynı kategorilere yerleştirilir
+3. **Zaman Tasarrufu**: Manuel kategori atama işlemi azalır
+4. **Ölçeklenebilirlik**: Yeni ürünler otomatik olarak doğru kategorilere yerleştirilir
+
+### Gelecek Geliştirmeler
+
+1. **Makine Öğrenmesi Entegrasyonu**: Ürün özelliklerini daha doğru tanımlamak için ML modelleri
+2. **Kullanıcı Geri Bildirimi**: Kullanıcıların önerilere geri bildirim vererek sistemi eğitmesi
+3. **Özel Kurallar**: İşletmeye özel kategori kurallarının tanımlanabilmesi
