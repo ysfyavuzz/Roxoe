@@ -1,25 +1,33 @@
 # RoxoePOS Teknik Doküman (Geliştirici Kitabı)
 
-Son Güncelleme: 2025-08-30
+Son Güncelleme: 2025-08-31
 Sürüm Bağlamı: 0.5.3 (client/package.json)
 
 İçindekiler
 - 1. Proje Genel Bakış
-- 2. Geliştirme Komutları ve Çalışma Ortamı
-- 3. Yüksek Seviye Mimari
-- 4. Uygulama Modülleri (Sayfalar ve Akışlar)
-- 5. Elektron (Main ve Preload) & IPC Köprüleri
-- 6. Veri Katmanı: IndexedDB, Servisler ve Yedekleme Altyapısı
-- 7. Bileşenler ve UI Yapısı
-- 8. Performans ve İleri Seviye Özellikler
-- 9. Test Altyapısı ve Kapsam
-- 10. Derleme, Paketleme ve Yayınlama
-- 11. Kod Kalitesi, Lint ve Format Standartları
-- 12. Tailwind ve Stil Rehberi
-- 13. Yol Alias ve Proje Yolu Konvansiyonları
-- 14. Dosya Rehberi (Önemli Dosyalar ve Amaçları)
-- 15. Bilinen Sorunlar, Eksikler ve İyileştirme Önerileri
-- 16. Yol Haritası (Önerilen Sırayla Uygulanacaklar)
+- 2. Program Özellikleri ve Yetenekleri
+- 3. Kullanım Kılavuzu ve Son Kullanıcı Rehberi
+- 4. Geliştirme Komutları ve Çalışma Ortamı
+- 5. Yüksek Seviye Mimari
+- 6. Uygulama Modülleri (Sayfalar ve Akışlar)
+- 7. Elektron (Main ve Preload) & IPC Köprüleri
+- 8. Veri Katmanı: IndexedDB, Servisler ve Yedekleme Altyapısı
+- 9. Bileşenler ve UI Yapısı
+- 10. Performans ve İleri Seviye Özellikler
+- 11. Test Altyapısı ve Kapsam
+- 12. Derleme, Paketleme ve Yayınlama
+- 13. Kod Kalitesi, Lint ve Format Standartları
+- 14. Tailwind ve Stil Rehberi
+- 15. Yol Alias ve Proje Yolu Konvansiyonları
+- 16. Dosya Rehberi (Önemli Dosyalar ve Amaçları)
+- 17. Test ve Quality Assurance Detayları
+- 18. Performans Monitoring ve Optimizasyon
+- 19. DevOps, Automation ve CI/CD
+- 20. Bilinen Sorunlar, Eksikler ve İyileştirme Önerileri
+- 21. Yol Haritası (Önerilen Sırayla Uygulanacaklar)
+- 22. İnteraktif Kod Örnekleri ve Pratik Senaryolar
+- 23. Gelişmiş Sorun Giderme ve Troubleshooting Rehberi
+- 24. Kapsamlı API Referans ve Dokümantasyonu
 
 ---
 
@@ -29,7 +37,10 @@ Dokümantasyon Ana İndeksi (Hızlı Bağlantılar)
 - Proje Durumu: status.md
 - Modül Durumları: modules.md
 - API Referansı: api.md
-- Bileşen Envanteri: components.md (ve ayrıntılar için components-batch-1..12)
+- Bileşen Envanteri: components.md (ve ayrıntılar için components-batch-1..16)
+- Test Altyapısı Detayları: components-batch-14.md
+- Performans Test Suite: components-batch-15.md
+- DevOps ve Automation: components-batch-16.md
 - Performans Rehberi: performance-overview.md (ayrıca performance/performance-checklist.md, performance/measurement-guide.md, performance/performance-playbook.md)
 - Test Kapsam Politikası: test-coverage.md
 - Playwright E2E Rehberi: testing/playwright-e2e.md
@@ -54,7 +65,217 @@ RoxoePOS; React + TypeScript + Vite + Electron temelli, masaüstü odaklı bir P
 
 ---
 
-2. Geliştirme Komutları ve Çalışma Ortamı
+2. Program Özellikleri ve Yetenekleri
+
+## 2.1 Temel POS Özellikleri
+
+### 💰 Satış Yönetimi
+- **Çoklu Sepet Sistemi**: Aynı anda birden fazla müşteri işlemi yürütebilme
+- **Barkod Okuma**: USB HID barkod okuyucular ile entegrasyon
+- **Manuel Ürün Ekleme**: Barkod olmayan ürünler için arama ve seçim
+- **Miktar Ayarlama**: Ürün başına esnek miktar girimi
+- **İndirim Yönetimi**: Ürün ve sepet bazlı indirimler
+- **KDV Hesaplaması**: Otomatik KDV dahil/hariç hesaplama
+- **Fiş Yazdırma**: ESC/POS yazıcılar ile otomatik fiş çıktısı
+
+### 💳 Ödeme Sistemi
+- **Nakit Ödeme**: Para üstü hesaplama ile
+- **Kart Ödeme**: Ingenico, Verifone POS cihazları entegrasyonu
+- **Veresiye Sistemi**: Müşteri bazında kredi takibi
+- **Karma Ödeme**: Nakit + kart karışık ödemeler
+- **Ödeme Geçmişi**: Tüm ödeme işlemlerinin kaydı
+
+### 📦 Ürün Yönetimi
+- **Ürün Kataloğu**: Sınırsız ürün tanımlama
+- **Kategori Yönetimi**: Hiyerarşik kategori yapısı
+- **Stok Takibi**: Gerçek zamanlı stok izleme
+- **Barkod Üretimi**: EAN-13, CODE128 formatlarında barkod oluşturma
+- **Excel İçe/Dışa Aktarım**: Toplu ürün işlemleri
+- **Gelmiş Arama**: Türkçe karakterler ile uyumlu arama
+- **Fiyat Güncelleme**: Toplu fiyat değişikliği
+
+## 2.2 İleri Seviye Özellikler
+
+### 🤖 AI Destekli Optimizasyonlar
+- **Akıllı İndeks Optimizasyonu**: Veritabanı performansını otomatik iyileştirme
+- **Performans İzleme**: Gerçek zamanlı sistem performans takibi
+- **Kullanım Analizi**: En çok kullanılan özellikler ve performans metrikleri
+- **Otomatik Arşivleme**: Eski verilerin akıllı arşivlenmesi
+
+### 📊 Dashboard ve Raporlama
+- **Satış İstatistikleri**: Günlük, haftalık, aylık analizler
+- **Performans Grafikleri**: Satış trendleri ve kar analizi
+- **Stok Uyarıları**: Düşük stok bildirimleri
+- **Müşteri Analizi**: En çok satan ürünler ve kar analizi
+- **Finansal Özetler**: Gelir, gider ve kar/zarar raporları
+
+### 💾 Veri Yönetimi ve Güvenlik
+- **Otomatik Yedekleme**: Zamanlanmış ve manuel yedekleme seçenekleri
+- **Şifreleme**: AES şifreleme ile veri koruma
+- **Geri Yükleme**: Hızlı ve güvenli veri kurtarma
+- **Veri Sıkıştırma**: Depolama alanı optimizasyonu
+- **İntegrite Kontrolü**: Veri bütünlüğü doğrulaması
+
+### 🔄 Sistem Entegrasyonları
+- **Otomatik Güncelleme**: GitHub üzerinden güvenli güncellemeler
+- **Lisans Yönetimi**: Cihaz bazlı aktivasyon sistemi
+- **Donanım Desteği**: POS cihazları, yazıcılar, barkod okuyucular
+- **Çoklu Platform**: Windows, macOS, Linux desteği
+- **Offline Çalışma**: İnternet bağlantısı olmadan tam işlevsellik
+
+## 2.3 Performans Özellikleri
+
+### 🚀 Hız ve Verimlilik
+- **Sanallaştırılmış Listeler**: Büyük veri setlerinde hızlı performans
+- **Akıllı Önbellek**: Sık kullanılan verilerin hızlı erişimi
+- **Lazy Loading**: Gereksiz yüklemelerin engellenmesi
+- **Memory Optimizasyonu**: Düşük bellek kullanımı
+- **Hızlı Arama**: Türkçe karakterler için optimize edilmiş arama algoritması
+
+### 📱 Mobil Uyumluluk
+- **Responsive Tasarım**: Farklı ekran boyutlarına uyum
+- **Touch Friendly**: Dokunmatik ekran optimizasyonu
+- **Kısayol Tuşları**: Hızlı işlem için klavye destekleri
+- **Compact Mod**: Küçük ekranlar için optimized görünüm
+
+---
+
+3. Kullanım Kılavuzu ve Son Kullanıcı Rehberi
+
+## 3.1 İlk Kurulum ve Aktivasyon
+
+### Adım 1: Uygulama Kurulumu
+1. **RoxoePOS-Setup.exe** dosyasını çift tıklayın
+2. Kurulum sihirbazını takip edin
+3. Kurulum tamamlandıktan sonra uygulama otomatik başlayacaktır
+
+### Adım 2: Lisans Aktivasyonu
+1. Uygulama açıldığında **Ayarlar** > **Serial** sekmesine gidin
+2. Size verilen **Serial Numarasını** girin
+3. **Aktifleştir** butonuna tıklayın
+4. Aktivasyon başarılı mesajını bekleyin
+
+```
+💡 İpucu: Serial numaranız yoksa demo modunda çalışabilirsiniz.
+```
+
+### Adım 3: Temel Ayarlar
+1. **Ayarlar** > **Fiş & İşletme** sekmesinde:
+   - İşletme adını ve adres bilgilerini girin
+   - Vergi numarasını ekleyin
+   - Fiş altına eklemek istediğiniz notları yazın
+
+2. **POS Ayarları** sekmesinde:
+   - Varsayılan ödeme yöntemini seçin
+   - KDV oranlarını ayarlayın
+   - Para birimi formatını belirleyin
+
+## 3.2 Ürün Yönetimi
+
+### Yeni Ürün Ekleme
+1. **Ürünler** sayfasına gidin
+2. **Yeni Ürün** butonuna tıklayın
+3. Gerekli bilgileri doldurun:
+   - **Ürün Adı**: Ürünün tam adı
+   - **Barkod**: Eğer varsa barkod numarası
+   - **Satış Fiyatı**: Müşteriye satılacak fiyat
+   - **Alış Fiyatı**: Maliyeti (opsiyonel)
+   - **KDV Oranı**: Ürüne uygulanan KDV oranı
+   - **Kategori**: Ürünün ait olduğu kategori
+   - **Başlangıç Stok**: Mevcut stok miktarı
+
+4. **Kaydet** butonuna tıklayın
+
+### Excel'den Ürün İçe Aktarma
+1. **Ürünler** sayfasında **İçe Aktar** butonuna tıklayın
+2. **Excel Dosyası Seç** ile ürün listesini seçin
+3. **Sütun Eşleştirme** ekranında:
+   - Excel sütunlarını sistem alanlarıyla eşleştirin
+   - Önergörüm tablosunu kontrol edin
+4. **İçe Aktarımı Başlat** butonuna tıklayın
+
+```
+⚠️ Dikkat: Excel dosyanızda şu sütunlar olmalı:
+- Ürün Adı (zorunlu)
+- Satış Fiyatı (zorunlu) 
+- Barkod (opsiyonel ama önerilen)
+- Kategori (opsiyonel)
+```
+
+## 3.3 Satış İşlemleri
+
+### Temel Satış Adımları
+1. **POS** sayfasına gidin
+2. **Kasa Aç**: Eğer kapalıysa kasayı açın (Başlangıç tutarı girin)
+3. **Ürün Ekleme**: 
+   - Barkod okutun VEYA
+   - Ürün listesinden seçin VEYA
+   - Arama yaparak bulun
+4. **Miktar Ayarlama**: Gerekirse ürün miktarını değiştirin
+5. **İndirim**: Gerekirse ürün veya sepet indirimi uygulayın
+6. **Ödeme**: Ödeme butonuna tıklayıp ödeme yöntemini seçin
+7. **Fiş**: Otomatik fiş çıktısı alın
+
+### Ödeme Yöntemleri
+
+#### Nakit Ödeme
+1. **Nakit** butonuna tıklayın
+2. **Alınan Tutar** alanına müşteriden alınan para miktarını girin
+3. **Para Üstü** otomatik hesaplanır
+4. **Ödemeyi Tamamla** butonuna tıklayın
+
+#### Kart Ödeme
+1. **Kart** butonuna tıklayın
+2. POS cihazında işlemi başlatın
+3. Müşterinin kartını okutmasını bekleyin
+4. **Ödemeyi Tamamla** butonuna tıklayın
+
+## 3.4 Raporlar ve Dashboard
+
+### Dashboard İncelemesi
+**Dashboard** sayfasında görebileceğiniz bilgiler:
+- **Günlük Satışlar**: Bugünkü toplam satış ve adet
+- **Aylık Trend**: Son 30 günlük satış grafiği
+- **En Çok Satanlar**: Popüler ürünler listesi
+- **Stok Uyarıları**: Düşük stoklu ürünler
+- **Kasa Durumu**: Güncel kasa bakiyesi
+
+### Excel Raporları Çıkarma
+1. Çıkarmak istediğiniz sayfa/bölümde **Dışa Aktar** butonunu bulun
+2. **Excel Olarak İndir** seçeneğine tıklayın
+3. Dosya otomatik olarak indirilecektir
+
+**Mevcut Rapor Türleri:**
+- Ürün Listesi
+- Satış Geçmişi
+- Kasa İşlemleri
+- Müşteri Veresiye Listesi
+- Stok Raporu
+
+## 3.5 Yedekleme ve Güvenlik
+
+### Otomatik Yedekleme Ayarları
+1. **Ayarlar** > **Yedekleme** sekmesine gidin
+2. **Otomatik Yedekleme** seçeneğini açın
+3. **Yedekleme Sıklığını** seçin (Günlük/Haftalık)
+4. **Yedekleme Klasörü** belirleyin
+5. **Kaydet** butonuna tıklayın
+
+### Sorun Giderme
+
+#### Barkod Okuyucu Çalışmıyor
+1. USB bağlantısını kontrol edin
+2. **Ayarlar** > **Barkod** sekmesinde cihazın tanındığını kontrol edin
+3. Uygulamyı yeniden başlatın
+
+#### Yazıcı Fiş Çıkarmıyor
+1. Yazıcı kağıdını kontrol edin
+2. USB/Serial bağlantısını kontrol edin
+3. **Ayarlar** > **Fiş** sekmesinde yazıcı ayarlarını kontrol edin
+
+---
+
+4. Geliştirme Komutları ve Çalışma Ortamı
 Komutlar client/ klasöründe çalıştırılmalıdır. Özet:
 - Geliştirme: npm run dev
 - Build: npm run build (tsc + vite build + electron-builder)
@@ -80,7 +301,7 @@ Notlar:
 
 ---
 
-3. Yüksek Seviye Mimari
+5. Yüksek Seviye Mimari
 Katmanlar:
 - Electron Main (client/electron/main.ts): Uygulamanın yaşam döngüsü, güncelleme (electron-updater), yedekleme köprüleri (IPC), pencere yönetimi, kapanışta yedekleme koordinasyonu.
 - Preload (client/electron/preload.ts): Güvenli şekilde window.* API’lerini expose eder (appInfo, ipcRenderer proxy, updaterAPI, backupAPI, serialAPI, indexedDBAPI).
@@ -93,7 +314,7 @@ Akışlar (özet):
 
 ---
 
-4. Uygulama Modülleri (Sayfalar ve Akışlar)
+6. Uygulama Modülleri (Sayfalar ve Akışlar)
 - POSPage.tsx: Satış akışı, sepet yönetimi, ödeme işlemleri; bileşenleri pos/ altından kullanır.
 - ProductsPage.tsx: Ürün listeleme/arama/filtreleme, toplu işlemler (Excel import/export, barkod üretimi).
 - SalesHistoryPage.tsx & SaleDetailPage.tsx: Geçmiş satışlar, detay görüntüleme ve filtreler.
@@ -106,7 +327,7 @@ Akış örneği (Satış):
 
 ---
 
-5. Elektron (Main ve Preload) & IPC Köprüleri
+7. Elektron (Main ve Preload) & IPC Köprüleri
 Main (client/electron/main.ts):
 - Güncelleme olayları: checking-for-update, update-available, download-progress, update-downloaded, error
 - IPC Handlers:
@@ -134,7 +355,7 @@ Lisans (client/electron/license.ts):
 
 ---
 
-6. Veri Katmanı: IndexedDB, Servisler ve Yedekleme Altyapısı
+8. Veri Katmanı: IndexedDB, Servisler ve Yedekleme Altyapısı
 IndexedDB ve Servisler (client/src/services):
 - dbService.ts: Genel veritabanı erişim yardımcıları
 - productDB.ts, salesDB.ts, cashRegisterDB.ts: Domain odaklı CRUD/işlemler
@@ -153,7 +374,7 @@ Not (Güncel Durum):
 
 ---
 
-7. Bileşenler ve UI Yapısı
+9. Bileşenler ve UI Yapısı
 - src/components/ui/: Button, Card, Dialog, Input, Select, Switch, Table, Tabs vb. temel UI bileşenleri
 - src/components/modals/: Customer/Product/Payment/Transaction gibi modal bileşenleri
 - src/components/dashboard/: CashTab, OverviewTab, ProductsTab, SalesTab
@@ -201,7 +422,7 @@ CashRegisterPage ve useRegisterStatus (Kullanım Örneği)
 
 ---
 
-8. Performans ve İleri Seviye Özellikler
+10. Performans ve İleri Seviye Özellikler
 - AI destekli indeks optimizasyonu: src/services/AIIndexAnalyzer.ts ve src/services/IndexOptimizer.ts
 - Akıllı arşivleme: src/services/SmartArchiveManager.ts ve backup altyapısı ile entegre
 - Performans izleme: src/services/PerformanceMonitor.ts ve UI’da PerformanceDashboard
@@ -230,7 +451,7 @@ CashRegisterPage ve useRegisterStatus (Kullanım Örneği)
 
 ---
 
-9. Test Altyapısı ve Kapsam
+11. Test Altyapısı ve Kapsam
 - Test çatısı: Vitest (jsdom) + React Testing Library, E2E için Playwright
 - E2E dokümanları: testing/playwright-e2e.md (çalıştırma ve env), testing/e2e-tests.md (senaryo kataloğu), testing/test-results.md (son çalıştırma özeti)
 - Diagnostics ve RBAC: Diagnostics sekmesinde indeks uygulama işlemi admin guard (VITE_ADMIN_MODE) ile sınırlandı; indeks önerileri için onay diyaloğu ve dry-run önizlemesi eklendi. IndexedDB indeks fallback durumları IndexTelemetry ile kaydediliyor.
@@ -285,34 +506,34 @@ Komutlar:
 
 ---
 
-10. Derleme, Paketleme ve Yayınlama
+12. Derleme, Paketleme ve Yayınlama
 - Vite (client/vite.config.ts) + vite-plugin-electron/simple ile main (electron/main.ts) ve preload (electron/preload.ts) girişleri
 - electron-builder ayarları client/package.json içinde (appId, productName, publish→github, NSIS/dmg/portable hedefleri, asarUnpack: better-sqlite3)
 - Yayın için GH_TOKEN gerekir (private release yapılandırması). macOS hedefleri macOS ortamında paketlenir.
 
 ---
 
-11. Kod Kalitesi, Lint ve Format Standartları
+13. Kod Kalitesi, Lint ve Format Standartları
 - ESLint (client/eslint.config.js): TS + React + Hooks + Refresh kuralları; project-aware parsing (tsconfig), no-duplicate-imports, no-console (warn), eqeqeq, curly, TS için no-explicit-any (warn), explicit-function-return-type (warn) vb.
 - Prettier (client/.prettierrc): semi: true, singleQuote: true, printWidth: 80, trailingComma: es5 vb.
 - TSConfig (client/tsconfig.json): strict tüm bayraklar aktif; noUncheckedIndexedAccess, exactOptionalPropertyTypes vb. gelişmiş güvenlikler etkin.
 
 ---
 
-12. Tailwind ve Stil Rehberi
+14. Tailwind ve Stil Rehberi
 - Tailwind konfig (client/tailwind.config.js): darkMode: class, animate eklentisi, tema genişletmeleri (primary/secondary tonlar, chart renkleri, gölgeler, borderRadius), content yolları src/**/*
 - Stil kullanımında projenin kurallarına göre sınıf sıralaması (Layout → Spacing → Typography → Colors → Effects) tercih edilir.
 
 ---
 
-13. Yol Alias ve Proje Yolu Konvansiyonları
+15. Yol Alias ve Proje Yolu Konvansiyonları
 - Vite alias: '@' → './src' (client/vite.config.ts)
 - Tip kökleri: tsconfig typeRoots içinde './src/types' ve node_modules/@types
 - Filepath önerisi: utils/hook/component ayrımı için klasör düzeni zaten oturmuş durumda.
 
 ---
 
-14. Dosya Rehberi (Önemli Dosyalar ve Amaçları)
+16. Dosya Rehberi (Önemli Dosyalar ve Amaçları)
 Kök:
 - README.md: Ürün özellikleri, kurulum, kullanım, mimari, sorun giderme
 - command-guide.md: Komut rehberi (tamamen Türkçe)
@@ -424,7 +645,7 @@ Bu belge, projenin tamamını yüksek seviyede kapsar ve derinleşmesi gereken a
 
 ---
 
-17. Proje Standartları ve Kurallar (Özet ve Uygulama)
+19. Proje Standartları ve Kurallar (Özet ve Uygulama)
 - Dil politikası: Tüm dokümantasyon ve yorumlar Türkçe olmalıdır; teknik terimler istisna. (language_policy)
 - TypeScript: strict mode zorunlu; noImplicitAny, strictNullChecks vb. etkin. Fonksiyon parametre/dönüş tipleri belirtilmeli. (typescript_strict)
 - Test coverage: Minimum %80; kritik yollar (ödeme, auth, kayıt) için %95. Unit, integration ve kritik akışlarda E2E önerilir. (test_coverage, xyHMAO...)
@@ -1733,5 +1954,750 @@ if (!result.success) {
 75. Future Vision
 - Dosya: docs/roadmap.md
 - İçerik: Cloud sync, mobil entegrasyon, AI öneri sistemi, eklenti mimarisi ve SLO’lar.
+
+---
+
+22. İnteraktif Kod Örnekleri ve Pratik Senaryolar
+
+## 22.1 Gerçek Dünya Senaryoları
+
+### Senaryo 1: Yeni Mağaza Kurulumu
+```typescript
+// Yeni mağaza için temel ayarları yapılandırma
+import { StoreConfigService } from '@/services/StoreConfigService'
+import { CategoryService } from '@/services/CategoryService'
+import { ProductService } from '@/services/ProductService'
+
+// 1. Mağaza Bilgilerini Ayarlama
+async function setupNewStore() {
+  const config = {
+    storeName: 'Yerel Market',
+    address: 'Merkez Mah. 123. Sok. No:5',
+    taxNumber: '1234567890',
+    vatRate: 18,
+    currency: 'TRY',
+    printReceipts: true
+  }
+  
+  await StoreConfigService.updateConfig(config)
+  
+  // 2. Temel Kategorileri Oluşturma
+  const categories = [
+    { name: 'Gıda', icon: '🍎', color: '#4CAF50' },
+    { name: 'İçecek', icon: '🥤', color: '#2196F3' },
+    { name: 'Temizlik', icon: '🧽', color: '#FF9800' },
+    { name: 'Kırtasiye', icon: '📝', color: '#9C27B0' }
+  ]
+  
+  for (const cat of categories) {
+    await CategoryService.create(cat)
+  }
+  
+  // 3. Örnek Ürün Ekleme
+  const products = [
+    {
+      name: 'Süt 1L',
+      barcode: '8690632006963',
+      salePrice: 15.50,
+      purchasePrice: 12.00,
+      vatRate: 8,
+      category: 'Gıda',
+      stock: 50
+    },
+    {
+      name: 'Ekmek',
+      barcode: '',
+      salePrice: 4.00,
+      purchasePrice: 2.50,
+      vatRate: 1,
+      category: 'Gıda',
+      stock: 20
+    }
+  ]
+  
+  for (const product of products) {
+    await ProductService.create(product)
+  }
+  
+  console.log('Mağaza kurulumu tamamlandı!')
+}
+```
+
+### Senaryo 2: Günlük Operasyon Yönetimi
+```typescript
+// Günlük kasa işlemleri ve raporlama
+import { CashRegisterService } from '@/services/CashRegisterService'
+import { SalesService } from '@/services/SalesService'
+import { ReportService } from '@/services/ReportService'
+
+// Kasa açma işlemi
+async function openCashRegister() {
+  const session = await CashRegisterService.openSession({
+    initialCash: 100.00, // Başlangıç nakit miktarı
+    operatorId: 'user123',
+    operatorName: 'Ahmet Yılmaz'
+  })
+  
+  console.log(`Kasa oturumu açıldı: ${session.id}`)
+  return session
+}
+
+// Satış işlemi
+async function processSale() {
+  const cart = {
+    items: [
+      {
+        productId: 'prod-123',
+        quantity: 2,
+        unitPrice: 15.50,
+        vatRate: 8
+      },
+      {
+        productId: 'prod-456',
+        quantity: 1,
+        unitPrice: 4.00,
+        vatRate: 1
+      }
+    ],
+    discounts: [],
+    paymentMethod: 'cash'
+  }
+  
+  const sale = await SalesService.processSale(cart)
+  console.log(`Satış tamamlandı: ${sale.receiptNumber}`)
+  
+  return sale
+}
+
+// Günlük rapor alma
+async function getDailySummary() {
+  const today = new Date()
+  const report = await ReportService.getDailySales(today)
+  
+  console.log('Günlük Özet:', {
+    totalSales: report.totalAmount,
+    totalTransactions: report.transactionCount,
+    averageTransaction: report.averageAmount,
+    topProducts: report.topSellingProducts.slice(0, 5)
+  })
+  
+  return report
+}
+```
+
+### Senaryo 3: Hata Yönetimi ve Kurtarma
+```typescript
+// Hata durumlarında otomatik kurtarma
+import { ErrorHandlerService } from '@/services/ErrorHandlerService'
+import { BackupService } from '@/services/BackupService'
+import { DatabaseIntegrityService } from '@/services/DatabaseIntegrityService'
+
+// Kritik hata yakalama ve kurtarma
+class ApplicationErrorHandler {
+  static async handleCriticalError(error: Error) {
+    console.error('Kritik hata:', error)
+    
+    // 1. Hata logunu kaydet
+    await ErrorHandlerService.logError({
+      type: 'CRITICAL',
+      message: error.message,
+      stack: error.stack,
+      timestamp: new Date(),
+      context: 'main-application'
+    })
+    
+    // 2. Veritabanı bütünlük kontrolü
+    const integrityCheck = await DatabaseIntegrityService.validateDatabase()
+    
+    if (!integrityCheck.isValid) {
+      console.warn('Veritabanı bütünlük sorunu tespit edildi')
+      
+      // 3. Otomatik onarım denemesi
+      const repairResult = await DatabaseIntegrityService.repairDatabase()
+      
+      if (!repairResult.success) {
+        // 4. Son yedekten geri yükleme
+        console.warn('Onarım başarısız, son yedekten geri yükleniyor...')
+        const backups = await BackupService.listBackups()
+        const latestBackup = backups[0]
+        
+        if (latestBackup) {
+          await BackupService.restoreFromBackup(latestBackup.id)
+          console.log('Geri yükleme tamamlandı')
+        }
+      }
+    }
+    
+    // 5. Kullanıcıya bilgi ver
+    return {
+      recovered: true,
+      message: 'Sistem otomatik olarak kurtarıldı'
+    }
+  }
+}
+
+// Ağ bağlantı hataları için retry mekanizması
+class NetworkRetryHandler {
+  static async withRetry<T>(
+    operation: () => Promise<T>,
+    maxRetries = 3,
+    delay = 1000
+  ): Promise<T> {
+    let lastError: Error
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation()
+      } catch (error) {
+        lastError = error as Error
+        console.warn(`Deneme ${attempt}/${maxRetries} başarısız:`, error.message)
+        
+        if (attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, delay * attempt))
+        }
+      }
+    }
+    
+    throw lastError!
+  }
+}
+```
+
+## 22.2 Komponent Test Örnekleri
+
+### React Testing Library ile POS Komponenti Testi
+```typescript
+// POS.test.tsx
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { POS } from '@/pages/POS'
+import { ProductService } from '@/services/ProductService'
+import { SalesService } from '@/services/SalesService'
+
+// Mock services
+jest.mock('@/services/ProductService')
+jest.mock('@/services/SalesService')
+
+const mockProducts = [
+  {
+    id: '1',
+    name: 'Test Ürün',
+    barcode: '1234567890',
+    salePrice: 10.00,
+    stock: 100
+  }
+]
+
+describe('POS Component', () => {
+  beforeEach(() => {
+    (ProductService.search as jest.Mock).mockResolvedValue(mockProducts)
+    (SalesService.processSale as jest.Mock).mockResolvedValue({
+      success: true,
+      receiptNumber: 'F20241231-001'
+    })
+  })
+  
+  test('ürün arama ve sepete ekleme', async () => {
+    const user = userEvent.setup()
+    render(<POS />)
+    
+    // Arama inputunu bul ve ürün ara
+    const searchInput = screen.getByTestId('pos-search-input')
+    await user.type(searchInput, 'Test')
+    
+    // Ürün sonuçlarının görünmesini bekle
+    await waitFor(() => {
+      expect(screen.getByText('Test Ürün')).toBeInTheDocument()
+    })
+    
+    // Ürünü sepete ekle
+    const addButton = screen.getByTestId('add-to-cart-1')
+    await user.click(addButton)
+    
+    // Sepetin güncellendiğini kontrol et
+    expect(screen.getByText('Test Ürün')).toBeInTheDocument()
+    expect(screen.getByText('₺10,00')).toBeInTheDocument()
+  })
+  
+  test('ödeme işlemi', async () => {
+    const user = userEvent.setup()
+    render(<POS />)
+    
+    // Sepete ürün ekle (önceki test adımları)
+    // ...
+    
+    // Ödeme butonuna tıkla
+    const payButton = screen.getByTestId('pay-button')
+    await user.click(payButton)
+    
+    // Ödeme modalının açıldığını kontrol et
+    expect(screen.getByText('Ödeme')).toBeInTheDocument()
+    
+    // Nakit ödeme seç
+    const cashButton = screen.getByTestId('cash-payment')
+    await user.click(cashButton)
+    
+    // Ödeme tamamla
+    const completeButton = screen.getByTestId('complete-payment')
+    await user.click(completeButton)
+    
+    // Başarı mesajını kontrol et
+    await waitFor(() => {
+      expect(screen.getByText(/Ödeme başarıyla tamamlandı/)).toBeInTheDocument()
+    })
+  })
+})
+```
+
+### Service Layer Test Örneği
+```typescript
+// ProductService.test.ts
+import { ProductService } from '@/services/ProductService'
+import { DatabaseService } from '@/services/DatabaseService'
+
+jest.mock('@/services/DatabaseService')
+
+describe('ProductService', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+  
+  test('ürün oluşturma - geçerli veri', async () => {
+    const productData = {
+      name: 'Test Ürün',
+      barcode: '1234567890',
+      salePrice: 15.50,
+      purchasePrice: 10.00,
+      vatRate: 18,
+      stock: 100
+    }
+    
+    const mockProduct = { id: '123', ...productData }
+    ;(DatabaseService.products.add as jest.Mock).mockResolvedValue(mockProduct)
+    
+    const result = await ProductService.create(productData)
+    
+    expect(result).toEqual(mockProduct)
+    expect(DatabaseService.products.add).toHaveBeenCalledWith({
+      ...productData,
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date)
+    })
+  })
+  
+  test('ürün oluşturma - geçersiz fiyat', async () => {
+    const invalidData = {
+      name: 'Test Ürün',
+      salePrice: -5.00 // Negatif fiyat
+    }
+    
+    await expect(ProductService.create(invalidData as any))
+      .rejects.toThrow('Satış fiyatı pozitif olmalıdır')
+  })
+  
+  test('stok güncelleme', async () => {
+    const productId = '123'
+    const newStock = 50
+    
+    ;(DatabaseService.products.update as jest.Mock).mockResolvedValue(true)
+    
+    await ProductService.updateStock(productId, newStock)
+    
+    expect(DatabaseService.products.update).toHaveBeenCalledWith(
+      productId,
+      { stock: newStock, updatedAt: expect.any(Date) }
+    )
+  })
+})
+```
+
+## 22.3 Performans Test Senaryoları
+
+### Büyük Veri Seti Performans Testi
+```typescript
+// performance-tests.ts
+import { performance } from 'perf_hooks'
+import { ProductService } from '@/services/ProductService'
+import { SalesService } from '@/services/SalesService'
+
+class PerformanceTestSuite {
+  static async testProductSearch() {
+    console.log('Ürün arama performans testi başlıyor...')
+    
+    // 10.000 ürün ekle
+    const products = Array.from({ length: 10000 }, (_, i) => ({
+      name: `Ürün ${i + 1}`,
+      barcode: String(1000000000 + i),
+      salePrice: Math.random() * 100,
+      stock: Math.floor(Math.random() * 1000)
+    }))
+    
+    const insertStart = performance.now()
+    await Promise.all(products.map(p => ProductService.create(p)))
+    const insertEnd = performance.now()
+    
+    console.log(`10.000 ürün ekleme süresi: ${insertEnd - insertStart}ms`)
+    
+    // Arama performansı
+    const searchQueries = ['Ürün', 'test', '123', 'abc']
+    
+    for (const query of searchQueries) {
+      const searchStart = performance.now()
+      const results = await ProductService.search(query)
+      const searchEnd = performance.now()
+      
+      console.log(`Arama "${query}": ${results.length} sonuç, ${searchEnd - searchStart}ms`)
+    }
+  }
+  
+  static async testSalesVolume() {
+    console.log('Satış hacmi performans testi başlıyor...')
+    
+    // 1000 satış işlemi simülasyonu
+    const salesCount = 1000
+    const batchSize = 50
+    
+    const totalStart = performance.now()
+    
+    for (let i = 0; i < salesCount; i += batchSize) {
+      const batch = Array.from({ length: Math.min(batchSize, salesCount - i) }, (_, j) => {
+        return {
+          items: [
+            {
+              productId: `prod-${Math.floor(Math.random() * 1000)}`,
+              quantity: Math.floor(Math.random() * 5) + 1,
+              unitPrice: Math.random() * 50
+            }
+          ],
+          paymentMethod: 'cash'
+        }
+      })
+      
+      const batchStart = performance.now()
+      await Promise.all(batch.map(sale => SalesService.processSale(sale)))
+      const batchEnd = performance.now()
+      
+      console.log(`Batch ${Math.floor(i/batchSize) + 1}: ${batchEnd - batchStart}ms`)
+    }
+    
+    const totalEnd = performance.now()
+    console.log(`Toplam ${salesCount} satış: ${totalEnd - totalStart}ms`)
+    console.log(`Ortalama satış süresi: ${(totalEnd - totalStart) / salesCount}ms`)
+  }
+  
+  static async testMemoryUsage() {
+    if (typeof process !== 'undefined' && process.memoryUsage) {
+      const initial = process.memoryUsage()
+      console.log('Başlangıç bellek kullanımı:', {
+        rss: `${Math.round(initial.rss / 1024 / 1024)}MB`,
+        heapUsed: `${Math.round(initial.heapUsed / 1024 / 1024)}MB`
+      })
+      
+      // Bellek yoğun işlem
+      await this.testProductSearch()
+      
+      const final = process.memoryUsage()
+      console.log('Son bellek kullanımı:', {
+        rss: `${Math.round(final.rss / 1024 / 1024)}MB`,
+        heapUsed: `${Math.round(final.heapUsed / 1024 / 1024)}MB`
+      })
+      
+      console.log('Bellek artışı:', {
+        rss: `${Math.round((final.rss - initial.rss) / 1024 / 1024)}MB`,
+        heapUsed: `${Math.round((final.heapUsed - initial.heapUsed) / 1024 / 1024)}MB`
+      })
+    }
+  }
+}
+
+// Kullanım
+PerformanceTestSuite.testProductSearch()
+PerformanceTestSuite.testSalesVolume()
+PerformanceTestSuite.testMemoryUsage()
+```
+
+---
+
+23. Gelişmiş Sorun Giderme ve Troubleshooting Rehberi
+
+## 23.1 Sistem Diagnostik Araçları
+
+### Performans İzleme ve Analiz
+```typescript
+// Sistem performansını izleme
+import { PerformanceMonitor } from '@/services/PerformanceMonitor'
+import { DatabaseDiagnostics } from '@/services/DatabaseDiagnostics'
+
+class SystemDiagnostics {
+  static async runFullDiagnostic() {
+    console.log('🔍 Sistem tanılaması başlıyor...')
+    
+    // 1. Bellek kullanımı kontrolü
+    const memoryUsage = await this.checkMemoryUsage()
+    
+    // 2. Veritabanı performansı
+    const dbPerformance = await this.checkDatabasePerformance()
+    
+    // 3. Disk alanı kontrolü
+    const diskSpace = await this.checkDiskSpace()
+    
+    // 4. Network bağlantı kontrolü
+    const networkStatus = await this.checkNetworkConnectivity()
+    
+    const report = {
+      timestamp: new Date(),
+      memory: memoryUsage,
+      database: dbPerformance,
+      storage: diskSpace,
+      network: networkStatus,
+      overall: this.calculateOverallHealth({
+        memoryUsage,
+        dbPerformance,
+        diskSpace,
+        networkStatus
+      })
+    }
+    
+    console.log('📊 Tanılama raporu:', report)
+    return report
+  }
+  
+  static async checkMemoryUsage() {
+    if (typeof process !== 'undefined') {
+      const usage = process.memoryUsage()
+      return {
+        rss: Math.round(usage.rss / 1024 / 1024),
+        heapUsed: Math.round(usage.heapUsed / 1024 / 1024),
+        heapTotal: Math.round(usage.heapTotal / 1024 / 1024),
+        external: Math.round(usage.external / 1024 / 1024),
+        status: usage.heapUsed < 512 * 1024 * 1024 ? 'normal' : 'warning'
+      }
+    }
+    return { status: 'unknown' }
+  }
+  
+  static async checkDatabasePerformance() {
+    const startTime = performance.now()
+    
+    try {
+      // Test sorguları
+      await DatabaseDiagnostics.testQuery('products', 100)
+      await DatabaseDiagnostics.testQuery('sales', 50)
+      await DatabaseDiagnostics.testQuery('customers', 25)
+      
+      const endTime = performance.now()
+      const responseTime = endTime - startTime
+      
+      return {
+        responseTime: Math.round(responseTime),
+        status: responseTime < 1000 ? 'excellent' : responseTime < 3000 ? 'good' : 'slow',
+        indexStatus: await DatabaseDiagnostics.checkIndexEfficiency()
+      }
+    } catch (error) {
+      return {
+        status: 'error',
+        error: error.message
+      }
+    }
+  }
+}
+```
+
+### Yaygın Sorunlar ve Çözümleri
+
+#### 1. Uygulama Başlatma Sorunları
+```typescript
+// Başlatma sorunları için diagnostic
+class StartupTroubleshooter {
+  static async diagnoseLaunchIssues() {
+    const issues = []
+    
+    // Node.js sürüm kontrolü
+    if (typeof process !== 'undefined') {
+      const nodeVersion = process.version
+      const majorVersion = parseInt(nodeVersion.substring(1))
+      
+      if (majorVersion < 18) {
+        issues.push({
+          type: 'version',
+          severity: 'critical',
+          message: `Node.js sürümü çok eski: ${nodeVersion}. Minimum v18 gerekli.`,
+          solution: 'Node.js v18+ sürümüne güncelleyin'
+        })
+      }
+    }
+    
+    // Lisans durumu kontrolü
+    try {
+      const licenseStatus = await window.licenseAPI?.getStatus()
+      if (!licenseStatus?.isValid) {
+        issues.push({
+          type: 'license',
+          severity: 'warning',
+          message: 'Lisans doğrulanamadı',
+          solution: 'Ayarlar > Serial sekmesinde lisansınızı kontrol edin'
+        })
+      }
+    } catch (error) {
+      issues.push({
+        type: 'license',
+        severity: 'error',
+        message: 'Lisans servisi yanıt vermiyor',
+        solution: 'Uygulamayı yeniden başlatın'
+      })
+    }
+    
+    // Veritabanı bağlantı kontrolü
+    try {
+      await DatabaseService.testConnection()
+    } catch (error) {
+      issues.push({
+        type: 'database',
+        severity: 'critical',
+        message: 'Veritabanına bağlanılamıyor',
+        solution: 'Disk alanını kontrol edin ve uygulamayı yeniden başlatın'
+      })
+    }
+    
+    return issues
+  }
+}
+```
+
+#### 2. Performans Sorunları
+```typescript
+// Performans sorunları tanılama
+class PerformanceTroubleshooter {
+  static async diagnoseSlowPerformance() {
+    const metrics = await PerformanceMonitor.getMetrics()
+    const recommendations = []
+    
+    // Bellek kullanımı yüksekse
+    if (metrics.memory.heapUsed > 512) {
+      recommendations.push({
+        issue: 'Yüksek bellek kullanımı',
+        cause: 'Çok fazla veri yüklü veya bellek sızıntısı',
+        solutions: [
+          'Uygulamayı yeniden başlatın',
+          'Büyük raporları küçük parçalar halinde alın',
+          'Eski satış verilerini arşivleyin'
+        ]
+      })
+    }
+    
+    // Veritabanı yavaşsa
+    if (metrics.database.responseTime > 3000) {
+      recommendations.push({
+        issue: 'Yavaş veritabanı performansı',
+        cause: 'İndeks eksikliği veya büyük veri seti',
+        solutions: [
+          'Tanı sayfasından indeks optimizasyonu çalıştırın',
+          'Eski verileri arşivleyin',
+          'Veritabanı bütünlük kontrolü yapın'
+        ]
+      })
+    }
+    
+    // UI donmaları
+    if (metrics.ui.renderTime > 100) {
+      recommendations.push({
+        issue: 'UI performans sorunları',
+        cause: 'Aynı anda çok fazla veri gösteriliyor',
+        solutions: [
+          'Sayfalama kullanın',
+          'Sanallaştırılmış listeleri etkinleştirin',
+          'Filtreleme kullanarak veri miktarını azaltın'
+        ]
+      })
+    }
+    
+    return recommendations
+  }
+}
+```
+
+---
+
+24. Kapsamlı API Referans ve Dokümantasyonu
+
+## 24.1 IPC API Referansı
+
+### Window API'leri
+
+#### Backup API
+```typescript
+interface BackupAPI {
+  // Yedekleme oluşturma
+  createBackup(options: BackupOptions): Promise<BackupResult>
+  
+  // Yedekleme listesi
+  listBackups(): Promise<BackupInfo[]>
+  
+  // Geri yükleme
+  restoreFromBackup(backupId: string): Promise<RestoreResult>
+  
+  // İlerleme dinleme
+  onBackupProgress(callback: (progress: BackupProgress) => void): void
+}
+
+// Kullanım örneği
+const result = await window.backupAPI.createBackup({
+  description: 'Manuel yedek',
+  includeMedia: true
+})
+```
+
+#### License API
+```typescript
+interface LicenseAPI {
+  // Lisans durumu
+  getStatus(): Promise<LicenseStatus>
+  
+  // Aktivasyon
+  activate(serialNumber: string): Promise<ActivationResult>
+  
+  // Deaktivasyon
+  deactivate(): Promise<void>
+}
+
+// Kullanım örneği
+const status = await window.licenseAPI.getStatus()
+if (!status.isValid) {
+  await window.licenseAPI.activate('SERIAL-KEY-HERE')
+}
+```
+
+## 24.2 Service Layer API'leri
+
+### ProductService
+```typescript
+class ProductService {
+  // Ürün oluşturma
+  static async create(data: ProductCreateData): Promise<Product>
+  
+  // Ürün arama
+  static async search(query: string): Promise<Product[]>
+  
+  // Stok güncelleme
+  static async updateStock(id: string, stock: number): Promise<void>
+  
+  // Toplu işlemler
+  static async bulkImport(products: ProductImportData[]): Promise<ImportResult>
+}
+```
+
+### SalesService
+```typescript
+class SalesService {
+  // Satış işleme
+  static async processSale(cart: Cart): Promise<SaleResult>
+  
+  // Satış iptal
+  static async cancelSale(saleId: string): Promise<void>
+  
+  // Günlük rapor
+  static async getDailySales(date: Date): Promise<DailySalesReport>
+}
+```
 
 ---

@@ -104,6 +104,23 @@ Performans & İyileştirme Önerileri:
 
 ---
 
+8.8 client/src/utils/MobilePerformanceOptimizer.ts (Yeni - v0.5.3)
+- Teknoloji: TS
+- Satır sayısı: 530+
+
+Ne işe yarar / Nasıl çalışır:
+- Mobil cihazlar ve tablet'ler için özel performans optimizasyonu sağlar
+- Touch target optimization (minimum 44px), passive event listeners
+- Lazy image loading, virtual scrolling, battery saver mode
+- Adaptive performance (cihaz kapasitesine göre dinamik optimizasyon)
+
+Performans & İyileştirme Önerileri:
+- Touch responsive: 60 FPS hedefi ile smooth scroll
+- Memory efficient: Aggressive cleanup ve object pooling
+- Battery aware: Reduced animations ve efficient rendering
+
+---
+
 Dosya Haritası (Batch 8)
 - client/src/utils/FocusManager.ts
 - client/src/utils/backup-bridge.ts
@@ -112,4 +129,5 @@ Dosya Haritası (Batch 8)
 - client/src/utils/numberFormatUtils.ts
 - client/src/utils/turkishSearch.ts
 - client/src/utils/vatUtils.ts
+- client/src/utils/MobilePerformanceOptimizer.ts (Yeni)
 

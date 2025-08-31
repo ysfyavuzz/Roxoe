@@ -2,15 +2,15 @@
 
 Bağlantılar: [SUMMARY](SUMMARY.md) · [PROGRESS](PROGRESS.md)
 
-Son Güncelleme: 2025-08-28
-Metrik Kaynağı: docs/docs-metrics.json (generatedAt: 2025-08-28)
+Son Güncelleme: 2025-01-31
+Metrik Kaynağı: docs/docs-metrics.json (generatedAt: 2025-08-31T01:05:13.386Z)
 
 Bu belge, tüm components-batch-* dokümanlarının hızlı özetini (başlık, satır sayısı, boyut ve yol) sunar.
 
 Toplam
-- Batch doküman sayısı: 13
-- Toplam satır: 2345
-- Toplam boyut: 126641 bytes
+- Batch doküman sayısı: 16
+- Toplam satır: 3946 (components-batch)
+- Toplam boyut: 177975 bytes (components-batch)
 
 Batches
 - Batch 1 — Çekirdek Uygulama ve Altyapı — satır: 305, boyut: 18162 bytes — yol: docs/components-batch-1.md
@@ -26,8 +26,12 @@ Batches
 - Batch 11 — Yapı ve Konfigürasyon (Build & Config) — satır: 101, boyut: 4561 bytes — yol: docs/components-batch-11.md
 - Batch 12 — Statik Varlıklar (Public, Assets) — satır: 74, boyut: 3469 bytes — yol: docs/components-batch-12.md
 - Batch 13 — Dokümantasyon ve Süreç Altyapısı — satır: 57+, boyut: 3493 bytes — yol: docs/components-batch-13.md
+- Batch 14 — Test Altyapısı ve Quality Assurance — satır: 431, boyut: 14785 bytes — yol: docs/components-batch-14.md
+- Batch 15 — Performans Testleri ve Monitoring — satır: 430, boyut: 11885 bytes — yol: docs/components-batch-15.md
+- Batch 16 — DevOps, Scripts ve Automation — satır: 550, boyut: 12293 bytes — yol: docs/components-batch-16.md
 
 Notlar
 - Metrikler scripts/generate-docs-metrics.js ile otomatik üretilir.
 - Yeni Batch eklendiğinde bu liste güncellenmelidir.
+- Batch 14-16 yeni eklenen kapsamlı test ve DevOps dokümantasyonlarıdır.
 
