@@ -45,7 +45,8 @@ describe('[coverage] salesDB geniş kapsam', () => {
 
     // 4) Indexed yol: indeksleri kur ve tekrar filtrele
     await new Promise<void>((res, rej) => {
-      const req = indexedDB.open('salesDB', 7)
+      // Versiyonu artırarak (mevcut sürümden büyük) upgrade tetikle ve indeksleri ekle
+      const req = indexedDB.open('salesDB', 8)
       req.onupgradeneeded = () => {
         const db = req.result
         if (!db.objectStoreNames.contains('sales')) {
