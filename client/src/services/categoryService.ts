@@ -27,7 +27,7 @@ class CategoryService {
 
     try {
       const categories = await productService.getCategories();
-      const roots = categories.filter((c) => c.parentId == null || c.level === 0);
+const roots = categories.filter((c) => (c.parentId === null || c.parentId === undefined) || c.level === 0);
       return roots.length > 0 ? roots : categories; // parentId/level yoksa tümünü kök say
     } catch (error) {
       console.error('Ana kategoriler getirilirken hata:', error);
@@ -63,7 +63,7 @@ class CategoryService {
       let current = byId.get(id);
       while (current) {
         result.unshift(current);
-        if (current.parentId == null) {break;}
+if (current.parentId === null || current.parentId === undefined) {break;}
         current = byId.get(current.parentId);
       }
       return result;
@@ -80,8 +80,8 @@ class CategoryService {
 const payload: Omit<Category, 'id'> = {
       name: data.name,
       ...(data.icon ? { icon: data.icon } : {}),
-      ...(data.parentId != null ? { parentId: data.parentId } : {}),
-      ...(data.level != null ? { level: data.level } : {}),
+...(data.parentId !== null && data.parentId !== undefined ? { parentId: data.parentId } : {}),
+...(data.level !== null && data.level !== undefined ? { level: data.level } : {}),
       path: data.path ?? data.name,
       ...(data.color ? { color: data.color } : {}),
       ...(data.createdAt ? { createdAt: data.createdAt } : {}),

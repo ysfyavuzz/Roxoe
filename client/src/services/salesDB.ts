@@ -134,15 +134,15 @@ class SalesService {
       if (idxNames && (needStatus || needPayment || needDate)) {
         let candidate: Sale[] | null = null
 
-        async function getAllFromIndex(indexName: string, query: IDBKeyRange | unknown): Promise<Sale[]> {
-          return new Promise((resolve, reject) => {
+        async function getAllFromIndex(indexName: string, query: IDBKeyRange | IDBValidKey): Promise<Sale[]> {
+          return new Promise<Sale[]>((resolve, reject) => {
             try {
-              const idx = store.index(indexName)
-              const req = (query instanceof IDBKeyRange) ? (idx as any).getAll(query) : (idx as any).getAll(query)
-              req.onsuccess = () => resolve((req.result || []) as Sale[])
-              req.onerror = () => reject(req.error)
+              const idx = (store as IDBObjectStore).index(indexName) as IDBIndex
+              const req = (query instanceof IDBKeyRange) ? idx.getAll(query) : idx.getAll(query)
+              req.onsuccess = () => resolve(((req.result as unknown) as Sale[]) || [])
+              req.onerror = () => reject(req.error as unknown)
             } catch (e) {
-              reject(e)
+              reject(e as unknown)
             }
           })
         }

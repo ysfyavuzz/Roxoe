@@ -355,7 +355,7 @@ export class IndexedDBImporter {
     clearExisting: boolean,
     onProgress?: (processedCount: number) => void
   ): Promise<{ success: boolean; importedCount: number }> {
-    let tx: any = null;
+    let tx: IDBPTransaction<unknown, string[], 'readwrite'> | null = null;
     let importedCount = 0; // Başarılı olanların sayısı
     let errorCount = 0;    // Hata alanların sayısı
     let processedCount = 0; // Döngüde işlenenlerin sayısı

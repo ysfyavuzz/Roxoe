@@ -9,7 +9,9 @@ import { test, expect } from '@playwright/test'
 test('Diagnostics: refresh and apply suggested indexes', async ({ page }) => {
   // Force diagnostics tab as active before app loads
   await page.addInitScript(() => {
-    try { window.localStorage.setItem('settings.activeTab', 'diagnostics') } catch {}
+    try { window.localStorage.setItem('settings.activeTab', 'diagnostics') } catch (e) {
+      // Yerel depolama dev ortamında engellenmiş olabilir; hatayı sessizce yut
+    }
   })
 
   await page.goto('/#/settings')

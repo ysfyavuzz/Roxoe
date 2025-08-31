@@ -61,18 +61,18 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
     setTree(prev => {
       if (nodePath.length === 0) {return prev;}
       const newTree = [...prev];
-      let current: any = newTree;
+      let currentNodes: CategoryNode[] = newTree;
       
       // Node path'e göre ilgili node'u bul
-for (let i = 0; i < nodePath.length - 1; i++) {
+      for (let i = 0; i < nodePath.length - 1; i++) {
         const idx = nodePath[i]!;
-        current = current[idx].children;
+        currentNodes = currentNodes[idx].children;
       }
       
       const lastIndex = nodePath[nodePath.length - 1]!;
-      current[lastIndex] = {
-        ...current[lastIndex],
-        isOpen: !current[lastIndex].isOpen
+      currentNodes[lastIndex] = {
+        ...currentNodes[lastIndex],
+        isOpen: !currentNodes[lastIndex].isOpen
       };
       
       return newTree;

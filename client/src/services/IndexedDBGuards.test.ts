@@ -1,6 +1,6 @@
+import { openDB, type IDBPDatabase } from 'idb'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import 'fake-indexeddb/auto'
-import { openDB, type IDBPDatabase } from 'idb'
 
 // Mock UnifiedDBInitializer so services use our controlled DB instance
 let mockedDb: IDBPDatabase<any>
@@ -47,13 +47,32 @@ async function createTestDB(): Promise<IDBPDatabase<any>> {
 
 beforeEach(async () => {
   // Ensure clean slate
-  try { await new Promise<void>((res, rej) => { const req = indexedDB.deleteDatabase('posDB'); req.onsuccess = () => res(); req.onerror = () => rej(req.error); req.onblocked = () => res(); }) } catch {}
+  try {
+    await new Promise<void>((res, rej) => {
+      const req = indexedDB.deleteDatabase('posDB');
+      req.onsuccess = () => res();
+      // Hata durumunda test akışını bozma, logla
+      req.onerror = () => rej(req.error);
+      req.onblocked = () => res();
+    })
+  } catch (e) {
+    // Test ortamında engel olabilir; sessiz geç
+  }
   mockedDb = await createTestDB()
 })
 
 afterEach(async () => {
-  try { mockedDb.close() } catch {}
-  try { await new Promise<void>((res, rej) => { const req = indexedDB.deleteDatabase('posDB'); req.onsuccess = () => res(); req.onerror = () => rej(req.error); req.onblocked = () => res(); }) } catch {}
+  try { mockedDb.close() } catch (e) { /* test sonlandırma: göz ardı et */ }
+  try {
+    await new Promise<void>((res, rej) => {
+      const req = indexedDB.deleteDatabase('posDB');
+      req.onsuccess = () => res();
+      req.onerror = () => rej(req.error);
+      req.onblocked = () => res();
+    })
+  } catch (e) {
+    // CI ortamında bloklanabilir; göz ardı et
+  }
 })
 
 // Helper to build a minimal valid Product (without id)
