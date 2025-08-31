@@ -10,6 +10,8 @@ export interface Product {
   vatRate: VatRate; // KDV oranı
   priceWithVat: number; // KDV'li fiyat
   category: string;
+  categoryId: string; // Yeni: Hiyerarşik kategori ID
+  categoryPath: string; // Yeni: Ürünün tam kategori yolu
   stock: number;
   barcode: string;
   imageUrl?: string; // Ürün resmi (opsiyonel)
@@ -41,6 +43,12 @@ export interface Category {
   id: number;
   name: string;
   icon: string;
+  parentId?: string; // Üst kategori ID (null ise ana kategori)
+  level: number; // Kategori seviyesi (0: Ana, 1: Alt, 2: Alt-alt, ...)
+  path: string; // Kategori yolu (örn: "Diğer > Temizlik Malzemeleri > Deterjan")
+  color?: string; // Renk kodu
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ProductGroup {
