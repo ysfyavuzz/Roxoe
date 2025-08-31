@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import CategoryService, { CategoryNode } from '../services/categoryService';
 
 interface CategoryTreeViewProps {
-  selectedCategory?: string;
+  selectedCategory: string | undefined;
   onSelect: (categoryId: string) => void;
 }
 
@@ -63,8 +63,9 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
       let current: any = newTree;
       
       // Node path'e göre ilgili node'u bul
-      for (let i = 0; i < nodePath.length - 1; i++) {
-        current = current[nodePath[i]].children;
+for (let i = 0; i < nodePath.length - 1; i++) {
+        const idx = nodePath[i]!;
+        current = current[idx].children;
       }
       
       const lastIndex = nodePath[nodePath.length - 1]!;

@@ -76,15 +76,15 @@ class CategoryService {
    * Yeni kategori oluştur (basit wrapper)
    */
   static async createCategory(data: Omit<Category, 'id'>): Promise<Category> {
-    const payload: Omit<Category, 'id'> = {
+const payload: Omit<Category, 'id'> = {
       name: data.name,
-      icon: data.icon ?? '🏷️',
-      parentId: data.parentId,
-      level: data.level,
+      ...(data.icon ? { icon: data.icon } : {}),
+      ...(data.parentId != null ? { parentId: data.parentId } : {}),
+      ...(data.level != null ? { level: data.level } : {}),
       path: data.path ?? data.name,
-      color: data.color,
-      createdAt: data.createdAt ?? new Date(),
-      updatedAt: data.updatedAt ?? new Date(),
+      ...(data.color ? { color: data.color } : {}),
+      ...(data.createdAt ? { createdAt: data.createdAt } : {}),
+      ...(data.updatedAt ? { updatedAt: data.updatedAt } : {}),
     };
     const id = await productService.addCategory(payload);
     return { id, ...payload };

@@ -29,12 +29,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSave }) => {
 
   const suggestCategory = async () => {
     try {
-      const suggestedId = await AutoCategoryAssignment.assignCategory(productName);
-      setSuggestedCategory(suggestedId);
+const suggestedId = await AutoCategoryAssignment.assignCategory(productName);
+      setSuggestedCategory(String(suggestedId));
       
       // Kullanıcıya öneriyi göster
       if (!categoryId) {
-        setCategoryId(suggestedId);
+        setCategoryId(String(suggestedId));
       }
     } catch (error) {
       console.error('Kategori önerisi alınırken hata:', error);

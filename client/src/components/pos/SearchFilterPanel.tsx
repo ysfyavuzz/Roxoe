@@ -10,7 +10,7 @@ interface SearchFilterPanelProps {
   setShowFilters: (show: boolean) => void;
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
-  categories: Array<{ id: number; name: string; icon: string }>;
+  categories: Array<{ id: number; name: string; icon?: string }>;
   activeFilters: ActiveFilter[];
   onBarcodeDetected: (barcode: string) => void;
   onScanModeChange: (isScanMode: boolean) => void;
