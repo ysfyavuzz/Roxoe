@@ -1,9 +1,10 @@
 // components/pos/ProductPanel.tsx
-import { Plus } from "lucide-react";
+import { Plus, Eye, EyeOff } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FixedSizeList as List, ListChildComponentProps, FixedSizeGrid as Grid, GridChildComponentProps } from "react-window";
 
 import { Product, ProductGroup } from "../../types/product";
+import { getProductImagePath } from "../../utils/image-path";
 import { formatCurrency } from "../../utils/vatUtils";
 import ProductGroupTabs from "../ProductGroupTabs";
 import Card from "../ui/Card";
@@ -22,6 +23,8 @@ interface ProductPanelProps {
   filteredProducts: Product[];
   compactProductView: boolean;
   setCompactProductView: (compact: boolean) => void;
+  showProductImages: boolean;
+  setShowProductImages: (v: boolean) => void;
   onProductClick: (product: Product) => void;
   onAddProductToGroup: (groupId: number, productId: number) => void;
   onRemoveProductFromGroup: (groupId: number, productId: number) => void;
@@ -43,7 +46,9 @@ const ProductPanel: React.FC<ProductPanelProps> = React.memo(({
   onProductClick,
   onAddProductToGroup,
   onRemoveProductFromGroup,
-  setShowSelectProductsModal
+  setShowSelectProductsModal,
+  showProductImages,
+  setShowProductImages,
 }) => {
   // Filter products based on active group
   const finalFilteredProducts = useMemo(() => {
@@ -74,55 +79,70 @@ const ProductPanel: React.FC<ProductPanelProps> = React.memo(({
         onRenameGroup={onRenameGroup}
         onDeleteGroup={onDeleteGroup}
         viewToggleIcon={
-          <button
-            onClick={() => setCompactProductView(!compactProductView)}
-            className={`p-1.5 rounded-lg ${
-              compactProductView
-                ? "bg-indigo-50 text-indigo-600"
-                : "text-gray-500 hover:bg-gray-50"
-            }`}
-            title={compactProductView ? "Kart Görünümü" : "Liste Görünümü"}
-          >
-            {compactProductView ? (
-              // Grid ikonu
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-              </svg>
-            ) : (
-              // Liste ikonu
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="8" y1="6" x2="21" y2="6" />
-                <line x1="8" y1="12" x2="21" y2="12" />
-                <line x1="8" y1="18" x2="21" y2="18" />
-                <line x1="3" y1="6" x2="3.01" y2="6" />
-                <line x1="3" y1="12" x2="3.01" y2="12" />
-                <line x1="3" y1="18" x2="3.01" y2="18" />
-              </svg>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Görünüm: Liste/Kart */}
+            <button
+              onClick={() => setCompactProductView(!compactProductView)}
+              className={`p-1.5 rounded-lg ${
+                compactProductView
+                  ? "bg-indigo-50 text-indigo-600"
+                  : "text-gray-500 hover:bg-gray-50"
+              }`}
+              title={compactProductView ? "Kart Görünümü" : "Liste Görünümü"}
+            >
+              {compactProductView ? (
+                // Grid ikonu
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                </svg>
+              ) : (
+                // Liste ikonu
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="8" y1="6" x2="21" y2="6" />
+                  <line x1="8" y1="12" x2="21" y2="12" />
+                  <line x1="8" y1="18" x2="21" y2="18" />
+                  <line x1="3" y1="6" x2="3.01" y2="6" />
+                  <line x1="3" y1="12" x2="3.01" y2="12" />
+                  <line x1="3" y1="18" x2="3.01" y2="18" />
+                </svg>
+              )}
+            </button>
+            {/* Görselleri Göster/Gizle */}
+            <button
+              onClick={() => setShowProductImages(!showProductImages)}
+              className={`p-1.5 rounded-lg ${
+                showProductImages
+                  ? "bg-indigo-50 text-indigo-600"
+                  : "text-gray-500 hover:bg-gray-50"
+              }`}
+              title={showProductImages ? "Görselleri Gizle" : "Görselleri Göster"}
+            >
+              {showProductImages ? <Eye size={18} /> : <EyeOff size={18} />}
+            </button>
+          </div>
         }
       />
 
@@ -155,6 +175,7 @@ const ProductPanel: React.FC<ProductPanelProps> = React.memo(({
             productGroups={productGroups}
             onAddProductToGroup={onAddProductToGroup}
             onRemoveProductFromGroup={onRemoveProductFromGroup}
+            showProductImages={showProductImages}
           />
         ) : finalFilteredProducts.length > GRID_VIRTUALIZATION_THRESHOLD ? (
           // Kart Görünümü - Sanallaştırılmış Grid
@@ -166,6 +187,7 @@ const ProductPanel: React.FC<ProductPanelProps> = React.memo(({
             productGroups={productGroups}
             onAddProductToGroup={onAddProductToGroup}
             onRemoveProductFromGroup={onRemoveProductFromGroup}
+            showProductImages={showProductImages}
           />
         ) : (
           // Kart Görünümü - Klasik render (küçük listeler)
@@ -177,6 +199,7 @@ const ProductPanel: React.FC<ProductPanelProps> = React.memo(({
             productGroups={productGroups}
             onAddProductToGroup={onAddProductToGroup}
             onRemoveProductFromGroup={onRemoveProductFromGroup}
+            showProductImages={showProductImages}
           />
         )}
       </div>
@@ -193,6 +216,7 @@ const ProductListView: React.FC<{
   productGroups: ProductGroup[];
   onAddProductToGroup: (groupId: number, productId: number) => void;
   onRemoveProductFromGroup: (groupId: number, productId: number) => void;
+  showProductImages?: boolean;
 }> = ({
   products,
   onProductClick,
@@ -200,7 +224,8 @@ const ProductListView: React.FC<{
   activeGroupId,
   productGroups,
   onAddProductToGroup,
-  onRemoveProductFromGroup
+  onRemoveProductFromGroup,
+  showProductImages = true,
 }) => {
   const ITEM_SIZE = 64; // px
   const THRESHOLD = 100;
@@ -221,15 +246,10 @@ const ProductListView: React.FC<{
         key={product.id}
       >
         {/* Ürün Resmi */}
-        <div className="w-12 h-12 flex-shrink-0 mr-3 bg-gray-50 rounded-md overflow-hidden border border-gray-100">
-          {product.imageUrl ? (
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full">
+        {showProductImages && (
+          <div className="w-12 h-12 flex-shrink-0 mr-3 bg-gray-50 rounded-md overflow-hidden border border-gray-100 relative">
+            {/* Placeholder katmanı (her zaman altta) */}
+            <div className="absolute inset-0 flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -247,8 +267,22 @@ const ProductListView: React.FC<{
                 <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
               </svg>
             </div>
-          )}
-        </div>
+            {/* Gerçek görsel (fallback dahil) */}
+            {(() => {
+              const src = getProductImagePath(product.barcode, product.imageUrl);
+              return src ? (
+                <img
+                  src={src}
+                  alt={product.name || product.barcode}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 w-full h-full object-contain"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                />
+              ) : null;
+            })()}
+          </div>
+        )}
 
         {/* Ürün Bilgileri */}
         <div className="flex-1 min-w-0 mr-2">
@@ -403,6 +437,7 @@ const ProductGridView: React.FC<{
   productGroups: ProductGroup[];
   onAddProductToGroup: (groupId: number, productId: number) => void;
   onRemoveProductFromGroup: (groupId: number, productId: number) => void;
+  showProductImages?: boolean;
 }> = ({
   products,
   onProductClick,
@@ -410,14 +445,17 @@ const ProductGridView: React.FC<{
   activeGroupId,
   productGroups,
   onAddProductToGroup,
-  onRemoveProductFromGroup
+  onRemoveProductFromGroup,
+  showProductImages = true,
 }) => (
-  <div className="grid xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-2">
+        <div className="grid xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-2">
     {products.map((product) => (
       <Card
         key={product.id}
         variant="product"
         title={product.name}
+        barcode={product.barcode}
+        hideImage={!showProductImages}
         {...(product.imageUrl && { imageUrl: product.imageUrl })}
         category={product.category}
         price={formatCurrency(product.priceWithVat)}
@@ -486,6 +524,7 @@ const ProductGridVirtualized: React.FC<{
   productGroups: ProductGroup[];
   onAddProductToGroup: (groupId: number, productId: number) => void;
   onRemoveProductFromGroup: (groupId: number, productId: number) => void;
+  showProductImages?: boolean;
 }> = ({
   products,
   onProductClick,
@@ -494,6 +533,7 @@ const ProductGridVirtualized: React.FC<{
   productGroups,
   onAddProductToGroup,
   onRemoveProductFromGroup,
+  showProductImages = true,
 }) => {
   const { ref, size } = useElementSize<HTMLDivElement>();
   const width = Math.max(0, size.width);
@@ -518,16 +558,43 @@ const ProductGridVirtualized: React.FC<{
           style={{ width: GRID_ITEM_WIDTH - 8, height: GRID_ITEM_HEIGHT - 8 }}
         >
           {/* Görsel */}
-          <div className="w-full h-[110px] bg-gray-50 overflow-hidden border-b">
-            {product.imageUrl ? (
-              <img
-                src={product.imageUrl}
-                alt={product.name}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            ) : null}
-          </div>
+          {showProductImages && (
+            <div className="w-full h-[110px] bg-gray-50 overflow-hidden border-b relative">
+              {/* Placeholder katmanı */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-gray-300"
+                >
+                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                  <circle cx="9" cy="9" r="2" />
+                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                </svg>
+              </div>
+              {/* Gerçek görsel */}
+              {(() => {
+                const src = getProductImagePath(product.barcode, product.imageUrl);
+                return src ? (
+                  <img
+                    src={src}
+                    alt={product.name || product.barcode}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-contain"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                  />
+                ) : null;
+              })()}
+            </div>
+          )}
           {/* Metinler */}
           <div className="p-2 flex-1 min-h-0">
             <div className="text-sm font-medium truncate" title={product.name}>

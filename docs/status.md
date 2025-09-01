@@ -2,7 +2,7 @@
 
 [← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
-Son Güncelleme: 2025-08-31
+Son Güncelleme: 2025-09-01
 Sürüm: 0.5.3
 
 ## 🎯 Genel Durum
@@ -13,6 +13,7 @@ Sürüm: 0.5.3
 - Dokümantasyon: Batch 1–13 tamamlandı (bkz. components-batch-index.md)
 
 ## 🧪 Test ve Kapsam Özeti
+- Son Ölçüm: lines=8.53%, branches=76.44%, functions=64.47%, statements=8.53%
 - Politika: Global ≥ %80, kritik dosyalar ≥ %95 (satır)
 - Araçlar: Vitest + RTL, Playwright (E2E), Ajv (Contract)
 - Son Ölçüm: Yerelde `npm run test:coverage` ile üretin

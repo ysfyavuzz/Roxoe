@@ -2,9 +2,9 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 
 import { useAlert } from "../../../components/AlertProvider";
 import { useFeatureFlag } from "../../../hooks/useFeatureFlag";
+import { openDrawerIfEnabled } from "../../../services/cashDrawerService";
 import { cashRegisterService } from "../../../services/cashRegisterDB";
 import { creditService } from "../../../services/creditServices";
-import { openDrawerIfEnabled } from "../../../services/cashDrawerService";
 import { CashRegisterStatus, CashTransactionType, CashTransaction } from "../../../types/cashRegister";
 import { Customer } from "../../../types/credit";
 import eventBus from "../../../utils/eventBus";

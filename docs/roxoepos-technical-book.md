@@ -1,6 +1,6 @@
 # RoxoePOS Teknik Doküman (Geliştirici Kitabı)
 
-Son Güncelleme: 2025-08-31
+Son Güncelleme: 2025-09-01
 Sürüm Bağlamı: 0.5.3 (client/package.json)
 
 İçindekiler

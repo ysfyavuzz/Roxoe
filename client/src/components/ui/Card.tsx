@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import React from "react";
 
+import { getProductImagePath } from "../../utils/image-path";
+
 export type CardVariant =
   | "default"
   | "stat"
@@ -20,13 +22,21 @@ export type CardVariant =
   | "summary"; // Yeni varyant
 
 export interface CardProps {
+  /** Kart tipi */
   variant?: CardVariant;
+  /** Başlık metni (ürün adı vb.) */
   title?: string;
+  /** Özet değer (istatistik kartlarında) */
   value?: string | number;
+  /** Açıklama metni */
   description?: string;
+  /** Trend yüzdesi */
   trend?: number;
+  /** Trend etiketi */
   trendLabel?: string;
+  /** Sol üst ikon vb. */
   icon?: React.ReactNode;
+  /** Renk teması */
   color?:
     | "primary"
     | "red"
@@ -36,17 +46,35 @@ export interface CardProps {
     | "gray"
     | "indigo"
     | "purple";
+  /** Ürün görseli için açık URL (varsa önceliklidir) */
   imageUrl?: string;
+  /** Ürün görseli tamamen gizlensin mi? */
+  hideImage?: boolean;
+  /** Ürün barkodu (fallback yol üretimi için kullanılır) */
+  barcode?: string;
+  /** Görsel yerleşimi (contain: kırpma yapmaz, cover: alanı doldurur) */
+  objectFit?: "contain" | "cover";
+  /** Ürün kategorisi etiketi */
   category?: string;
+  /** Fiyat metni */
   price?: string;
+  /** KDV oranı metni (opsiyonel) */
   vatRate?: string;
+  /** Stok adedi */
   stock?: number;
+  /** Kart tıklama olayı */
   onClick?: () => void;
+  /** Devre dışı durumu */
   disabled?: boolean;
+  /** Ek sınıflar */
   className?: string;
+  /** Gruba ekleme aksiyonu */
   onAddToGroup?: () => void;
+  /** Gruptan çıkarma aksiyonu */
   onRemoveFromGroup?: () => void;
+  /** Kart boyutu */
   size?: "normal" | "small";
+  /** İçerik */
   children?: React.ReactNode;
 }
 
@@ -60,6 +88,9 @@ const Card: React.FC<CardProps> = ({
   icon,
   color = "primary",
   imageUrl,
+  hideImage,
+  barcode,
+  objectFit = "contain",
   category,
   price,
   vatRate,
@@ -169,6 +200,9 @@ const Card: React.FC<CardProps> = ({
 
 // === PRODUCT ===
 if (variant === "product") {
+  // Görsel yolu: imageUrl öncelikli, yoksa barkod tabanlı fallback
+  const primarySrc = getProductImagePath(barcode, imageUrl);
+
   return (
     <div
       className={clsx(
@@ -190,7 +224,8 @@ if (variant === "product") {
       {/* Ürün Görseli Konteyneri */}
       {/* aspect-square: Kare olmasını sağlar */}
       {/* overflow-hidden: Taşan kısımları gizler (özellikle Tükendi banner'ı için) */}
-      <div className="relative w-full aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
+      {!hideImage && (
+      <div className="relative w-full aspect-square bg-gray-50 overflow-hidden">
         {/* Kategori Etiketi (Opsiyonel) */}
         {category && (
           <div
@@ -221,22 +256,32 @@ if (variant === "product") {
             {stock} adet kaldı
           </div>
         )}
-        {/* Asıl Ürün Görseli veya Placeholder */}
-        {imageUrl ? (
+
+        {/* Placeholder katmanı (her zaman altta) */}
+        <div className="absolute inset-0 flex items-center justify-center p-4">
+          {/* Neden placeholder? Fallback görsel 404 verirse kırık ikon yerine temiz bir ikon gösterelim */}
+          <Image size={32} className="text-gray-300" strokeWidth={1} />
+        </div>
+
+        {/* Gerçek görsel (varsa) */}
+        {primarySrc && (
           <img
-            src={imageUrl}
-            alt={title}
-            // object-cover: Resmi kırparak kare alanı doldurur, oranı korur
-            // object-contain: Resmi kırmadan kare alana sığdırır, boşluk bırakabilir
-            className="w-full h-full object-cover"
+            src={primarySrc}
+            alt={title || "Ürün görseli"}
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+            // object-contain: Şeffaf PNG ve tek ebat ile en güvenli seçenek
+            className={clsx(
+              "absolute inset-0 w-full h-full",
+              objectFit === "contain" ? "object-contain p-2" : "object-cover"
+            )}
+            // 404 gibi durumlarda kırık img göstermemek için img'yi gizliyoruz; alttaki placeholder görünür kalır
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
           />
-        ) : (
-          // Resim yoksa placeholder ikon
-          <div className="flex items-center justify-center p-4 w-full h-full">
-            <Image size={32} className="text-gray-300" strokeWidth={1} />
-          </div>
         )}
       </div>
+      )}
 
       {/* Ürün Detayları Bölümü */}
       <div className="p-2 flex flex-col">

@@ -2,6 +2,7 @@
 import { Printer, Check, RefreshCw } from "lucide-react";
 import React from "react";
 
+import { usePOSViewPreferences } from "../../hooks/usePOSViewPreferences";
 import { POSConfig, SerialOptions } from "../../types/pos";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
@@ -30,6 +31,8 @@ const POSSettingsTab: React.FC<POSSettingsTabProps> = React.memo(({
   onSave,
   saveStatus,
 }) => {
+  const { showProductImages, setShowProductImages } = usePOSViewPreferences();
+
   const handlePOSTypeChange = (type: POSConfig["type"]) => {
     setPosConfig({ ...posConfig, type });
   };
@@ -78,6 +81,23 @@ const POSSettingsTab: React.FC<POSSettingsTabProps> = React.memo(({
 
   return (
     <div className="space-y-6">
+      {/* Görsel Tercihi */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Ürün Görselleri</h3>
+        <label className="flex items-center space-x-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showProductImages}
+            onChange={(e) => setShowProductImages(e.target.checked)}
+            className="form-checkbox"
+          />
+          <span>Ürün görsellerini göster</span>
+        </label>
+        <p className="text-xs text-gray-500 mt-2">
+          Bu ayar POS ekranındaki ürün listesi ve kartlarda görsellerin gösterimini kontrol eder.
+        </p>
+      </Card>
+
       {/* POS Cihazı Tipi */}
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-4">

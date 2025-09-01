@@ -32,7 +32,9 @@ async function seedTekelStock() {
     'Atıştırmalık',
     'İçecek',
   ]
-  for (const c of categories) await safeAddCategory(c)
+  for (const c of categories) {
+    await safeAddCategory(c)
+  }
 
   // Ürünler (örnek)
   const vat = 20 as const
@@ -90,7 +92,9 @@ describe('[scenario] Tekel bayi: stok, veresiye ve satış akışı', () => {
 
     function pickByBarcode(bc: string) {
       const p = all.find(x => x.barcode === bc)
-      if (!p) throw new Error('Ürün bulunamadı: ' + bc)
+  if (!p) {
+        throw new Error('Ürün bulunamadı: ' + bc)
+      }
       return p
     }
 

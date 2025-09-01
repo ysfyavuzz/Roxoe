@@ -2,10 +2,13 @@ import clsx from "clsx";
 import { ShoppingCart, AlertTriangle, Tag, Plus, Minus } from "lucide-react";
 import React from "react";
 
+import { getProductImagePath } from "../../utils/image-path";
+
 export interface CardProps {
   variant?: "product" | "addProduct";
   title?: string;
   imageUrl?: string;
+  barcode?: string;
   category?: string;
   price?: string;
   vatRate?: string;
@@ -21,6 +24,7 @@ const NeonProductCard: React.FC<CardProps> = ({
   variant = "product",
   title,
   imageUrl,
+  barcode,
   category,
   price,
   vatRate,
@@ -56,6 +60,9 @@ const NeonProductCard: React.FC<CardProps> = ({
     stock === 0 ? "from-red-600 to-red-800" : 
     stock < 5 ? "from-orange-600 to-orange-800" : 
     "from-green-600 to-green-800";
+
+  // Görsel yolu: imageUrl öncelikli, yoksa barkod tabanlı fallback
+  const primarySrc = getProductImagePath(barcode, imageUrl);
 
   return (
     <div className={clsx(
@@ -112,19 +119,21 @@ const NeonProductCard: React.FC<CardProps> = ({
       >
         {/* Resim Alanı - Overlay ile */}
         <div className="w-full aspect-square overflow-hidden relative">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={title || "Ürün"}
-              className="w-full h-full object-cover brightness-90 group-hover:brightness-110 group-hover:scale-105 transition-all duration-300"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-800/80 to-purple-900/80">
-              <div className="text-blue-200 flex flex-col items-center">
-                <Tag size={36} className="mb-2 opacity-40" />
-                <span className="text-sm opacity-60">Resim Yok</span>
-              </div>
+          {/* Placeholder katmanı (her zaman altta) */}
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-800/80 to-purple-900/80">
+            <div className="text-blue-200 flex flex-col items-center">
+              <Tag size={36} className="mb-2 opacity-40" />
+              <span className="text-sm opacity-60">Resim Yok</span>
             </div>
+          </div>
+          {/* Gerçek görsel (varsa) */}
+          {primarySrc && (
+            <img
+              src={primarySrc}
+              alt={title || "Ürün"}
+              className="absolute inset-0 w-full h-full object-cover brightness-90 group-hover:brightness-110 group-hover:scale-105 transition-all duration-300"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+            />
           )}
           
           {/* Kategori - Parlak neon efektli */}

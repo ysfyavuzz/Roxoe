@@ -76,6 +76,8 @@ const POSPage: React.FC = () => {
     setCompactCartView,
     compactProductView,
     setCompactProductView,
+    showProductImages,
+    setShowProductImages,
   } = usePOSViewPreferences();
 
   // 3) Müşteriler (veresiye için)
@@ -480,6 +482,8 @@ const POSPage: React.FC = () => {
               filteredProducts={filteredProducts}
               compactProductView={compactProductView}
               setCompactProductView={setCompactProductView}
+              showProductImages={showProductImages}
+              setShowProductImages={setShowProductImages}
               onProductClick={(product) => {
                 if (product.stock > 0) {
                   addToCart(product);

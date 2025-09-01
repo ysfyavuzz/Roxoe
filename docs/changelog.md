@@ -2,6 +2,17 @@
 
 [← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
+Tarih: 2025-09-01
+Sürüm: 0.5.3
+
+Öne çıkanlar
+- POS: Ürün görselleri için barkod tabanlı fallback eklendi (imageUrl yoksa /images/products/<barkod-sanitize>.png).
+- POS: “Görselleri Göster/Gizle” anahtarı eklendi; tercih kalıcı (localStorage.showProductImages).
+- UI: Card bileşeni hideImage desteği kazandı, görsel alanı koşullu render ediliyor.
+- Dokümantasyon: Ürün görsellere ilişkin standart ve fallback kuralları (docs/components/product-images.md) güncellendi.
+
+---
+
 Tarih: 2025-08-31
 Sürüm: 0.5.3 (dokümantasyon ve test stabilizasyonu)
 

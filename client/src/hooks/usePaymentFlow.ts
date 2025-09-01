@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 
+import { openDrawerIfEnabled } from "../services/cashDrawerService";
 import { cashRegisterService } from "../services/cashRegisterDB";
 import { creditService } from "../services/creditServices";
 import { productService } from "../services/productDB";
@@ -8,7 +9,6 @@ import { Customer } from "../types/credit";
 import { PaymentMethod, PaymentResult, CartItem } from "../types/pos";
 import { Product } from "../types/product";
 import { Sale } from "../types/sales";
-import { openDrawerIfEnabled } from "../services/cashDrawerService";
 
 interface UsePaymentFlowParams {
   activeTab: { cart: CartItem[] } | undefined;

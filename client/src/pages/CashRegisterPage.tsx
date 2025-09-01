@@ -1,12 +1,12 @@
 import { RefreshCw } from "lucide-react";
 import React, { Suspense, lazy } from "react";
 
+import { useAlert } from "../components/AlertProvider";
 import PageLayout from "../components/layout/PageLayout";
 import { useFeatureFlag } from "../hooks/useFeatureFlag";
 import { useRegisterStatus } from "../hooks/useRegisterStatus";
-import { CashRegisterStatus } from "../types/cashRegister";
-import { useAlert } from "../components/AlertProvider";
 import { openDrawerIfEnabled } from "../services/cashDrawerService";
+import { CashRegisterStatus } from "../types/cashRegister";
 
 import { useCashRegisterPage } from "./cashregister/hooks/useCashRegisterPage";
 
