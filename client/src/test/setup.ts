@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 import { expect, afterEach, vi, beforeEach, afterAll } from 'vitest'
+import 'fake-indexeddb/auto'
+
+// Ensure window.indexedDB points to fake-indexeddb implementation
+Object.defineProperty(window, 'indexedDB', { value: globalThis.indexedDB, writable: true })
 
 // Her test sonrası temizlik yap
 afterEach(() => {
@@ -32,15 +36,6 @@ Object.defineProperty(window, 'localStorage', {
     setItem: vi.fn(),
     removeItem: vi.fn(),
     clear: vi.fn(),
-  },
-  writable: true,
-})
-
-// IndexedDB mock (basit)
-Object.defineProperty(window, 'indexedDB', {
-  value: {
-    open: vi.fn(),
-    deleteDatabase: vi.fn(),
   },
   writable: true,
 })

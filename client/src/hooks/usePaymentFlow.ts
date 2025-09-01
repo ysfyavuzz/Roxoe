@@ -8,6 +8,7 @@ import { Customer } from "../types/credit";
 import { PaymentMethod, PaymentResult, CartItem } from "../types/pos";
 import { Product } from "../types/product";
 import { Sale } from "../types/sales";
+import { openDrawerIfEnabled } from "../services/cashDrawerService";
 
 interface UsePaymentFlowParams {
   activeTab: { cart: CartItem[] } | undefined;
@@ -91,14 +92,17 @@ export function usePaymentFlow({
 
       try {
         const activeSession = await cashRegisterService.getActiveSession();
+        let shouldOpenDrawer = false;
         if (activeSession) {
           if (paymentResult.mode === "normal") {
             if (paymentResult.paymentMethod === "nakit") {
               await cashRegisterService.recordSale(finalTotal, 0);
+              shouldOpenDrawer = true;
             } else if (paymentResult.paymentMethod === "kart") {
               await cashRegisterService.recordSale(0, finalTotal);
             } else if (paymentResult.paymentMethod === "nakitpos") {
               await cashRegisterService.recordSale(finalTotal, 0);
+              shouldOpenDrawer = true;
             }
           } else {
             let totalCash = 0;
@@ -123,7 +127,12 @@ export function usePaymentFlow({
               }
             }
             await cashRegisterService.recordSale(totalCash, totalCard);
+            shouldOpenDrawer = totalCash > 0;
           }
+        }
+        // Attempt to open drawer if enabled and cash present
+        if (shouldOpenDrawer) {
+          void openDrawerIfEnabled(); // fire-and-forget to avoid blocking UI
         }
       } catch (cashError) {
         console.error("Kasa kaydı güncellenirken hata:", cashError);

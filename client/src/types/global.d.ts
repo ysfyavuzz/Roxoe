@@ -153,7 +153,12 @@ declare global {
     backupAPI: BackupAPI;
     updaterAPI: UpdaterAPI;
     ipcRenderer: IpcRenderer;
+    cashDrawerAPI: CashDrawerAPI;
   }
+}
+
+interface CashDrawerAPI {
+  open(): Promise<{ success: boolean; error?: string }>;
 }
 
 export {};

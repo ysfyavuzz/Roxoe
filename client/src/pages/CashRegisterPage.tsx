@@ -2,8 +2,8 @@ import { RefreshCw } from "lucide-react";
 import React, { Suspense, lazy } from "react";
 
 import PageLayout from "../components/layout/PageLayout";
-import { useRegisterStatus } from "../hooks/useRegisterStatus";
 import { useFeatureFlag } from "../hooks/useFeatureFlag";
+import { useRegisterStatus } from "../hooks/useRegisterStatus";
 import { CashRegisterStatus } from "../types/cashRegister";
 
 import { useCashRegisterPage } from "./cashregister/hooks/useCashRegisterPage";

@@ -187,3 +187,10 @@ contextBridge.exposeInMainWorld("indexedDBAPI", {
     return await ipcRenderer.invoke("db-import-request", data, options);
   },
 });
+
+// ESC/POS: Drawer API (experimental)
+contextBridge.exposeInMainWorld("cashDrawerAPI", {
+  open: async (): Promise<{ success: boolean; error?: string }> => {
+    return await ipcRenderer.invoke("escpos:open-drawer");
+  },
+});

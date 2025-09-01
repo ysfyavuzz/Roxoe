@@ -94,6 +94,19 @@ ipcMain.on("update-window-title", (_, newTitle) => {
   }
 });
 
+// ESC/POS: Cash drawer open handler (experimental)
+ipcMain.handle("escpos:open-drawer", async () => {
+  try {
+    // TODO: Implement actual ESC/POS command over serial/USB/printer port.
+    // For now, we log and return success to allow end-to-end wiring under the feature flag.
+    log.info("ESC/POS: Drawer open requested (experimental flag)");
+    return { success: true } as { success: boolean; error?: string };
+  } catch (err) {
+    log.error("ESC/POS: Drawer open failed", err);
+    return { success: false, error: String(err) } as { success: boolean; error?: string };
+  }
+});
+
 // Güncelleme yükleme ekranını oluştur
 function createUpdateSplash() {
   updateSplashWindow = new BrowserWindow({
