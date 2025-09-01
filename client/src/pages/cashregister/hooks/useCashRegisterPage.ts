@@ -4,6 +4,7 @@ import { useAlert } from "../../../components/AlertProvider";
 import { useFeatureFlag } from "../../../hooks/useFeatureFlag";
 import { cashRegisterService } from "../../../services/cashRegisterDB";
 import { creditService } from "../../../services/creditServices";
+import { openDrawerIfEnabled } from "../../../services/cashDrawerService";
 import { CashRegisterStatus, CashTransactionType, CashTransaction } from "../../../types/cashRegister";
 import { Customer } from "../../../types/credit";
 import eventBus from "../../../utils/eventBus";
@@ -210,6 +211,9 @@ export function useCashRegisterPage() {
       const sessionDetails = await cashRegisterService.getSessionDetails(sessionId);
       setTransactions(sessionDetails.transactions);
 
+      // Try to open drawer for cash deposit (if enabled)
+      void openDrawerIfEnabled();
+
       showSuccess(`${formatCurrency(parseFloat(transactionAmount))} nakit giriş kaydedildi`);
 
       setShowDepositModal(false);
@@ -275,6 +279,9 @@ export function useCashRegisterPage() {
         amount,
         `Veresiye Tahsilatı - ${selectedCustomer.name}`
       );
+
+      // Try to open drawer for credit collection (cash in)
+      void openDrawerIfEnabled();
 
       await creditService.addTransaction({
         customerId: selectedCustomer.id,

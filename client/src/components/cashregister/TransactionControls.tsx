@@ -15,6 +15,9 @@ interface TransactionControlsProps {
   onShowCreditCollectionModal: () => void;
   onShowCountingModal: () => void;
   onCloseDay: () => void;
+  // Optional drawer open action
+  onOpenDrawer?: () => void;
+  showOpenDrawer?: boolean;
 }
 
 const TransactionControls: React.FC<TransactionControlsProps> = React.memo(({
@@ -22,7 +25,9 @@ const TransactionControls: React.FC<TransactionControlsProps> = React.memo(({
   onShowWithdrawalModal,
   onShowCreditCollectionModal,
   onShowCountingModal,
-  onCloseDay
+  onCloseDay,
+  onOpenDrawer,
+  showOpenDrawer,
 }) => {
   return (
     <div className="bg-white rounded-lg border p-6">
@@ -31,7 +36,7 @@ const TransactionControls: React.FC<TransactionControlsProps> = React.memo(({
         <h3 className="text-lg font-semibold">İşlem Kontrolleri</h3>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
         <button
           onClick={onShowDepositModal}
           className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 justify-center transition-colors"
@@ -71,6 +76,17 @@ const TransactionControls: React.FC<TransactionControlsProps> = React.memo(({
           <FileText size={16} />
           <span className="font-medium">Günü Kapat</span>
         </button>
+
+        {showOpenDrawer && (
+          <button
+            onClick={onOpenDrawer}
+            className="px-4 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 flex items-center gap-2 justify-center transition-colors"
+            title="Çekmeceyi Aç"
+          >
+            <DollarSign size={16} />
+            <span className="font-medium">Çekmeceyi Aç</span>
+          </button>
+        )}
       </div>
       
       <div className="mt-4 p-3 bg-gray-50 rounded-lg">

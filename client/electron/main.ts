@@ -97,9 +97,19 @@ ipcMain.on("update-window-title", (_, newTitle) => {
 // ESC/POS: Cash drawer open handler (experimental)
 ipcMain.handle("escpos:open-drawer", async () => {
   try {
+    const { getEscposConfig } = await import('./escposConfig')
+    const cfg = getEscposConfig()
+
+    if (!cfg.enabled) {
+      log.info("ESC/POS: Drawer open requested but ESC/POS is disabled in config")
+      return { success: false, error: 'escpos disabled' } as { success: boolean; error?: string }
+    }
+
     // TODO: Implement actual ESC/POS command over serial/USB/printer port.
-    // For now, we log and return success to allow end-to-end wiring under the feature flag.
-    log.info("ESC/POS: Drawer open requested (experimental flag)");
+    // For now, just log configured parameters.
+    log.info(
+      `ESC/POS: Drawer open requested (mode=${cfg.mode}, device=${cfg.device}, pin=${cfg.drawerPin}, t1=${cfg.pulseOnMs}ms, t2=${cfg.pulseOffMs}ms)`
+    )
     return { success: true } as { success: boolean; error?: string };
   } catch (err) {
     log.error("ESC/POS: Drawer open failed", err);

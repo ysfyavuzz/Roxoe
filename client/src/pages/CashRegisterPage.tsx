@@ -5,6 +5,8 @@ import PageLayout from "../components/layout/PageLayout";
 import { useFeatureFlag } from "../hooks/useFeatureFlag";
 import { useRegisterStatus } from "../hooks/useRegisterStatus";
 import { CashRegisterStatus } from "../types/cashRegister";
+import { useAlert } from "../components/AlertProvider";
+import { openDrawerIfEnabled } from "../services/cashDrawerService";
 
 import { useCashRegisterPage } from "./cashregister/hooks/useCashRegisterPage";
 
@@ -74,6 +76,8 @@ const CashRegisterPage: React.FC = () => {
 
   // Feature flags
   const recoveryEnabled = useFeatureFlag("registerRecovery");
+  const drawerEnabled = useFeatureFlag("escposDrawer");
+  const { showSuccess, showError, showInfo } = useAlert();
 
   // Loading state
   if (isLoading) {
@@ -165,6 +169,24 @@ const CashRegisterPage: React.FC = () => {
               onShowCreditCollectionModal={() => setShowCreditCollectionModal(true)}
               onShowCountingModal={() => setShowCountingModal(true)}
               onCloseDay={handleCloseDay}
+              showOpenDrawer={drawerEnabled}
+              onOpenDrawer={async () => {
+                if (!drawerEnabled) {
+                  showInfo?.("ESC/POS çekmece entegrasyonu kapalı. Ayarlar > Deneysel'den açabilirsiniz.");
+                  return;
+                }
+                try {
+                  const ok = await openDrawerIfEnabled();
+                  if (ok) {
+                    showSuccess?.("Çekmece açma komutu gönderildi");
+                  } else {
+                    showError?.("Çekmece açılamadı veya devre dışı");
+                  }
+                } catch (e) {
+                  console.error(e);
+                  showError?.("Çekmece açma sırasında bir hata oluştu");
+                }
+              }}
             />
           </Suspense>
         )}
