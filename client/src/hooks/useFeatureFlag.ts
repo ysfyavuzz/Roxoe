@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+
 import { FeatureFlagKey, getFlag, subscribe } from '../config/featureFlags'
 
 export function useFeatureFlag(key: FeatureFlagKey): boolean {

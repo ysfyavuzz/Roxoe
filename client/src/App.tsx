@@ -12,6 +12,7 @@ import BackupDialogManager from "./components/BackupDialogManager";
 import DynamicWindowTitle from "./components/DynamicWindowTitle";
 import SerialActivation from "./components/SerialActivation";
 import UpdateNotification from "./components/UpdateNotification";
+import { configureFlags } from "./config/featureFlags";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import MainLayout from "./layouts/MainLayout";
 import CashRegisterPage from "./pages/CashRegisterPage";
@@ -31,6 +32,31 @@ function App() {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
+    // Feature flags: load persisted overrides from localStorage
+    try {
+      const parse = (v: string | null) => {
+        if (v === null) {
+          return undefined as unknown as boolean;
+        }
+        const val = v.trim().toLowerCase();
+        return val === "true" || val === "1" || val === "on" || val === "yes";
+      };
+      const registerRecovery = parse(localStorage.getItem("featureFlags.registerRecovery"));
+      const escposDrawer = parse(localStorage.getItem("featureFlags.escposDrawer"));
+      const overrides: Record<string, boolean> = {};
+      if (typeof registerRecovery === "boolean") {
+        overrides.registerRecovery = registerRecovery;
+      }
+      if (typeof escposDrawer === "boolean") {
+        overrides.escposDrawer = escposDrawer;
+      }
+      if (Object.keys(overrides).length > 0) {
+        configureFlags(overrides as unknown as { registerRecovery?: boolean; escposDrawer?: boolean });
+      }
+    } catch {
+      /* ignore */ void 0;
+    }
+
     // Lisans/aktivasyon bypass modu (yalnız dev/test)
     if (isLicenseBypassEnabled()) {
       try {

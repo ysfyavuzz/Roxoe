@@ -3,6 +3,7 @@ import React, { Suspense, lazy } from "react";
 
 import PageLayout from "../components/layout/PageLayout";
 import { useRegisterStatus } from "../hooks/useRegisterStatus";
+import { useFeatureFlag } from "../hooks/useFeatureFlag";
 import { CashRegisterStatus } from "../types/cashRegister";
 
 import { useCashRegisterPage } from "./cashregister/hooks/useCashRegisterPage";
@@ -71,6 +72,9 @@ const CashRegisterPage: React.FC = () => {
     onError: () => {},
   });
 
+  // Feature flags
+  const recoveryEnabled = useFeatureFlag("registerRecovery");
+
   // Loading state
   if (isLoading) {
     return (
@@ -87,8 +91,15 @@ const CashRegisterPage: React.FC = () => {
       <div className="space-y-4">
         {/* Toolbar with useRegisterStatus */}
         <div className="flex items-center justify-between bg-white rounded-lg border px-3 py-2">
-          <div className="text-sm">
-            Kasa: {registerLoading ? "Yükleniyor..." : isRegisterOpen ? "Açık" : "Kapalı"}
+          <div className="text-sm flex items-center gap-2">
+            <span>
+              Kasa: {registerLoading ? "Yükleniyor..." : isRegisterOpen ? "Açık" : "Kapalı"}
+            </span>
+            {recoveryEnabled && (
+              <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800" title="Kasa kurtarma modu aktif">
+                Kurtarma modu aktif
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button

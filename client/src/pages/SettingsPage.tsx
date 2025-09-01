@@ -1,5 +1,5 @@
 // pages/SettingsPage.tsx
-import { Printer, Barcode, Building, Key, Check, RefreshCw, Database, Info, Wrench } from "lucide-react";
+import { Printer, Barcode, Building, Key, Check, RefreshCw, Database, Info, Wrench, Settings as Gear } from "lucide-react";
 import React, { useState, useEffect, lazy, Suspense } from "react";
 
 import { isSerialFeatureEnabled, isAdminModeEnabled } from "../utils/feature-flags";
@@ -16,6 +16,7 @@ const SerialSettingsTab = lazy(() => import("../components/settings/SerialSettin
 const AboutTab = lazy(() => import("../components/settings/AboutTab"));
 const DiagnosticsTab = lazy(() => import("../components/settings/DiagnosticsTab"));
 const HotkeySettings = lazy(() => import("../components/HotkeySettings"));
+const ExperimentalFeaturesTab = lazy(() => import("../components/settings/ExperimentalFeaturesTab"));
 
 // Loading component for lazy-loaded tabs
 const TabLoading: React.FC = () => (
@@ -106,6 +107,7 @@ const SettingsPage: React.FC = () => {
     { id: "hotkeys", title: "Kısayollar", icon: <Key size={20} /> },
     ...(isSerialFeatureEnabled() ? [{ id: "serial", title: "Serial No", icon: <Check size={20} /> }] : []),
     { id: "diagnostics", title: "Tanılama", icon: <Wrench size={20} /> },
+    { id: "experimental", title: "Deneysel", icon: <Gear size={20} /> },
     { id: "about", title: "Hakkında", icon: <Info size={20} /> },
   ];
 
@@ -196,6 +198,12 @@ const SettingsPage: React.FC = () => {
         return (
           <Suspense fallback={<TabLoading />}>
             <DiagnosticsTab canApplyIndexes={isAdminModeEnabled()} />
+          </Suspense>
+        );
+      case "experimental":
+        return (
+          <Suspense fallback={<TabLoading />}>
+            <ExperimentalFeaturesTab />
           </Suspense>
         );
       case "about":

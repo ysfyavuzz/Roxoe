@@ -15,10 +15,16 @@ const ENV_MAP: Record<FeatureFlagKey, string> = {
 }
 
 function parseBool(value: unknown): boolean | undefined {
-  if (value == null) return undefined
+  if (value === null || value === undefined) {
+    return undefined
+  }
   const v = String(value).trim().toLowerCase()
-  if (['1', 'true', 'yes', 'on', 'y'].includes(v)) return true
-  if (['0', 'false', 'no', 'off', 'n'].includes(v)) return false
+  if (["1", "true", "yes", "on", "y"].includes(v)) {
+    return true
+  }
+  if (["0", "false", "no", "off", "n"].includes(v)) {
+    return false
+  }
   return undefined
 }
 
@@ -27,9 +33,10 @@ function envGet(name: string): string | undefined {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const viteEnv = (typeof import.meta !== 'undefined' && (import.meta as any)?.env) || undefined
   const fromVite = viteEnv?.[name]
-  if (fromVite != null) return fromVite
+  if (fromVite !== null && fromVite !== undefined) {
+    return fromVite
+  }
   // Node/test time fallback
-  // eslint-disable-next-line no-process-env
   return typeof process !== 'undefined' ? process.env?.[name] : undefined
 }
 
@@ -44,13 +51,17 @@ const flags: FeatureFlags = { ...defaultFlags }
 for (const key of Object.keys(ENV_MAP) as FeatureFlagKey[]) {
   const envVal = envGet(ENV_MAP[key])
   const parsed = parseBool(envVal)
-  if (parsed !== undefined) flags[key] = parsed
+  if (parsed !== undefined) {
+    flags[key] = parsed
+  }
 }
 
 // Simple pub-sub so React hook can subscribe to updates
 const listeners = new Set<() => void>()
 function notify() {
-  for (const cb of Array.from(listeners)) cb()
+  for (const cb of Array.from(listeners)) {
+    cb()
+  }
 }
 
 export function subscribe(listener: () => void): () => void {
@@ -75,7 +86,9 @@ export function configureFlags(overrides: Partial<FeatureFlags>): void {
       changed = true
     }
   }
-  if (changed) notify()
+  if (changed) {
+    notify()
+  }
 }
 
 export function getAllFlags(): FeatureFlags {
@@ -84,7 +97,9 @@ export function getAllFlags(): FeatureFlags {
 
 // Test-only helper to reset flags to defaults (not exported in prod bundles if tree-shaken)
 export function __resetFlagsForTests(): void {
-  for (const k of Object.keys(flags) as FeatureFlagKey[]) flags[k] = defaultFlags[k]
+  for (const k of Object.keys(flags) as FeatureFlagKey[]) {
+    flags[k] = defaultFlags[k]
+  }
   notify()
 }
 

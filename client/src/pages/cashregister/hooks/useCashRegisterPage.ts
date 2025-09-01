@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 
 import { useAlert } from "../../../components/AlertProvider";
+import { useFeatureFlag } from "../../../hooks/useFeatureFlag";
 import { cashRegisterService } from "../../../services/cashRegisterDB";
 import { creditService } from "../../../services/creditServices";
 import { CashRegisterStatus, CashTransactionType, CashTransaction } from "../../../types/cashRegister";
@@ -57,6 +58,9 @@ export function useCashRegisterPage() {
   const dailyTotalSales = useMemo(() => {
     return dailyCashSales + dailyCardSales - cashWithdrawals + cashDeposits;
   }, [dailyCashSales, dailyCardSales, cashWithdrawals, cashDeposits]);
+
+  // Feature flags
+  const registerRecoveryEnabled = useFeatureFlag("registerRecovery");
 
   // Aktif kasa oturumunu yükle
   const loadCashRegister = useCallback(async () => {
@@ -142,12 +146,20 @@ export function useCashRegisterPage() {
       console.error("Kasa açılırken hata:", error);
       const message = error instanceof Error ? error.message : "Kasa açılırken bir hata oluştu!";
 
-      // Eğer zaten açık oturum nedeniyle engelleniyorsa kurtarma akışı öner
-      if (typeof message === "string" && message.includes("Zaten açık bir kasa dönemi")) {
-        const proceed = await confirm("Mevcut açık kasa oturumu tespit edildi. Kurtarma modunda önce kapatıp sonra tekrar açmak ister misiniz?");
+      // Eğer zaten açık oturum nedeniyle engelleniyorsa ve feature flag açıksa kurtarma akışı öner
+      if (
+        registerRecoveryEnabled &&
+        typeof message === "string" &&
+        message.includes("Zaten açık bir kasa dönemi")
+      ) {
+        const proceed = await confirm(
+          "Mevcut açık kasa oturumu tespit edildi. Kurtarma modunda önce kapatıp sonra tekrar açmak ister misiniz?"
+        );
         if (proceed) {
           try {
-            const session = await cashRegisterService.forceOpenRegister(parseFloat(newOpeningBalance));
+            const session = await cashRegisterService.forceOpenRegister(
+              parseFloat(newOpeningBalance)
+            );
             // UI durumlarını güncelle
             setRegisterStatus(CashRegisterStatus.OPEN);
             setSessionId(session.id);
@@ -165,7 +177,10 @@ export function useCashRegisterPage() {
             return;
           } catch (recoverErr) {
             console.error("Kurtarma ile kasa açılırken hata:", recoverErr);
-            const recoverMsg = recoverErr instanceof Error ? recoverErr.message : "Kurtarma ile açma başarısız oldu!";
+            const recoverMsg =
+              recoverErr instanceof Error
+                ? recoverErr.message
+                : "Kurtarma ile açma başarısız oldu!";
             showError(recoverMsg);
             return;
           }
@@ -174,7 +189,7 @@ export function useCashRegisterPage() {
 
       showError(message);
     }
-  }, [newOpeningBalance, showError, showSuccess, loadCashRegister, confirm]);
+  }, [newOpeningBalance, showError, showSuccess, loadCashRegister, confirm, registerRecoveryEnabled]);
 
   const handleCashDeposit = useCallback(async () => {
     if (!transactionAmount || isNaN(parseFloat(transactionAmount)) || parseFloat(transactionAmount) <= 0) {
