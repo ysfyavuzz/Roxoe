@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import React from "react";
 
-import ProductPanel from "../ProductPanel";
-import { Product, ProductGroup } from "../../../types/product";
+import ProductPanel from "./ProductPanel";
+import { Product, ProductGroup } from "../../types/product";
 
 function makeProduct(id: number, name: string, stock: number, barcode: string): Product {
   return {

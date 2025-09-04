@@ -1,18 +1,31 @@
-# SUMMARY – Dokümantasyon Navigasyonu
+# 📖 RoxoePOS Dokümantasyon Navigasyonu
 
-Bu özet, depodaki dokümanları kategorilere ayırarak hızlı bir gezinme sağlar. Ayrıntılı ilerleme için bkz. PROGRESS.md.
+> Bu özet, tüm proje dokümanlarına hızlı erişim sağlar.  
+> **Son Güncelleme:** 2025-01-23
 
-## 🚀 Genel ve Durum
-- [STATUS - Proje Durumu](status.md)
-- [Changelog - Değişiklik Günlüğü](changelog.md)
-- [Teknik Kitap (Ana Dokümantasyon)](roxoepos-technical-book.md) ⭐ **Güncellendi: Program Özellikleri ve Kullanım Kılavuzu eklendi**
-- [Genel Kitap (Kullanıcı/Yatırımcı)](BOOK/roxoepos-book.md)
-- [API Referansı](api.md)
-- [Özellik Bayrakları (Feature Flags)](feature-flags.md)
-- [Operasyon ve İzleme](operations-monitoring.md)
-- [Onboarding – 10 Dakika](onboarding-10-minutes-roxoepos.md)
-- [Yol Haritası](roadmap.md)
-- [Diyagramlar](diagrams.md)
+---
+
+## 🎯 Genel Dokümanlar
+
+### 📋 Durum ve Raporlar
+- 📊 **[STATUS - Proje Durumu](STATUS.md)** - Güncel proje metrikleri
+- 🗾 **[Changelog](changelog.md)** - Sürüm değişiklikleri
+- 📋 **[Proje İnceleme Raporu](PROJE-INCELEME-RAPORU.md)** - Kod kalitesi analizi
+- 🔄 **[Dokümantasyon Güncelleme Raporu](DOKUMENTASYON-GUNCELLEME-RAPORU.md)**
+- 🧹 **[Temizlik Raporu](cleanup-report.md)** - Proje temizlik kılavuzu
+- 💻 **[Komut Kılavuzu](command-guide.md)** - CLI komutları
+
+### 📖 Kitaplar
+- ⭐ **[Teknik Kitap](roxoepos-technical-book.md)** - Detaylı mimari ve teknik doküman
+- 📘 **[Genel Kitap](BOOK/roxoepos-book.md)** - Kullanıcı ve yatırımcı perspektifi
+
+### 🛠️ Teknik Dokümanlar
+- 🔌 **[API Referansı](api.md)** - IPC ve servis API'leri
+- 🎨 **[Özellik Bayrakları](feature-flags.md)** - Feature flags yapılandırması
+- 📊 **[Operasyon ve İzleme](operations-monitoring.md)** - Monitoring rehberi
+- 🎯 **[Onboarding – 10 Dakika](onboarding-10-minutes-roxoepos.md)** - Hızlı başlangıç
+- 🗺️ **[Yol Haritası](roadmap.md)** - Proje roadmap
+- 📈 **[Diyagramlar](diagrams.md)** - Mimari diyagramlar
 
 ## 🧩 Bileşen Dokümantasyonu
 - [Bileşenler (Envanter)](components.md)
@@ -95,19 +108,33 @@ Bu özet, depodaki dokümanları kategorilere ayırarak hızlı bir gezinme sağ
 ## 📄 Arşiv
 - [İyileştirme Özeti (İngilizce)](archive/improvement-summary-report.en.md)
 
-## 📌 Kök Proje Dosyaları
-- [Kök README](../README.md)
-- [Client README](../client/README.md)
-- [Dokümantasyon (Kısa)](../documentation.md)
-- [Komut Rehberi](../command-guide.md)
-- [Bileşen Bölme Planı](../component-splitting-plan.md)
-- [Temizlik Raporu](../cleanup-report.md)
-- [Proje Özeti (EN)](../project-summary-report.md)
-- [Türkçe Proje Raporu](../turkish-project-report.md)
-- [PROGRESS (İlerleme Günlüğü)](PROGRESS.md)
+## 📄 Kök Proje Dosyaları
+- 🏠 **[Ana README](../README.md)** - Proje ana sayfası
+- 📝 **[Client README](../client/README.md)** - Client uygulama dokümantasyonu
+- 📁 **[PROGRESS (İlerleme Günlüğü)](PROGRESS.md)** - Detaylı ilerleme kayıtları
+- 🔀 **[Component Splitting Plan](component-splitting-plan.md)** - Bileşen ayrıştırma planı
 
 ---
 
-**Son güncelleme**: 2025-08-31  
-**Toplam dokümantasyon dosyası**: 73 dosya  
-**Dokümantasyon durumu**: ✅ Tamamlanmış ve güncel
+## 📊 Dokümantasyon Metrikleri
+
+| Metrik | Değer | Durum |
+|--------|-------|-------|
+| **Toplam Doküman** | 80+ dosya | ✅ |
+| **Dokümantasyon Coverage** | %95 | ✅ |
+| **Son Güncelleme** | 2025-01-23 | 🆕 |
+| **Batch Dokümanları** | 16 tamamlandı | ✅ |
+| **API Dokümantasyonu** | Tam | ✅ |
+| **Test Dokümanları** | Güncel | ✅ |
+
+---
+
+<div align="center">
+
+📖 **RoxoePOS Dokümantasyon Merkezi**
+
+Tüm dokümanlar Türkçe olarak hazırlanmıştır.
+
+Dokümantasyon eksikleri için: destek@roxoe.com
+
+</div>

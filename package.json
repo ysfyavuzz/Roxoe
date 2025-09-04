@@ -8,6 +8,10 @@
     "docs:update": "node scripts/update-tech-book-metadata.js && node scripts/update-api-docs.js && node scripts/update-components.js && node scripts/update-performance-docs.js",
     "status:update": "node scripts/update-status.js",
     "analyze:project": "node scripts/analyze-project.js",
-    "docs:all": "npm run analyze:project && npm run docs:update && npm run status:update"
+    "docs:all": "npm run analyze:project && npm run docs:update && npm run status:update",
+    "docs:scan": "node scripts/docs/scan-src.js",
+    "docs:analyze-batches": "node scripts/docs/analyze-batches.js",
+    "docs:update-batches": "node scripts/docs/update-batches.js",
+    "docs:full": "npm run docs:scan && npm run docs:analyze-batches && npm run docs:update-batches"
   }
 }

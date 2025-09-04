@@ -1,0 +1,1610 @@
+[
+  {
+    "path": "client/src/App.tsx",
+    "name": "App",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 144,
+    "size": 5025
+  },
+  {
+    "path": "client/src/backup/core/BackupDeserializer.ts",
+    "name": "BackupDeserializer",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 161,
+    "size": 4692
+  },
+  {
+    "path": "client/src/backup/core/BackupManager.ts",
+    "name": "BackupManager",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 357,
+    "size": 10860
+  },
+  {
+    "path": "client/src/backup/core/BackupSerializer.ts",
+    "name": "BackupSerializer",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 132,
+    "size": 3870
+  },
+  {
+    "path": "client/src/backup/core/OptimizedBackupManager.ts",
+    "name": "OptimizedBackupManager",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 202,
+    "size": 6980
+  },
+  {
+    "path": "client/src/backup/core/StreamingBackupSerializer.ts",
+    "name": "StreamingBackupSerializer",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 196,
+    "size": 6037
+  },
+  {
+    "path": "client/src/backup/database/IndexedDBExporter.ts",
+    "name": "IndexedDBExporter",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 156,
+    "size": 4311
+  },
+  {
+    "path": "client/src/backup/database/IndexedDBImporter.ts",
+    "name": "IndexedDBImporter",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 528,
+    "size": 24987
+  },
+  {
+    "path": "client/src/backup/database/StreamingIndexedDBExporter.ts",
+    "name": "StreamingIndexedDBExporter",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 230,
+    "size": 7104
+  },
+  {
+    "path": "client/src/backup/index.ts",
+    "name": "index",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 98,
+    "size": 3746
+  },
+  {
+    "path": "client/src/backup/scheduler/BackupScheduler.ts",
+    "name": "BackupScheduler",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 266,
+    "size": 7350
+  },
+  {
+    "path": "client/src/backup/scheduler/BackupScheduler.web.ts",
+    "name": "BackupScheduler.web",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 30,
+    "size": 1094
+  },
+  {
+    "path": "client/src/backup/utils/checksumUtils.ts",
+    "name": "checksumUtils",
+    "ext": ".ts",
+    "type": "util",
+    "lines": 27,
+    "size": 826
+  },
+  {
+    "path": "client/src/backup/utils/compressionUtils.ts",
+    "name": "compressionUtils",
+    "ext": ".ts",
+    "type": "util",
+    "lines": 43,
+    "size": 1212
+  },
+  {
+    "path": "client/src/backup/utils/fileUtils.ts",
+    "name": "fileUtils",
+    "ext": ".ts",
+    "type": "util",
+    "lines": 325,
+    "size": 12508
+  },
+  {
+    "path": "client/src/backup/utils/fileUtils.web.ts",
+    "name": "fileUtils.web",
+    "ext": ".ts",
+    "type": "util",
+    "lines": 56,
+    "size": 1566
+  },
+  {
+    "path": "client/src/components/AddProductToGroupCard.tsx",
+    "name": "AddProductToGroupCard",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 21,
+    "size": 750
+  },
+  {
+    "path": "client/src/components/AdvancedFeaturesTab.tsx",
+    "name": "AdvancedFeaturesTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 473,
+    "size": 17998
+  },
+  {
+    "path": "client/src/components/AlertProvider.tsx",
+    "name": "AlertProvider",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 322,
+    "size": 8515
+  },
+  {
+    "path": "client/src/components/BackupDialogManager.tsx",
+    "name": "BackupDialogManager",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 42,
+    "size": 1505
+  },
+  {
+    "path": "client/src/components/BarcodeGenerator.tsx",
+    "name": "BarcodeGenerator",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 268,
+    "size": 8853
+  },
+  {
+    "path": "client/src/components/BatchPriceUpdate.tsx",
+    "name": "BatchPriceUpdate",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 183,
+    "size": 6537
+  },
+  {
+    "path": "client/src/components/BulkProductOperations.tsx",
+    "name": "BulkProductOperations",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 445,
+    "size": 16022
+  },
+  {
+    "path": "client/src/components/cashregister/CashCounting.tsx",
+    "name": "CashCounting",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 110,
+    "size": 3930
+  },
+  {
+    "path": "client/src/components/cashregister/CashRegisterStatus.tsx",
+    "name": "CashRegisterStatus",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 285,
+    "size": 10396
+  },
+  {
+    "path": "client/src/components/cashregister/TransactionControls.tsx",
+    "name": "TransactionControls",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 104,
+    "size": 3550
+  },
+  {
+    "path": "client/src/components/cashregister/TransactionHistory.tsx",
+    "name": "TransactionHistory",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 160,
+    "size": 4550
+  },
+  {
+    "path": "client/src/components/cashregister/TransactionModals.tsx",
+    "name": "TransactionModals",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 284,
+    "size": 9359
+  },
+  {
+    "path": "client/src/components/CategoryManagement.tsx",
+    "name": "CategoryManagement",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 266,
+    "size": 9129
+  },
+  {
+    "path": "client/src/components/CategorySelector.tsx",
+    "name": "CategorySelector",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 57,
+    "size": 1606
+  },
+  {
+    "path": "client/src/components/CategoryTreeView.tsx",
+    "name": "CategoryTreeView",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 140,
+    "size": 4038
+  },
+  {
+    "path": "client/src/components/ClosingBackupLoader.tsx",
+    "name": "ClosingBackupLoader",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 189,
+    "size": 6577
+  },
+  {
+    "path": "client/src/components/CustomerSelectionButton.tsx",
+    "name": "CustomerSelectionButton",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 51,
+    "size": 1754
+  },
+  {
+    "path": "client/src/components/dashboard/cash/CashFlowCard.tsx",
+    "name": "CashFlowCard",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 59,
+    "size": 2355
+  },
+  {
+    "path": "client/src/components/dashboard/cash/CashMovementsChart.tsx",
+    "name": "CashMovementsChart",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 47,
+    "size": 2598
+  },
+  {
+    "path": "client/src/components/dashboard/cash/CashSummaryCards.tsx",
+    "name": "CashSummaryCards",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 50,
+    "size": 1270
+  },
+  {
+    "path": "client/src/components/dashboard/cash/ClosedSessionsTable.tsx",
+    "name": "ClosedSessionsTable",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 124,
+    "size": 4015
+  },
+  {
+    "path": "client/src/components/dashboard/cash/DailyIncreaseCard.tsx",
+    "name": "DailyIncreaseCard",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 86,
+    "size": 3402
+  },
+  {
+    "path": "client/src/components/dashboard/cash/SalesDistributionChart.tsx",
+    "name": "SalesDistributionChart",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 48,
+    "size": 1431
+  },
+  {
+    "path": "client/src/components/dashboard/CashTab.tsx",
+    "name": "CashTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 120,
+    "size": 3715
+  },
+  {
+    "path": "client/src/components/dashboard/overview/CategoryDistributionPie.tsx",
+    "name": "CategoryDistributionPie",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 47,
+    "size": 1776
+  },
+  {
+    "path": "client/src/components/dashboard/overview/LastClosedSessionCard.tsx",
+    "name": "LastClosedSessionCard",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 53,
+    "size": 2590
+  },
+  {
+    "path": "client/src/components/dashboard/overview/OverviewSummaryCards.tsx",
+    "name": "OverviewSummaryCards",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 25,
+    "size": 976
+  },
+  {
+    "path": "client/src/components/dashboard/overview/SalesTrendChart.tsx",
+    "name": "SalesTrendChart",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 36,
+    "size": 1729
+  },
+  {
+    "path": "client/src/components/dashboard/overview/TopProductsTable.tsx",
+    "name": "TopProductsTable",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 87,
+    "size": 2517
+  },
+  {
+    "path": "client/src/components/dashboard/OverviewTab.tsx",
+    "name": "OverviewTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 80,
+    "size": 2116
+  },
+  {
+    "path": "client/src/components/dashboard/products/ProductPerformanceTable.tsx",
+    "name": "ProductPerformanceTable",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 81,
+    "size": 2968
+  },
+  {
+    "path": "client/src/components/dashboard/products/ProductsFilterPanelContent.tsx",
+    "name": "ProductsFilterPanelContent",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 203,
+    "size": 8461
+  },
+  {
+    "path": "client/src/components/dashboard/products/ProductSummaryCards.tsx",
+    "name": "ProductSummaryCards",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 62,
+    "size": 1729
+  },
+  {
+    "path": "client/src/components/dashboard/products/TopProfitableChart.tsx",
+    "name": "TopProfitableChart",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 38,
+    "size": 1562
+  },
+  {
+    "path": "client/src/components/dashboard/products/TopSellingChart.tsx",
+    "name": "TopSellingChart",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 38,
+    "size": 1585
+  },
+  {
+    "path": "client/src/components/dashboard/ProductsTab.tsx",
+    "name": "ProductsTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 467,
+    "size": 15691
+  },
+  {
+    "path": "client/src/components/dashboard/SalesTab.tsx",
+    "name": "SalesTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 459,
+    "size": 14665
+  },
+  {
+    "path": "client/src/components/DynamicWindowTitle.tsx",
+    "name": "DynamicWindowTitle",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 633,
+    "size": 24712
+  },
+  {
+    "path": "client/src/components/ExportButton.tsx",
+    "name": "ExportButton",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 306,
+    "size": 11367
+  },
+  {
+    "path": "client/src/components/HotkeySettings.tsx",
+    "name": "HotkeySettings",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 571,
+    "size": 17737
+  },
+  {
+    "path": "client/src/components/layout/PageLayout.tsx",
+    "name": "PageLayout",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 18,
+    "size": 396
+  },
+  {
+    "path": "client/src/components/LicenseActivation.tsx",
+    "name": "LicenseActivation",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 122,
+    "size": 3967
+  },
+  {
+    "path": "client/src/components/modals/ColumnMappingModal.tsx",
+    "name": "ColumnMappingModal",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 1089,
+    "size": 41949
+  },
+  {
+    "path": "client/src/components/modals/CustomerDetailModal.tsx",
+    "name": "CustomerDetailModal",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 783,
+    "size": 32746
+  },
+  {
+    "path": "client/src/components/modals/CustomerModal.tsx",
+    "name": "CustomerModal",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 218,
+    "size": 6885
+  },
+  {
+    "path": "client/src/components/modals/CustomerSearchModal.tsx",
+    "name": "CustomerSearchModal",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 179,
+    "size": 7123
+  },
+  {
+    "path": "client/src/components/modals/payment/EqualSplitSection.tsx",
+    "name": "EqualSplitSection",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 145,
+    "size": 6293
+  },
+  {
+    "path": "client/src/components/modals/payment/PaymentFooter.tsx",
+    "name": "PaymentFooter",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 42,
+    "size": 999
+  },
+  {
+    "path": "client/src/components/modals/payment/PaymentHeader.tsx",
+    "name": "PaymentHeader",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 61,
+    "size": 1689
+  },
+  {
+    "path": "client/src/components/modals/payment/PaymentTypeToggle.tsx",
+    "name": "PaymentTypeToggle",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 40,
+    "size": 1237
+  },
+  {
+    "path": "client/src/components/modals/payment/ProductSplitSection.tsx",
+    "name": "ProductSplitSection",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 218,
+    "size": 8952
+  },
+  {
+    "path": "client/src/components/modals/PaymentModal.tsx",
+    "name": "PaymentModal",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 1077,
+    "size": 37439
+  },
+  {
+    "path": "client/src/components/modals/ProductModal.tsx",
+    "name": "ProductModal",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 368,
+    "size": 14118
+  },
+  {
+    "path": "client/src/components/modals/ReasonModal.tsx",
+    "name": "ReasonModal",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 73,
+    "size": 2033
+  },
+  {
+    "path": "client/src/components/modals/ReceiptModal.tsx",
+    "name": "ReceiptModal",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 310,
+    "size": 12768
+  },
+  {
+    "path": "client/src/components/modals/SelectProductModal.tsx",
+    "name": "SelectProductModal",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 151,
+    "size": 5294
+  },
+  {
+    "path": "client/src/components/modals/TransactionModal.tsx",
+    "name": "TransactionModal",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 218,
+    "size": 7104
+  },
+  {
+    "path": "client/src/components/NotificationPopup.tsx",
+    "name": "NotificationPopup",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 95,
+    "size": 3282
+  },
+  {
+    "path": "client/src/components/PerformanceDashboard.tsx",
+    "name": "PerformanceDashboard",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 466,
+    "size": 18138
+  },
+  {
+    "path": "client/src/components/pos/CartPanel.tsx",
+    "name": "CartPanel",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 381,
+    "size": 12215
+  },
+  {
+    "path": "client/src/components/pos/PaymentControls.tsx",
+    "name": "PaymentControls",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 80,
+    "size": 2074
+  },
+  {
+    "path": "client/src/components/pos/POSHeader.tsx",
+    "name": "POSHeader",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 86,
+    "size": 2509
+  },
+  {
+    "path": "client/src/components/pos/ProductPanel.tsx",
+    "name": "ProductPanel",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 700,
+    "size": 24410
+  },
+  {
+    "path": "client/src/components/pos/QuantityModeToast.tsx",
+    "name": "QuantityModeToast",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 29,
+    "size": 751
+  },
+  {
+    "path": "client/src/components/pos/SearchFilterPanel.tsx",
+    "name": "SearchFilterPanel",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 95,
+    "size": 2816
+  },
+  {
+    "path": "client/src/components/PrinterDebug.tsx",
+    "name": "PrinterDebug",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 41,
+    "size": 1159
+  },
+  {
+    "path": "client/src/components/ProductForm.tsx",
+    "name": "ProductForm",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 94,
+    "size": 2559
+  },
+  {
+    "path": "client/src/components/ProductGroupTabs.tsx",
+    "name": "ProductGroupTabs",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 241,
+    "size": 7752
+  },
+  {
+    "path": "client/src/components/ResetDatabaseButton.tsx",
+    "name": "ResetDatabaseButton",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 71,
+    "size": 2537
+  },
+  {
+    "path": "client/src/components/SalesFilterPanel.tsx",
+    "name": "SalesFilterPanel",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 576,
+    "size": 23710
+  },
+  {
+    "path": "client/src/components/SearchFilterPanel.tsx",
+    "name": "SearchFilterPanel",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 339,
+    "size": 12569
+  },
+  {
+    "path": "client/src/components/SerialActivation.tsx",
+    "name": "SerialActivation",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 122,
+    "size": 3909
+  },
+  {
+    "path": "client/src/components/settings/AboutTab.tsx",
+    "name": "AboutTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 273,
+    "size": 10556
+  },
+  {
+    "path": "client/src/components/settings/BackupSettingsTab.tsx",
+    "name": "BackupSettingsTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 319,
+    "size": 10693
+  },
+  {
+    "path": "client/src/components/settings/BarcodeSettingsTab.tsx",
+    "name": "BarcodeSettingsTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 179,
+    "size": 6368
+  },
+  {
+    "path": "client/src/components/settings/DiagnosticsTab.tsx",
+    "name": "DiagnosticsTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 120,
+    "size": 4544
+  },
+  {
+    "path": "client/src/components/settings/ExperimentalFeaturesTab.tsx",
+    "name": "ExperimentalFeaturesTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 78,
+    "size": 2772
+  },
+  {
+    "path": "client/src/components/settings/POSSettingsTab.tsx",
+    "name": "POSSettingsTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 266,
+    "size": 8963
+  },
+  {
+    "path": "client/src/components/settings/ReceiptSettingsTab.tsx",
+    "name": "ReceiptSettingsTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 275,
+    "size": 10207
+  },
+  {
+    "path": "client/src/components/settings/SerialSettingsTab.tsx",
+    "name": "SerialSettingsTab",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 254,
+    "size": 8513
+  },
+  {
+    "path": "client/src/components/StockManagement.tsx",
+    "name": "StockManagement",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 249,
+    "size": 8379
+  },
+  {
+    "path": "client/src/components/ui/Badge.tsx",
+    "name": "Badge",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 27,
+    "size": 643
+  },
+  {
+    "path": "client/src/components/ui/Button.tsx",
+    "name": "Button",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 79,
+    "size": 2134
+  },
+  {
+    "path": "client/src/components/ui/Card.tsx",
+    "name": "Card",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 414,
+    "size": 12456
+  },
+  {
+    "path": "client/src/components/ui/Charts.tsx",
+    "name": "Charts",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 18,
+    "size": 467
+  },
+  {
+    "path": "client/src/components/ui/CustomerList.tsx",
+    "name": "CustomerList",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 438,
+    "size": 14271
+  },
+  {
+    "path": "client/src/components/ui/DatePicker.tsx",
+    "name": "DatePicker",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 482,
+    "size": 16977
+  },
+  {
+    "path": "client/src/components/ui/Dialog.tsx",
+    "name": "Dialog",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 47,
+    "size": 1275
+  },
+  {
+    "path": "client/src/components/ui/FilterPanel.tsx",
+    "name": "FilterPanel",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 1084,
+    "size": 35899
+  },
+  {
+    "path": "client/src/components/ui/Input.tsx",
+    "name": "Input",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 14,
+    "size": 516
+  },
+  {
+    "path": "client/src/components/ui/NeonProductCard.tsx",
+    "name": "NeonProductCard",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 201,
+    "size": 7363
+  },
+  {
+    "path": "client/src/components/ui/Pagination.tsx",
+    "name": "Pagination",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 73,
+    "size": 2374
+  },
+  {
+    "path": "client/src/components/ui/Select.tsx",
+    "name": "Select",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 93,
+    "size": 2439
+  },
+  {
+    "path": "client/src/components/ui/Switch.tsx",
+    "name": "Switch",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 58,
+    "size": 1229
+  },
+  {
+    "path": "client/src/components/ui/Table.tsx",
+    "name": "Table",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 568,
+    "size": 20143
+  },
+  {
+    "path": "client/src/components/ui/Tabs.tsx",
+    "name": "Tabs",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 131,
+    "size": 2738
+  },
+  {
+    "path": "client/src/components/UpdateNotification.tsx",
+    "name": "UpdateNotification",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 335,
+    "size": 12834
+  },
+  {
+    "path": "client/src/config/featureFlags.ts",
+    "name": "featureFlags",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 106,
+    "size": 2837
+  },
+  {
+    "path": "client/src/contexts/NotificationContext.tsx",
+    "name": "NotificationContext",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 151,
+    "size": 4356
+  },
+  {
+    "path": "client/src/diagnostics/indexTelemetry.ts",
+    "name": "indexTelemetry",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 101,
+    "size": 3216
+  },
+  {
+    "path": "client/src/error-handler/ErrorBoundary.tsx",
+    "name": "ErrorBoundary",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 47,
+    "size": 1667
+  },
+  {
+    "path": "client/src/error-handler/index.ts",
+    "name": "index",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 27,
+    "size": 924
+  },
+  {
+    "path": "client/src/helpers/DBVersionHelper.ts",
+    "name": "DBVersionHelper",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 85,
+    "size": 2506
+  },
+  {
+    "path": "client/src/helpers/paymentMethodDisplay.ts",
+    "name": "paymentMethodDisplay",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 19,
+    "size": 477
+  },
+  {
+    "path": "client/src/hooks/useBarcode.ts",
+    "name": "useBarcode",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 1,
+    "size": 0
+  },
+  {
+    "path": "client/src/hooks/useBarcodeHandler.ts",
+    "name": "useBarcodeHandler",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 196,
+    "size": 5723
+  },
+  {
+    "path": "client/src/hooks/useCart.ts",
+    "name": "useCart",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 228,
+    "size": 6602
+  },
+  {
+    "path": "client/src/hooks/useCashRegisterData.ts",
+    "name": "useCashRegisterData",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 158,
+    "size": 5765
+  },
+  {
+    "path": "client/src/hooks/useCustomers.ts",
+    "name": "useCustomers",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 94,
+    "size": 2648
+  },
+  {
+    "path": "client/src/hooks/useFeatureFlag.ts",
+    "name": "useFeatureFlag",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 16,
+    "size": 400
+  },
+  {
+    "path": "client/src/hooks/useHotkeys.tsx",
+    "name": "useHotkeys",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 246,
+    "size": 8843
+  },
+  {
+    "path": "client/src/hooks/usePaymentFlow.ts",
+    "name": "usePaymentFlow",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 205,
+    "size": 7497
+  },
+  {
+    "path": "client/src/hooks/usePOSViewPreferences.ts",
+    "name": "usePOSViewPreferences",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 85,
+    "size": 2519
+  },
+  {
+    "path": "client/src/hooks/useProductGroups.ts",
+    "name": "useProductGroups",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 188,
+    "size": 6104
+  },
+  {
+    "path": "client/src/hooks/useProducts.ts",
+    "name": "useProducts",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 98,
+    "size": 2854
+  },
+  {
+    "path": "client/src/hooks/useRegisterStatus.ts",
+    "name": "useRegisterStatus",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 84,
+    "size": 2326
+  },
+  {
+    "path": "client/src/hooks/useSales.ts",
+    "name": "useSales",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 44,
+    "size": 1119
+  },
+  {
+    "path": "client/src/ipc-schemas/backupProgressSchema.ts",
+    "name": "backupProgressSchema",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 11,
+    "size": 245
+  },
+  {
+    "path": "client/src/ipc-schemas/backupResultSchema.ts",
+    "name": "backupResultSchema",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 16,
+    "size": 407
+  },
+  {
+    "path": "client/src/ipc-schemas/updateStatusSchema.ts",
+    "name": "updateStatusSchema",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 25,
+    "size": 714
+  },
+  {
+    "path": "client/src/layouts/MainLayout.tsx",
+    "name": "MainLayout",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 540,
+    "size": 16934
+  },
+  {
+    "path": "client/src/main.tsx",
+    "name": "main",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 39,
+    "size": 1032
+  },
+  {
+    "path": "client/src/pages/cashregister/hooks/useCashRegisterPage.ts",
+    "name": "useCashRegisterPage",
+    "ext": ".ts",
+    "type": "hook",
+    "lines": 443,
+    "size": 15843
+  },
+  {
+    "path": "client/src/pages/CashRegisterPage.tsx",
+    "name": "CashRegisterPage",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 250,
+    "size": 9480
+  },
+  {
+    "path": "client/src/pages/CreditPage.tsx",
+    "name": "CreditPage",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 681,
+    "size": 23078
+  },
+  {
+    "path": "client/src/pages/dashboard/hooks/useCashDashboardData.ts",
+    "name": "useCashDashboardData",
+    "ext": ".ts",
+    "type": "hook",
+    "lines": 233,
+    "size": 7669
+  },
+  {
+    "path": "client/src/pages/dashboard/hooks/useDashboardSalesData.ts",
+    "name": "useDashboardSalesData",
+    "ext": ".ts",
+    "type": "hook",
+    "lines": 75,
+    "size": 2062
+  },
+  {
+    "path": "client/src/pages/DashboardPage.tsx",
+    "name": "DashboardPage",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 347,
+    "size": 11466
+  },
+  {
+    "path": "client/src/pages/POSPage.tsx",
+    "name": "POSPage",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 589,
+    "size": 18945
+  },
+  {
+    "path": "client/src/pages/ProductsPage.tsx",
+    "name": "ProductsPage",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 676,
+    "size": 22040
+  },
+  {
+    "path": "client/src/pages/SaleDetailPage.tsx",
+    "name": "SaleDetailPage",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 645,
+    "size": 24867
+  },
+  {
+    "path": "client/src/pages/SalesHistoryPage.tsx",
+    "name": "SalesHistoryPage",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 722,
+    "size": 24466
+  },
+  {
+    "path": "client/src/pages/settings/hooks/useSettingsPage.ts",
+    "name": "useSettingsPage",
+    "ext": ".ts",
+    "type": "hook",
+    "lines": 304,
+    "size": 8776
+  },
+  {
+    "path": "client/src/pages/SettingsPage.tsx",
+    "name": "SettingsPage",
+    "ext": ".tsx",
+    "type": "other",
+    "lines": 268,
+    "size": 8671
+  },
+  {
+    "path": "client/src/services/AIIndexAnalyzer.ts",
+    "name": "AIIndexAnalyzer",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 504,
+    "size": 16624
+  },
+  {
+    "path": "client/src/services/ArchiveService.ts",
+    "name": "ArchiveService",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 488,
+    "size": 15999
+  },
+  {
+    "path": "client/src/services/autoCategoryAssignment.ts",
+    "name": "autoCategoryAssignment",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 65,
+    "size": 2259
+  },
+  {
+    "path": "client/src/services/cashDrawerService.ts",
+    "name": "cashDrawerService",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 32,
+    "size": 998
+  },
+  {
+    "path": "client/src/services/cashRegisterDB.ts",
+    "name": "cashRegisterDB",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 370,
+    "size": 14227
+  },
+  {
+    "path": "client/src/services/categoryService.ts",
+    "name": "categoryService",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 120,
+    "size": 4181
+  },
+  {
+    "path": "client/src/services/CloudSyncManager.ts",
+    "name": "CloudSyncManager",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 605,
+    "size": 15868
+  },
+  {
+    "path": "client/src/services/creditServices.ts",
+    "name": "creditServices",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 342,
+    "size": 12930
+  },
+  {
+    "path": "client/src/services/dbService.ts",
+    "name": "dbService",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 43,
+    "size": 1724
+  },
+  {
+    "path": "client/src/services/discountService.ts",
+    "name": "discountService",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 96,
+    "size": 3361
+  },
+  {
+    "path": "client/src/services/encryptionService.ts",
+    "name": "encryptionService",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 15,
+    "size": 428
+  },
+  {
+    "path": "client/src/services/exportSevices.ts",
+    "name": "exportSevices",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 1610,
+    "size": 49991
+  },
+  {
+    "path": "client/src/services/importExportServices.ts",
+    "name": "importExportServices",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 132,
+    "size": 4480
+  },
+  {
+    "path": "client/src/services/IndexOptimizer.ts",
+    "name": "IndexOptimizer",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 362,
+    "size": 13764
+  },
+  {
+    "path": "client/src/services/PerformanceMonitor.ts",
+    "name": "PerformanceMonitor",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 685,
+    "size": 20630
+  },
+  {
+    "path": "client/src/services/posServices.ts",
+    "name": "posServices",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 158,
+    "size": 4672
+  },
+  {
+    "path": "client/src/services/productDB.ts",
+    "name": "productDB",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 905,
+    "size": 36327
+  },
+  {
+    "path": "client/src/services/productFeatureExtractor.ts",
+    "name": "productFeatureExtractor",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 111,
+    "size": 3498
+  },
+  {
+    "path": "client/src/services/receiptService.ts",
+    "name": "receiptService",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 242,
+    "size": 6072
+  },
+  {
+    "path": "client/src/services/salesDB.ts",
+    "name": "salesDB",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 429,
+    "size": 15884
+  },
+  {
+    "path": "client/src/services/SmartArchiveManager.ts",
+    "name": "SmartArchiveManager",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 598,
+    "size": 19089
+  },
+  {
+    "path": "client/src/services/UnifiedDBInitializer.ts",
+    "name": "UnifiedDBInitializer",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 94,
+    "size": 3400
+  },
+  {
+    "path": "client/src/test/setup.ts",
+    "name": "setup",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 60,
+    "size": 1367
+  },
+  {
+    "path": "client/src/types/backup.ts",
+    "name": "backup",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 66,
+    "size": 1981
+  },
+  {
+    "path": "client/src/types/barcode.ts",
+    "name": "barcode",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 15,
+    "size": 302
+  },
+  {
+    "path": "client/src/types/card.ts",
+    "name": "card",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 9,
+    "size": 176
+  },
+  {
+    "path": "client/src/types/cashRegister.ts",
+    "name": "cashRegister",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 33,
+    "size": 723
+  },
+  {
+    "path": "client/src/types/credit.ts",
+    "name": "credit",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 65,
+    "size": 1961
+  },
+  {
+    "path": "client/src/types/db.ts",
+    "name": "db",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 54,
+    "size": 1050
+  },
+  {
+    "path": "client/src/types/filters.ts",
+    "name": "filters",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 21,
+    "size": 453
+  },
+  {
+    "path": "client/src/types/global.d.ts",
+    "name": "global.d",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 164,
+    "size": 4784
+  },
+  {
+    "path": "client/src/types/hotkey.ts",
+    "name": "hotkey",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 29,
+    "size": 600
+  },
+  {
+    "path": "client/src/types/pos.ts",
+    "name": "pos",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 119,
+    "size": 3053
+  },
+  {
+    "path": "client/src/types/product.ts",
+    "name": "product",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 143,
+    "size": 4141
+  },
+  {
+    "path": "client/src/types/receipt.ts",
+    "name": "receipt",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 52,
+    "size": 1252
+  },
+  {
+    "path": "client/src/types/sales.ts",
+    "name": "sales",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 129,
+    "size": 3747
+  },
+  {
+    "path": "client/src/types/table.ts",
+    "name": "table",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 25,
+    "size": 648
+  },
+  {
+    "path": "client/src/utils/backup-bridge.ts",
+    "name": "backup-bridge",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 338,
+    "size": 12386
+  },
+  {
+    "path": "client/src/utils/dashboardStats.ts",
+    "name": "dashboardStats",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 351,
+    "size": 10868
+  },
+  {
+    "path": "client/src/utils/eventBus.ts",
+    "name": "eventBus",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 34,
+    "size": 923
+  },
+  {
+    "path": "client/src/utils/feature-flags.ts",
+    "name": "feature-flags",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 64,
+    "size": 2224
+  },
+  {
+    "path": "client/src/utils/FocusManager.ts",
+    "name": "FocusManager",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 38,
+    "size": 837
+  },
+  {
+    "path": "client/src/utils/image-path.ts",
+    "name": "image-path",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 68,
+    "size": 2351
+  },
+  {
+    "path": "client/src/utils/importProcessing.ts",
+    "name": "importProcessing",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 343,
+    "size": 10889
+  },
+  {
+    "path": "client/src/utils/MobilePerformanceOptimizer.ts",
+    "name": "MobilePerformanceOptimizer",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 616,
+    "size": 17709
+  },
+  {
+    "path": "client/src/utils/numberFormatUtils.ts",
+    "name": "numberFormatUtils",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 67,
+    "size": 2518
+  },
+  {
+    "path": "client/src/utils/turkishSearch.ts",
+    "name": "turkishSearch",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 75,
+    "size": 2187
+  },
+  {
+    "path": "client/src/utils/vatUtils.ts",
+    "name": "vatUtils",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 90,
+    "size": 2883
+  },
+  {
+    "path": "client/src/vite-env.d.ts",
+    "name": "vite-env.d",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 2,
+    "size": 38
+  },
+  {
+    "path": "client/src/workers/importWorker.ts",
+    "name": "importWorker",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 146,
+    "size": 5485
+  },
+  {
+    "path": "client/src/workers/messages.ts",
+    "name": "messages",
+    "ext": ".ts",
+    "type": "other",
+    "lines": 27,
+    "size": 946
+  }
+]
