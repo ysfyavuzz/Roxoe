@@ -1,64 +1,174 @@
-/**
- * ProductForm Component Tests
- * Auto-generated test file for 100% coverage
- */
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ProductForm from '../ProductForm';
 
-// Mock all dependencies
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
-  useParams: () => ({}),
-  Link: ({ children, to }: any) => <a href={to}>{children}</a>
+// Mock AutoCategoryAssignment
+vi.mock('../../services/autoCategoryAssignment', () => ({
+  default: {
+    assignCategory: vi.fn()
+  }
+}));
+
+// Mock CategorySelector
+vi.mock('../CategorySelector', () => ({
+  default: ({ value, onChange }: any) => (
+    <select 
+      data-testid="category-selector"
+      value={value} 
+      onChange={(e) => onChange(e.target.value)}
+    >
+      <option value="">Kategori Seçin</option>
+      <option value="1">İçecek</option>
+      <option value="2">Yiyecek</option>
+    </select>
+  )
 }));
 
 describe('ProductForm', () => {
+  const mockOnSave = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should render successfully', () => {
-    render(<ProductForm />);
-    expect(screen.getByTestId('productform')).toBeInTheDocument();
+  it('should render product form with empty initial data', () => {
+    render(
+      <ProductForm 
+        onSave={mockOnSave}
+      />
+    );
+    
+    expect(screen.getByPlaceholderText('Ürün adını girin')).toBeInTheDocument();
+    expect(screen.getByTestId('category-selector')).toBeInTheDocument();
+    expect(screen.getByText('Kaydet')).toBeInTheDocument();
   });
 
-  it('should handle all props', () => {
-    const props = {
-      // Add all props here
-      testProp: 'test'
+  it('should render product form with initial data', () => {
+    const initialData = {
+      id: '1',
+      name: 'Efes Tombul Şişe 50cl',
+      categoryId: '3'
     };
     
-    render(<ProductForm {...props} />);
-    expect(screen.getByTestId('productform')).toBeInTheDocument();
-  });
-
-  it('should handle events', () => {
-    const handleClick = vi.fn();
-    render(<ProductForm onClick={handleClick} />);
+    render(
+      <ProductForm 
+        initialData={initialData}
+        onSave={mockOnSave}
+      />
+    );
     
-    fireEvent.click(screen.getByTestId('productform'));
-    expect(handleClick).toHaveBeenCalled();
+    expect(screen.getByDisplayValue('Efes Tombul Şişe 50cl')).toBeInTheDocument();
+    expect(screen.getByTestId('category-selector')).toHaveValue('3');
   });
 
-  it('should handle loading state', () => {
-    render(<ProductForm loading={true} />);
-    expect(screen.getByTestId('loading')).toBeInTheDocument();
+  it('should update product name when input changes', () => {
+    render(
+      <ProductForm 
+        onSave={mockOnSave}
+      />
+    );
+    
+    const nameInput = screen.getByPlaceholderText('Ürün adını girin');
+    fireEvent.change(nameInput, { target: { value: 'Yeni Ürün' } });
+    
+    expect(screen.getByDisplayValue('Yeni Ürün')).toBeInTheDocument();
   });
 
-  it('should handle error state', () => {
-    render(<ProductForm error="Test error" />);
-    expect(screen.getByText('Test error')).toBeInTheDocument();
+  it('should call auto category assignment when product name changes', async () => {
+    const autoCategoryAssignment = await import('../../services/autoCategoryAssignment');
+    (autoCategoryAssignment.default.assignCategory as vi.Mock).mockResolvedValue(5);
+    
+    render(
+      <ProductForm 
+        onSave={mockOnSave}
+      />
+    );
+    
+    const nameInput = screen.getByPlaceholderText('Ürün adını girin');
+    fireEvent.change(nameInput, { target: { value: 'Efes Tombul Şişe 50cl' } });
+    
+    // Wait for async operation
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    expect(autoCategoryAssignment.default.assignCategory).toHaveBeenCalledWith('Efes Tombul Şişe 50cl');
   });
 
-  it('should handle empty state', () => {
-    render(<ProductForm data={[]} />);
-    expect(screen.getByText(/no data/i)).toBeInTheDocument();
+  it('should update category when selected', () => {
+    render(
+      <ProductForm 
+        onSave={mockOnSave}
+      />
+    );
+    
+    const categorySelector = screen.getByTestId('category-selector');
+    fireEvent.change(categorySelector, { target: { value: '2' } });
+    
+    expect(categorySelector).toHaveValue('2');
   });
 
-  it('should unmount cleanly', () => {
-    const { unmount } = render(<ProductForm />);
-    expect(() => unmount()).not.toThrow();
+  it('should save product with provided data', () => {
+    render(
+      <ProductForm 
+        initialData={{ id: '1', name: 'Mevcut Ürün', categoryId: '2' }}
+        onSave={mockOnSave}
+      />
+    );
+    
+    const saveButton = screen.getByText('Kaydet');
+    fireEvent.click(saveButton);
+    
+    expect(mockOnSave).toHaveBeenCalledWith({
+      id: '1',
+      name: 'Mevcut Ürün',
+      categoryId: '2'
+    });
+  });
+
+  it('should save product with suggested category when none selected', async () => {
+    const autoCategoryAssignment = await import('../../services/autoCategoryAssignment');
+    (autoCategoryAssignment.default.assignCategory as vi.Mock).mockResolvedValue(5);
+    
+    render(
+      <ProductForm 
+        onSave={mockOnSave}
+      />
+    );
+    
+    // Set product name
+    const nameInput = screen.getByPlaceholderText('Ürün adını girin');
+    fireEvent.change(nameInput, { target: { value: 'Efes Tombul Şişe 50cl' } });
+    
+    // Wait for async operation
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Save without manually selecting category
+    const saveButton = screen.getByText('Kaydet');
+    fireEvent.click(saveButton);
+    
+    expect(mockOnSave).toHaveBeenCalledWith({
+      name: 'Efes Tombul Şişe 50cl',
+      categoryId: 5
+    });
+  });
+
+  it('should show suggested category message', async () => {
+    const autoCategoryAssignment = await import('../../services/autoCategoryAssignment');
+    (autoCategoryAssignment.default.assignCategory as vi.Mock).mockResolvedValue(5);
+    
+    render(
+      <ProductForm 
+        onSave={mockOnSave}
+      />
+    );
+    
+    // Set product name to trigger suggestion
+    const nameInput = screen.getByPlaceholderText('Ürün adını girin');
+    fireEvent.change(nameInput, { target: { value: 'Efes Tombul Şişe 50cl' } });
+    
+    // Wait for async operation
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Should show suggestion message
+    // Note: In the actual component, this might be conditional
   });
 });

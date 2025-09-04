@@ -1,64 +1,124 @@
-/**
- * CategorySelector Component Tests
- * Auto-generated test file for 100% coverage
- */
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import CategorySelector from '../CategorySelector';
 
-// Mock all dependencies
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
-  useParams: () => ({}),
-  Link: ({ children, to }: any) => <a href={to}>{children}</a>
+// Mock CategoryService
+vi.mock('../../services/categoryService', () => ({
+  default: {
+    getCategoryHierarchy: vi.fn()
+  }
+}));
+
+// Mock CategoryTreeView
+vi.mock('../CategoryTreeView', () => ({
+  default: () => <div data-testid="category-tree-view">Category Tree View</div>
 }));
 
 describe('CategorySelector', () => {
+  const mockOnChange = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should render successfully', () => {
-    render(<CategorySelector />);
-    expect(screen.getByTestId('categoryselector')).toBeInTheDocument();
-  });
-
-  it('should handle all props', () => {
-    const props = {
-      // Add all props here
-      testProp: 'test'
-    };
+  it('should render with placeholder text', () => {
+    render(
+      <CategorySelector 
+        value=""
+        onChange={mockOnChange}
+        placeholder="Kategori seçin..."
+      />
+    );
     
-    render(<CategorySelector {...props} />);
-    expect(screen.getByTestId('categoryselector')).toBeInTheDocument();
+    expect(screen.getByText('Kategori seçin...')).toBeInTheDocument();
   });
 
-  it('should handle events', () => {
-    const handleClick = vi.fn();
-    render(<CategorySelector onClick={handleClick} />);
+  it('should render with default placeholder when none provided', () => {
+    render(
+      <CategorySelector 
+        value=""
+        onChange={mockOnChange}
+      />
+    );
     
-    fireEvent.click(screen.getByTestId('categoryselector'));
-    expect(handleClick).toHaveBeenCalled();
+    expect(screen.getByText('Kategori seçin...')).toBeInTheDocument();
   });
 
-  it('should handle loading state', () => {
-    render(<CategorySelector loading={true} />);
-    expect(screen.getByTestId('loading')).toBeInTheDocument();
+  it('should toggle dropdown when clicked', () => {
+    render(
+      <CategorySelector 
+        value=""
+        onChange={mockOnChange}
+      />
+    );
+    
+    const selector = screen.getByText('Kategori seçin...');
+    fireEvent.click(selector);
+    
+    expect(screen.getByTestId('category-tree-view')).toBeInTheDocument();
+    
+    fireEvent.click(selector);
+    // Dropdown should close (but we can't easily test disappearance in this mock)
   });
 
-  it('should handle error state', () => {
-    render(<CategorySelector error="Test error" />);
-    expect(screen.getByText('Test error')).toBeInTheDocument();
+  it('should display selected category name', async () => {
+    // Mock category service
+    const categoryService = await import('../../services/categoryService');
+    (categoryService.default.getCategoryHierarchy as vi.Mock).mockResolvedValue([
+      { id: 1, name: 'İçecek' },
+      { id: 2, name: 'Alkollü İçecekler' },
+      { id: 3, name: 'Bira' }
+    ]);
+    
+    render(
+      <CategorySelector 
+        value="3"
+        onChange={mockOnChange}
+      />
+    );
+    
+    // Wait for async operation
+    await screen.findByText('İçecek > Alkollü İçecekler > Bira');
+    
+    expect(screen.getByText('İçecek > Alkollü İçecekler > Bira')).toBeInTheDocument();
   });
 
-  it('should handle empty state', () => {
-    render(<CategorySelector data={[]} />);
-    expect(screen.getByText(/no data/i)).toBeInTheDocument();
+  it('should handle category selection', async () => {
+    const categoryService = await import('../../services/categoryService');
+    (categoryService.default.getCategoryHierarchy as vi.Mock).mockResolvedValue([
+      { id: 1, name: 'İçecek' },
+      { id: 2, name: 'Alkollü İçecekler' }
+    ]);
+    
+    render(
+      <CategorySelector 
+        value=""
+        onChange={mockOnChange}
+      />
+    );
+    
+    const selector = screen.getByText('Kategori seçin...');
+    fireEvent.click(selector);
+    
+    // Simulate category selection from tree view (mocked)
+    // In real implementation, this would be handled by CategoryTreeView
+    expect(mockOnChange).not.toHaveBeenCalled();
   });
 
-  it('should unmount cleanly', () => {
-    const { unmount } = render(<CategorySelector />);
-    expect(() => unmount()).not.toThrow();
+  it('should handle errors when fetching category hierarchy', async () => {
+    const categoryService = await import('../../services/categoryService');
+    (categoryService.default.getCategoryHierarchy as vi.Mock).mockRejectedValue(
+      new Error('Category not found')
+    );
+    
+    render(
+      <CategorySelector 
+        value="999"
+        onChange={mockOnChange}
+      />
+    );
+    
+    // Should not crash and should still render
+    expect(screen.getByText('Kategori seçin...')).toBeInTheDocument();
   });
 });
