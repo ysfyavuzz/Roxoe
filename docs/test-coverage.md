@@ -2,7 +2,7 @@
 
 [← Teknik Kitap’a Dön](roxoepos-technical-book.md) · [Genel Kitap](BOOK/roxoepos-book.md)
 
-Son Güncelleme: 2025-08-31
+Son Güncelleme: 2025-11-17
 Sürüm: 0.5.3
 
 ## 1) Politika
