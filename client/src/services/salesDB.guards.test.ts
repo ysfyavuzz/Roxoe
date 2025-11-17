@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import 'fake-indexeddb/auto'
 
 import { IndexTelemetry } from '../diagnostics/indexTelemetry'
+import { resetDatabase } from '../test/testUtils'
 
 import { salesDB } from './salesDB'
 
@@ -21,12 +22,7 @@ function makeSale(dateStr: string, status: 'completed' | 'cancelled' | 'refunded
 beforeEach(async () => {
   IndexTelemetry.reset()
   // Temiz salesDB
-  await new Promise<void>((res, rej) => {
-    const req = indexedDB.deleteDatabase('salesDB');
-    req.onsuccess = () => res();
-    req.onerror = () => rej(req.error);
-    req.onblocked = () => res();
-  })
+  await resetDatabase('salesDB')
 })
 
 describe('salesDB guard fallbacks (no indexes on sales store)', () => {

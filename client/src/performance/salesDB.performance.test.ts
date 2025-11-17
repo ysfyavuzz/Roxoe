@@ -3,17 +3,9 @@ import 'fake-indexeddb/auto'
 
 import { IndexTelemetry } from '../diagnostics/indexTelemetry'
 import { salesDB } from '../services/salesDB'
+import { resetDatabase } from '../test/testUtils'
 
 function randChoice<T>(arr: readonly T[]): T { return arr[Math.floor(Math.random() * arr.length)]! }
-
-async function resetDB(dbName: string) {
-  await new Promise<void>((res, rej) => {
-    const req = indexedDB.deleteDatabase(dbName)
-    req.onsuccess = () => res()
-    req.onerror = () => rej(req.error)
-    req.onblocked = () => res()
-  })
-}
 
 // Index creation is done via IndexOptimizer to avoid version conflicts
 
@@ -44,7 +36,7 @@ function ms<T>(fn: () => Promise<T>): Promise<{ ms: number; result: T }>{
 describe('[performance] salesDB.getSalesWithFilter', () => {
   beforeEach(async () => {
     IndexTelemetry.reset()
-    await resetDB('salesDB')
+    await resetDatabase('salesDB')
   })
 
   it('reports timings for no-index vs indexed paths (seed=150)', async () => {
@@ -58,7 +50,7 @@ describe('[performance] salesDB.getSalesWithFilter', () => {
     const fallbackStats1 = IndexTelemetry.getStats()
 
     // Reset DB and create indexed scenario
-    await resetDB('salesDB')
+    await resetDatabase('salesDB')
 
     // Prepare indexed schema before seeding (match app's base version 7)
     await new Promise<void>((res, rej) => {

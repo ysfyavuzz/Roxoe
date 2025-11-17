@@ -12,6 +12,7 @@ vi.mock('./UnifiedDBInitializer', () => {
 })
 
 import { IndexTelemetry } from '../diagnostics/indexTelemetry'
+import { resetDatabase } from '../test/testUtils'
 
 import { cashRegisterService, CashRegisterStatus, CashTransactionType } from './cashRegisterDB'
 import { productService } from './productDB'
@@ -47,32 +48,13 @@ async function createTestDB(): Promise<IDBPDatabase<any>> {
 
 beforeEach(async () => {
   // Ensure clean slate
-  try {
-    await new Promise<void>((res, rej) => {
-      const req = indexedDB.deleteDatabase('posDB');
-      req.onsuccess = () => res();
-      // Hata durumunda test akışını bozma, logla
-      req.onerror = () => rej(req.error);
-      req.onblocked = () => res();
-    })
-  } catch (e) {
-    // Test ortamında engel olabilir; sessiz geç
-  }
+  await resetDatabase('posDB')
   mockedDb = await createTestDB()
 })
 
 afterEach(async () => {
   try { mockedDb.close() } catch (e) { /* test sonlandırma: göz ardı et */ }
-  try {
-    await new Promise<void>((res, rej) => {
-      const req = indexedDB.deleteDatabase('posDB');
-      req.onsuccess = () => res();
-      req.onerror = () => rej(req.error);
-      req.onblocked = () => res();
-    })
-  } catch (e) {
-    // CI ortamında bloklanabilir; göz ardı et
-  }
+  await resetDatabase('posDB')
 })
 
 // Helper to build a minimal valid Product (without id)

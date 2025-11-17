@@ -3,22 +3,12 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import 'fake-indexeddb/auto'
 
 import { salesDB } from '../services/salesDB'
+import { resetDatabase, setupTestDatabase } from '../test/testUtils'
 
-Object.defineProperty(window, 'indexedDB', { value: globalThis.indexedDB, writable: true })
-
-async function resetDB(name: string) {
-  try {
-    await new Promise<void>((res, rej) => {
-      const req = indexedDB.deleteDatabase(name)
-      req.onsuccess = () => res()
-      req.onerror = () => rej(req.error)
-      req.onblocked = () => res()
-    })
-  } catch {}
-}
+setupTestDatabase()
 
 beforeEach(async () => {
-  await resetDB('salesDB')
+  await resetDatabase('salesDB')
 })
 
 describe('[coverage] salesDB geniş kapsam', () => {
