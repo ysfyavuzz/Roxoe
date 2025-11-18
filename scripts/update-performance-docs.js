@@ -5,22 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
-
-function today(){
-  const d = new Date();
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
-}
-function replaceLine(content, prefix, newline){
-  const lines = content.split(/\r?\n/);
-  for (let i=0;i<lines.length;i++){
-    if (lines[i].startsWith(prefix)) { lines[i]=newline; return lines.join('\n'); }
-  }
-  return `${newline}\n${content}`;
-}
-function readJSON(p){ return JSON.parse(fs.readFileSync(p,'utf-8')); }
+const { today, replaceLine, readJSON } = require('./utils');
 
 (function main(){
   const root = process.cwd();

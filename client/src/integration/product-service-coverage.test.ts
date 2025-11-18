@@ -3,23 +3,13 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import 'fake-indexeddb/auto'
 
 import { productService, resetDatabases } from '../services/productDB'
+import { resetDatabase, setupTestDatabase } from '../test/testUtils'
 
 // JSDOM ortamında window.indexedDB -> fake-indexeddb yönlendirmesi
-Object.defineProperty(window, 'indexedDB', { value: globalThis.indexedDB, writable: true })
-
-async function resetPOSDB() {
-  try {
-    await new Promise<void>((res, rej) => {
-      const req = indexedDB.deleteDatabase('posDB')
-      req.onsuccess = () => res()
-      req.onerror = () => rej(req.error)
-      req.onblocked = () => res()
-    })
-  } catch {}
-}
+setupTestDatabase()
 
 beforeEach(async () => {
-  await resetPOSDB()
+  await resetDatabase('posDB')
 })
 
 describe('[coverage] productService geniş kapsam', () => {
