@@ -50,5 +50,53 @@ describe("Card (product variant)", () => {
     fireEvent.click(removeBtn);
     expect(onRemove).toHaveBeenCalledTimes(1);
   });
+
+  it("hides image on load error and shows placeholder", () => {
+    render(
+      <Card variant="product" title="Test" imageUrl="/invalid.png" />
+    );
+    const img = screen.getByRole("img") as HTMLImageElement;
+    expect(img).toBeInTheDocument();
+
+    // Trigger image load error
+    fireEvent.error(img);
+
+    // Image should be hidden after error
+    expect(screen.queryByRole("img")).toBeNull();
+  });
+
+  it("resets image load error when imageUrl changes", () => {
+    const { rerender } = render(
+      <Card variant="product" title="Test" imageUrl="/invalid.png" />
+    );
+    const img = screen.getByRole("img") as HTMLImageElement;
+
+    // Trigger error on first image
+    fireEvent.error(img);
+    expect(screen.queryByRole("img")).toBeNull();
+
+    // Change imageUrl - should show image again
+    rerender(
+      <Card variant="product" title="Test" imageUrl="/valid.png" />
+    );
+    expect(screen.getByRole("img")).toBeInTheDocument();
+  });
+
+  it("resets image load error when barcode changes", () => {
+    const { rerender } = render(
+      <Card variant="product" title="Test" barcode="ABC-123" />
+    );
+    const img = screen.getByRole("img") as HTMLImageElement;
+
+    // Trigger error
+    fireEvent.error(img);
+    expect(screen.queryByRole("img")).toBeNull();
+
+    // Change barcode - should show image again
+    rerender(
+      <Card variant="product" title="Test" barcode="XYZ-789" />
+    );
+    expect(screen.getByRole("img")).toBeInTheDocument();
+  });
 });
 

@@ -103,6 +103,13 @@ const Card: React.FC<CardProps> = ({
   size = "normal",
   children,
 }) => {
+  // State to track image load failure
+  const [imageLoadFailed, setImageLoadFailed] = React.useState(false);
+
+  // Reset image load failure state when image source changes
+  React.useEffect(() => {
+    setImageLoadFailed(false);
+  }, [imageUrl, barcode]);
   // === SUMMARY VARYANTI ===
   if (variant === "summary") {
     const themeClass = {
@@ -263,8 +270,8 @@ if (variant === "product") {
           <Image size={32} className="text-gray-300" strokeWidth={1} />
         </div>
 
-        {/* Gerçek görsel (varsa) */}
-        {primarySrc && (
+        {/* Gerçek görsel (varsa ve yüklenebilmişse) */}
+        {primarySrc && !imageLoadFailed && (
           <img
             src={primarySrc}
             alt={title || "Ürün görseli"}
@@ -276,8 +283,8 @@ if (variant === "product") {
               "absolute inset-0 w-full h-full",
               objectFit === "contain" ? "object-contain p-2" : "object-cover"
             )}
-            // 404 gibi durumlarda kırık img göstermemek için img'yi gizliyoruz; alttaki placeholder görünür kalır
-            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+            // 404 gibi durumlarda kırık img göstermemek için state güncelliyoruz; alttaki placeholder görünür kalır
+            onError={() => setImageLoadFailed(true)}
           />
         )}
       </div>
