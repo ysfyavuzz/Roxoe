@@ -9,21 +9,24 @@ import { useHotkeys } from '../useHotkeys';
 describe('useHotkeys', () => {
   let mockCallback: ReturnType<typeof vi.fn>;
   let mockQuantityUpdate: ReturnType<typeof vi.fn>;
+  let originalLocalStorage: Storage;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockCallback = vi.fn();
     mockQuantityUpdate = vi.fn();
     
-    // Mock localStorage
-    global.localStorage = {
+    // Store original localStorage and mock it
+    originalLocalStorage = global.localStorage;
+    const localStorageMock = {
       getItem: vi.fn(() => null),
       setItem: vi.fn(),
       removeItem: vi.fn(),
       clear: vi.fn(),
       length: 0,
-      key: vi.fn(),
+      key: vi.fn(() => null),
     };
+    global.localStorage = localStorageMock as unknown as Storage;
 
     // Mock console methods to avoid test output clutter
     vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -31,6 +34,8 @@ describe('useHotkeys', () => {
   });
 
   afterEach(() => {
+    // Restore original localStorage
+    global.localStorage = originalLocalStorage;
     vi.restoreAllMocks();
   });
 
