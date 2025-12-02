@@ -46,7 +46,7 @@ describe('NotificationContext', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default mock implementation
-    (productService.getAllProducts as any).mockResolvedValue([]);
+    vi.mocked(productService.getAllProducts).mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -102,7 +102,7 @@ describe('NotificationContext', () => {
         { id: 2, name: 'Product 2', stock: 10, price: 20, category: 'test', barcode: '456' } as Product,
       ];
 
-      (productService.getAllProducts as any).mockResolvedValue(mockProducts);
+      vi.mocked(productService.getAllProducts).mockResolvedValue(mockProducts);
 
       let contextValue: any = null;
 
@@ -165,7 +165,7 @@ describe('NotificationContext', () => {
         { id: 1, name: 'Product 1', stock: 2, price: 10, category: 'test', barcode: '123' } as Product,
       ];
 
-      (productService.getAllProducts as any).mockResolvedValue(mockProducts);
+      vi.mocked(productService.getAllProducts).mockResolvedValue(mockProducts);
 
       let contextValue: any = null;
 
@@ -197,7 +197,7 @@ describe('NotificationContext', () => {
         { id: 2, name: 'Product 2', stock: 3, price: 20, category: 'test', barcode: '456' } as Product,
       ];
 
-      (productService.getAllProducts as any).mockResolvedValue(mockProducts);
+      vi.mocked(productService.getAllProducts).mockResolvedValue(mockProducts);
 
       let contextValue: any = null;
 
@@ -227,7 +227,7 @@ describe('NotificationContext', () => {
         { id: 2, name: 'Product 2', stock: 3, price: 20, category: 'test', barcode: '456' } as Product,
       ];
 
-      (productService.getAllProducts as any).mockResolvedValue(mockProducts);
+      vi.mocked(productService.getAllProducts).mockResolvedValue(mockProducts);
 
       let contextValue: any = null;
 
