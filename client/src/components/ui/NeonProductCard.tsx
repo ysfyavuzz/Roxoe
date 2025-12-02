@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { ShoppingCart, AlertTriangle, Tag, Plus, Minus } from "lucide-react";
 import React from "react";
 
+import { useImageErrorHandler } from "../../hooks/useImageErrorHandler";
 import { getProductImagePath } from "../../utils/image-path";
 
 export interface CardProps {
@@ -35,6 +36,7 @@ const NeonProductCard: React.FC<CardProps> = ({
   onAddToGroup,
   onRemoveFromGroup,
 }) => {
+  const handleImageError = useImageErrorHandler();
   if (variant === "addProduct") {
     return (
       <button
@@ -132,7 +134,7 @@ const NeonProductCard: React.FC<CardProps> = ({
               src={primarySrc}
               alt={title || "Ürün"}
               className="absolute inset-0 w-full h-full object-cover brightness-90 group-hover:brightness-110 group-hover:scale-105 transition-all duration-300"
-              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+              onError={handleImageError}
             />
           )}
           
