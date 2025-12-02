@@ -1,64 +1,93 @@
 /**
  * Switch Component Tests
- * Auto-generated test file for 100% coverage
+ * Tests for Switch toggle component
  */
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import Switch from '../Switch';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { Switch } from '../Switch';
 
-// Mock all dependencies
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
-  useParams: () => ({}),
-  Link: ({ children, to }: any) => <a href={to}>{children}</a>
-}));
-
-describe('Switch', () => {
+describe('Switch Component', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    // Clear any previous renders
   });
 
   it('should render successfully', () => {
-    render(<Switch />);
-    expect(screen.getByTestId('switch')).toBeInTheDocument();
-  });
-
-  it('should handle all props', () => {
-    const props = {
-      // Add all props here
-      testProp: 'test'
-    };
+    const { container } = render(
+      <Switch checked={false} onCheckedChange={() => {}} />
+    );
     
-    render(<Switch {...props} />);
-    expect(screen.getByTestId('switch')).toBeInTheDocument();
+    expect(container.querySelector('[role="switch"]')).toBeInTheDocument();
   });
 
-  it('should handle events', () => {
-    const handleClick = vi.fn();
-    render(<Switch onClick={handleClick} />);
+  it('should display checked state correctly', () => {
+    const { container } = render(
+      <Switch checked={true} onCheckedChange={() => {}} />
+    );
     
-    fireEvent.click(screen.getByTestId('switch'));
-    expect(handleClick).toHaveBeenCalled();
+    const switchElement = container.querySelector('[role="switch"]');
+    expect(switchElement).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('should handle loading state', () => {
-    render(<Switch loading={true} />);
-    expect(screen.getByTestId('loading')).toBeInTheDocument();
+  it('should display unchecked state correctly', () => {
+    const { container } = render(
+      <Switch checked={false} onCheckedChange={() => {}} />
+    );
+    
+    const switchElement = container.querySelector('[role="switch"]');
+    expect(switchElement).toHaveAttribute('aria-checked', 'false');
   });
 
-  it('should handle error state', () => {
-    render(<Switch error="Test error" />);
-    expect(screen.getByText('Test error')).toBeInTheDocument();
+  it('should call onCheckedChange when clicked', () => {
+    const handleChange = vi.fn();
+    const { container } = render(
+      <Switch checked={false} onCheckedChange={handleChange} />
+    );
+    
+    const switchElement = container.querySelector('[role="switch"]');
+    fireEvent.click(switchElement!);
+    
+    expect(handleChange).toHaveBeenCalledWith(true);
   });
 
-  it('should handle empty state', () => {
-    render(<Switch data={[]} />);
-    expect(screen.getByText(/no data/i)).toBeInTheDocument();
+  it('should toggle from checked to unchecked', () => {
+    const handleChange = vi.fn();
+    const { container } = render(
+      <Switch checked={true} onCheckedChange={handleChange} />
+    );
+    
+    const switchElement = container.querySelector('[role="switch"]');
+    fireEvent.click(switchElement!);
+    
+    expect(handleChange).toHaveBeenCalledWith(false);
+  });
+
+  it('should not call onCheckedChange when disabled', () => {
+    const handleChange = vi.fn();
+    const { container } = render(
+      <Switch checked={false} onCheckedChange={handleChange} disabled={true} />
+    );
+    
+    const switchElement = container.querySelector('[role="switch"]');
+    fireEvent.click(switchElement!);
+    
+    expect(handleChange).not.toHaveBeenCalled();
+  });
+
+  it('should have disabled attribute when disabled prop is true', () => {
+    const { container } = render(
+      <Switch checked={false} onCheckedChange={() => {}} disabled={true} />
+    );
+    
+    const switchElement = container.querySelector('[role="switch"]');
+    expect(switchElement).toHaveAttribute('disabled');
   });
 
   it('should unmount cleanly', () => {
-    const { unmount } = render(<Switch />);
+    const { unmount } = render(
+      <Switch checked={false} onCheckedChange={() => {}} />
+    );
+    
     expect(() => unmount()).not.toThrow();
   });
 });

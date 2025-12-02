@@ -1,64 +1,126 @@
 /**
  * Tabs Component Tests
- * Auto-generated test file for 100% coverage
+ * Tests for Tabs, TabsList, TabsTrigger, and TabsContent components
  */
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import Tabs from '../Tabs';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../Tabs';
 
-// Mock all dependencies
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
-  useParams: () => ({}),
-  Link: ({ children, to }: any) => <a href={to}>{children}</a>
-}));
-
-describe('Tabs', () => {
+describe('Tabs Component', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    // Clear any previous renders
   });
 
-  it('should render successfully', () => {
-    render(<Tabs />);
-    expect(screen.getByTestId('tabs')).toBeInTheDocument();
-  });
-
-  it('should handle all props', () => {
-    const props = {
-      // Add all props here
-      testProp: 'test'
-    };
+  it('should render tabs with children successfully', () => {
+    const { container } = render(
+      <Tabs defaultValue="tab1">
+        <TabsList>
+          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tab1">Content 1</TabsContent>
+        <TabsContent value="tab2">Content 2</TabsContent>
+      </Tabs>
+    );
     
-    render(<Tabs {...props} />);
-    expect(screen.getByTestId('tabs')).toBeInTheDocument();
+    expect(container).toBeInTheDocument();
+    expect(screen.getByText('Tab 1')).toBeInTheDocument();
+    expect(screen.getByText('Tab 2')).toBeInTheDocument();
   });
 
-  it('should handle events', () => {
-    const handleClick = vi.fn();
-    render(<Tabs onClick={handleClick} />);
+  it('should show default tab content', () => {
+    render(
+      <Tabs defaultValue="tab1">
+        <TabsList>
+          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tab1">Content 1</TabsContent>
+        <TabsContent value="tab2">Content 2</TabsContent>
+      </Tabs>
+    );
     
-    fireEvent.click(screen.getByTestId('tabs'));
-    expect(handleClick).toHaveBeenCalled();
+    expect(screen.getByText('Content 1')).toBeInTheDocument();
+    expect(screen.queryByText('Content 2')).not.toBeInTheDocument();
   });
 
-  it('should handle loading state', () => {
-    render(<Tabs loading={true} />);
-    expect(screen.getByTestId('loading')).toBeInTheDocument();
+  it('should switch tabs when trigger is clicked', () => {
+    render(
+      <Tabs defaultValue="tab1">
+        <TabsList>
+          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tab1">Content 1</TabsContent>
+        <TabsContent value="tab2">Content 2</TabsContent>
+      </Tabs>
+    );
+    
+    // Click on Tab 2
+    fireEvent.click(screen.getByText('Tab 2'));
+    
+    expect(screen.queryByText('Content 1')).not.toBeInTheDocument();
+    expect(screen.getByText('Content 2')).toBeInTheDocument();
   });
 
-  it('should handle error state', () => {
-    render(<Tabs error="Test error" />);
-    expect(screen.getByText('Test error')).toBeInTheDocument();
+  it('should call onValueChange when tab is clicked', () => {
+    const handleValueChange = vi.fn();
+    
+    render(
+      <Tabs defaultValue="tab1" onValueChange={handleValueChange}>
+        <TabsList>
+          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tab1">Content 1</TabsContent>
+        <TabsContent value="tab2">Content 2</TabsContent>
+      </Tabs>
+    );
+    
+    fireEvent.click(screen.getByText('Tab 2'));
+    
+    expect(handleValueChange).toHaveBeenCalledWith('tab2');
   });
 
-  it('should handle empty state', () => {
-    render(<Tabs data={[]} />);
-    expect(screen.getByText(/no data/i)).toBeInTheDocument();
+  it('should support controlled mode with value prop', () => {
+    const { rerender } = render(
+      <Tabs value="tab1" defaultValue="tab1">
+        <TabsList>
+          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tab1">Content 1</TabsContent>
+        <TabsContent value="tab2">Content 2</TabsContent>
+      </Tabs>
+    );
+    
+    expect(screen.getByText('Content 1')).toBeInTheDocument();
+    
+    rerender(
+      <Tabs value="tab2" defaultValue="tab1">
+        <TabsList>
+          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tab1">Content 1</TabsContent>
+        <TabsContent value="tab2">Content 2</TabsContent>
+      </Tabs>
+    );
+    
+    expect(screen.getByText('Content 2')).toBeInTheDocument();
   });
 
   it('should unmount cleanly', () => {
-    const { unmount } = render(<Tabs />);
+    const { unmount } = render(
+      <Tabs defaultValue="tab1">
+        <TabsList>
+          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tab1">Content 1</TabsContent>
+      </Tabs>
+    );
+    
     expect(() => unmount()).not.toThrow();
   });
 });
