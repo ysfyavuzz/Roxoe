@@ -20,6 +20,8 @@ import { SyntheticEvent } from 'react';
  */
 export function useImageErrorHandler() {
   return (e: SyntheticEvent<HTMLImageElement>) => {
-    (e.currentTarget as HTMLImageElement).style.display = 'none';
+    if (e.currentTarget) {
+      e.currentTarget.style.display = 'none';
+    }
   };
 }
