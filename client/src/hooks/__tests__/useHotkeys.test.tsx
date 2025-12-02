@@ -1,64 +1,277 @@
 /**
- * useHotkeys Component Tests
- * Auto-generated test file for 100% coverage
+ * useHotkeys Hook Tests
+ * Tests for the keyboard hotkey management hook
  */
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import useHotkeys from '../useHotkeys';
-
-// Mock all dependencies
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
-  useParams: () => ({}),
-  Link: ({ children, to }: any) => <a href={to}>{children}</a>
-}));
+import { renderHook, act, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { useHotkeys } from '../useHotkeys';
 
 describe('useHotkeys', () => {
+  let mockCallback: ReturnType<typeof vi.fn>;
+  let mockQuantityUpdate: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
     vi.clearAllMocks();
-  });
-
-  it('should render successfully', () => {
-    render(<useHotkeys />);
-    expect(screen.getByTestId('usehotkeys')).toBeInTheDocument();
-  });
-
-  it('should handle all props', () => {
-    const props = {
-      // Add all props here
-      testProp: 'test'
+    mockCallback = vi.fn();
+    mockQuantityUpdate = vi.fn();
+    
+    // Mock localStorage
+    global.localStorage = {
+      getItem: vi.fn(() => null),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      clear: vi.fn(),
+      length: 0,
+      key: vi.fn(),
     };
+
+    // Mock console methods to avoid test output clutter
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should initialize with correct default state', () => {
+    const { result } = renderHook(() => useHotkeys({
+      hotkeys: [],
+      onQuantityUpdate: mockQuantityUpdate,
+    }));
+
+    expect(result.current.quantityMode).toBe(false);
+    expect(result.current.tempQuantity).toBe('');
+    expect(typeof result.current.resetQuantityMode).toBe('function');
+  });
+
+  it('should handle basic hotkey press', () => {
+    const { result } = renderHook(() => useHotkeys({
+      hotkeys: [
+        {
+          key: 'n',
+          ctrlKey: true,
+          callback: mockCallback,
+        },
+      ],
+    }));
+
+    act(() => {
+      const event = new KeyboardEvent('keydown', {
+        key: 'n',
+        ctrlKey: true,
+        bubbles: true,
+      });
+      window.dispatchEvent(event);
+    });
+
+    expect(mockCallback).toHaveBeenCalled();
+  });
+
+  it('should activate quantity mode with star key', async () => {
+    const { result } = renderHook(() => useHotkeys({
+      hotkeys: [],
+      onQuantityUpdate: mockQuantityUpdate,
+    }));
+
+    expect(result.current.quantityMode).toBe(false);
+
+    act(() => {
+      const event = new KeyboardEvent('keydown', {
+        key: '*',
+        bubbles: true,
+      });
+      window.dispatchEvent(event);
+    });
+
+    await waitFor(() => {
+      expect(result.current.quantityMode).toBe(true);
+    });
+  });
+
+  it('should accumulate digits in quantity mode', async () => {
+    const { result } = renderHook(() => useHotkeys({
+      hotkeys: [],
+      onQuantityUpdate: mockQuantityUpdate,
+    }));
+
+    // Activate quantity mode
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '*', bubbles: true }));
+    });
+
+    await waitFor(() => expect(result.current.quantityMode).toBe(true));
+
+    // Type digits
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '5', bubbles: true }));
+    });
+
+    await waitFor(() => {
+      expect(result.current.tempQuantity).toBe('5');
+    });
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '3', bubbles: true }));
+    });
+
+    await waitFor(() => {
+      expect(result.current.tempQuantity).toBe('53');
+    });
+  });
+
+  it('should call onQuantityUpdate when Enter is pressed in quantity mode', async () => {
+    const { result } = renderHook(() => useHotkeys({
+      hotkeys: [],
+      onQuantityUpdate: mockQuantityUpdate,
+    }));
+
+    // Activate quantity mode and enter a quantity
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '*', bubbles: true }));
+    });
+
+    await waitFor(() => expect(result.current.quantityMode).toBe(true));
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '1', bubbles: true }));
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '0', bubbles: true }));
+    });
+
+    // Press Enter to confirm
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    });
+
+    await waitFor(() => {
+      expect(mockQuantityUpdate).toHaveBeenCalledWith(10);
+      expect(result.current.quantityMode).toBe(false);
+      expect(result.current.tempQuantity).toBe('');
+    });
+  });
+
+  it('should cancel quantity mode on Escape', async () => {
+    const { result } = renderHook(() => useHotkeys({
+      hotkeys: [],
+      onQuantityUpdate: mockQuantityUpdate,
+    }));
+
+    // Activate quantity mode
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '*', bubbles: true }));
+    });
+
+    await waitFor(() => expect(result.current.quantityMode).toBe(true));
+
+    // Type some digits
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '5', bubbles: true }));
+    });
+
+    // Press Escape to cancel
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    });
+
+    await waitFor(() => {
+      expect(result.current.quantityMode).toBe(false);
+      expect(result.current.tempQuantity).toBe('');
+      expect(mockQuantityUpdate).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should reset quantity mode when resetQuantityMode is called', () => {
+    const { result } = renderHook(() => useHotkeys({
+      hotkeys: [],
+      onQuantityUpdate: mockQuantityUpdate,
+    }));
+
+    // Activate quantity mode
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '*', bubbles: true }));
+    });
+
+    act(() => {
+      result.current.resetQuantityMode();
+    });
+
+    expect(result.current.quantityMode).toBe(false);
+    expect(result.current.tempQuantity).toBe('');
+  });
+
+  it('should respect shouldHandleEvent callback', () => {
+    const shouldHandle = vi.fn(() => false);
     
-    render(<useHotkeys {...props} />);
-    expect(screen.getByTestId('usehotkeys')).toBeInTheDocument();
+    renderHook(() => useHotkeys({
+      hotkeys: [
+        {
+          key: 'n',
+          ctrlKey: true,
+          callback: mockCallback,
+        },
+      ],
+      shouldHandleEvent: shouldHandle,
+    }));
+
+    act(() => {
+      const event = new KeyboardEvent('keydown', {
+        key: 'n',
+        ctrlKey: true,
+        bubbles: true,
+      });
+      window.dispatchEvent(event);
+    });
+
+    expect(shouldHandle).toHaveBeenCalled();
+    expect(mockCallback).not.toHaveBeenCalled();
   });
 
-  it('should handle events', () => {
-    const handleClick = vi.fn();
-    render(<useHotkeys onClick={handleClick} />);
+  it('should handle multiple hotkeys', () => {
+    const callback1 = vi.fn();
+    const callback2 = vi.fn();
+
+    renderHook(() => useHotkeys({
+      hotkeys: [
+        { key: 'a', ctrlKey: true, callback: callback1 },
+        { key: 'b', ctrlKey: true, callback: callback2 },
+      ],
+    }));
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', {
+        key: 'a',
+        ctrlKey: true,
+        bubbles: true,
+      }));
+    });
+
+    expect(callback1).toHaveBeenCalled();
+    expect(callback2).not.toHaveBeenCalled();
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', {
+        key: 'b',
+        ctrlKey: true,
+        bubbles: true,
+      }));
+    });
+
+    expect(callback2).toHaveBeenCalled();
+  });
+
+  it('should cleanup event listeners on unmount', () => {
+    const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
     
-    fireEvent.click(screen.getByTestId('usehotkeys'));
-    expect(handleClick).toHaveBeenCalled();
-  });
+    const { unmount } = renderHook(() => useHotkeys({
+      hotkeys: [],
+    }));
 
-  it('should handle loading state', () => {
-    render(<useHotkeys loading={true} />);
-    expect(screen.getByTestId('loading')).toBeInTheDocument();
-  });
+    unmount();
 
-  it('should handle error state', () => {
-    render(<useHotkeys error="Test error" />);
-    expect(screen.getByText('Test error')).toBeInTheDocument();
-  });
-
-  it('should handle empty state', () => {
-    render(<useHotkeys data={[]} />);
-    expect(screen.getByText(/no data/i)).toBeInTheDocument();
-  });
-
-  it('should unmount cleanly', () => {
-    const { unmount } = render(<useHotkeys />);
-    expect(() => unmount()).not.toThrow();
+    expect(removeEventListenerSpy).toHaveBeenCalledWith(
+      'keydown',
+      expect.any(Function),
+      expect.any(Object)
+    );
   });
 });
