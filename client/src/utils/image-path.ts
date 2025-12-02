@@ -1,4 +1,5 @@
 // client/src/utils/image-path.ts
+import React from "react";
 
 /**
  * Dosya adı üretimi için güvenli dönüştürme yapar.
@@ -63,5 +64,17 @@ export function getProductImagePath(barcode?: string, imageUrl?: string): string
   }
   const safe = sanitizeForFileName(barcode as string);
   return `/images/products/${safe}.png`;
+}
+
+/**
+ * Görsel yükleme hatalarını yönetmek için standart handler.
+ * Görsel yüklenemediğinde (404 vb.) img elementini gizler,
+ * böylece alttaki placeholder gösterilir.
+ * 
+ * Kullanım:
+ * <img src={imageSrc} onError={handleImageError} />
+ */
+export function handleImageError(event: React.SyntheticEvent<HTMLImageElement>): void {
+  event.currentTarget.style.display = 'none';
 }
 

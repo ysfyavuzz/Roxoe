@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import React from "react";
 
-import { getProductImagePath } from "../../utils/image-path";
+import { getProductImagePath, handleImageError } from "../../utils/image-path";
 
 export type CardVariant =
   | "default"
@@ -277,7 +277,7 @@ if (variant === "product") {
               objectFit === "contain" ? "object-contain p-2" : "object-cover"
             )}
             // 404 gibi durumlarda kırık img göstermemek için img'yi gizliyoruz; alttaki placeholder görünür kalır
-            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+            onError={handleImageError}
           />
         )}
       </div>
