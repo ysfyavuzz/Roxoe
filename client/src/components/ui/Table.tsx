@@ -34,6 +34,7 @@ interface TableProps<
   // Virtualization support
   enableVirtualization?: boolean;
   rowHeight?: number;
+  maxHeight?: number;
 }
 
 export function Table<
@@ -66,6 +67,7 @@ export function Table<
   // Virtualization props
   enableVirtualization = false,
   rowHeight = 50,
+  maxHeight = 600,
 }: TableProps<T, K>) {
   // Sütunların genişlik durumlarını izlemek için state
   const [columnWidths, setColumnWidths] = useState<Record<string, string>>({});
@@ -508,7 +510,7 @@ export function Table<
             <tbody className="divide-y divide-gray-200">
               {/* Virtualized list for body rows */}
               <List
-                height={Math.min(600, sortedData.length * rowHeight)}
+                height={Math.min(maxHeight, sortedData.length * rowHeight)}
                 itemCount={sortedData.length}
                 itemSize={rowHeight}
                 width="100%"
