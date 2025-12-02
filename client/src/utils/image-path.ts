@@ -1,5 +1,5 @@
 // client/src/utils/image-path.ts
-import React from "react";
+import type { SyntheticEvent } from "react";
 
 /**
  * Dosya adı üretimi için güvenli dönüştürme yapar.
@@ -74,7 +74,7 @@ export function getProductImagePath(barcode?: string, imageUrl?: string): string
  * Kullanım:
  * <img src={imageSrc} onError={handleImageError} />
  */
-export function handleImageError(event: React.SyntheticEvent<HTMLImageElement>): void {
+export function handleImageError(event: SyntheticEvent<HTMLImageElement>): void {
   event.currentTarget.style.display = 'none';
 }
 
