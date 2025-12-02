@@ -528,7 +528,7 @@ export function Table<
                   )}
                   {columns.map((column, index) => {
                     const columnKey = column.key as keyof T;
-const isTotal = Object.prototype.hasOwnProperty.call(totalColumns, columnKey as string);
+const isTotal = Object.hasOwn(totalColumns, columnKey as string);
                     const totalValue = isTotal
                       ? totals[column.key as string]
                       : null;
@@ -537,7 +537,7 @@ const isTotal = Object.prototype.hasOwnProperty.call(totalColumns, columnKey as 
                     const isFirstColumn = index === 0 && !selectable;
 
                     // Alt bilgi varsa hesapla
-const hasFooter = Object.prototype.hasOwnProperty.call(totalFooters, columnKey as string);
+const hasFooter = Object.hasOwn(totalFooters, columnKey as string);
                     const footerContent = hasFooter
                       ? totalFooters[columnKey]?.(totalData || data)
                       : null;
@@ -754,7 +754,7 @@ const hasFooter = Object.prototype.hasOwnProperty.call(totalFooters, columnKey a
                 )}
                 {columns.map((column, index) => {
                   const columnKey = column.key as keyof T;
-const isTotal = Object.prototype.hasOwnProperty.call(totalColumns, columnKey as string);
+const isTotal = Object.hasOwn(totalColumns, columnKey as string);
                   const totalValue = isTotal
                     ? totals[column.key as string]
                     : null;
@@ -763,7 +763,7 @@ const isTotal = Object.prototype.hasOwnProperty.call(totalColumns, columnKey as 
                   const isFirstColumn = index === 0 && !selectable;
 
                   // Alt bilgi varsa hesapla
-const hasFooter = Object.prototype.hasOwnProperty.call(totalFooters, columnKey as string);
+const hasFooter = Object.hasOwn(totalFooters, columnKey as string);
                   const footerContent = hasFooter
                     ? totalFooters[columnKey]?.(totalData || data)
                     : null;
