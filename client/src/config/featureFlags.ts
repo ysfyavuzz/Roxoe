@@ -14,15 +14,18 @@ const ENV_MAP: Record<FeatureFlagKey, string> = {
   escposDrawer: 'VITE_FLAG_ESCPOS_DRAWER',
 }
 
+const TRUE_STRINGS = ["1", "true", "yes", "on", "y"];
+const FALSE_STRINGS = ["0", "false", "no", "off", "n"];
+
 function parseBool(value: unknown): boolean | undefined {
   if (value === null || value === undefined) {
     return undefined
   }
   const v = String(value).trim().toLowerCase()
-  if (["1", "true", "yes", "on", "y"].includes(v)) {
+  if (TRUE_STRINGS.includes(v)) {
     return true
   }
-  if (["0", "false", "no", "off", "n"].includes(v)) {
+  if (FALSE_STRINGS.includes(v)) {
     return false
   }
   return undefined
