@@ -1,49 +1,64 @@
 /**
  * useRegisterStatus Tests
- * Auto-generated test file for 100% coverage
  */
+import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as module from '../useRegisterStatus';
+import { useRegisterStatus } from '../useRegisterStatus';
+import { cashRegisterService } from '../../services/cashRegisterDB';
+
+vi.mock('../../services/cashRegisterDB');
 
 describe('useRegisterStatus', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  // Test all exported functions
-  Object.keys(module).forEach(exportName => {
-    if (typeof module[exportName] === 'function') {
-      describe(exportName, () => {
-        it('should be defined', () => {
-          expect(module[exportName]).toBeDefined();
-        });
+  it('should initialize with default values', () => {
+    vi.mocked(cashRegisterService.getActiveSession).mockResolvedValue(null);
+    
+    const { result } = renderHook(() => useRegisterStatus({ autoRefresh: false }));
 
-        it('should return expected result', () => {
-          const result = module[exportName]();
-          expect(result).toBeDefined();
-        });
-
-        it('should handle errors', () => {
-          // Test error handling
-          expect(() => module[exportName](null)).not.toThrow();
-        });
-
-        it('should handle edge cases', () => {
-          // Test edge cases
-          expect(module[exportName](undefined)).toBeDefined();
-          expect(module[exportName]({})).toBeDefined();
-          expect(module[exportName]([])).toBeDefined();
-        });
-      });
-    }
+    expect(result.current.isOpen).toBe(false);
+    expect(result.current.loading).toBe(false);
+    expect(result.current.session).toBeNull();
+    expect(result.current.error).toBeNull();
   });
 
-  // Test all exported constants
-  Object.keys(module).forEach(exportName => {
-    if (typeof module[exportName] !== 'function') {
-      it(`${exportName} should be defined`, () => {
-        expect(module[exportName]).toBeDefined();
-      });
-    }
+  it('should refresh and load active session', async () => {
+    const mockSession = {
+      id: 1,
+      openingBalance: 100,
+      openingDate: new Date().toISOString(),
+      cashSalesTotal: 0,
+      cardSalesTotal: 0,
+      cashDepositTotal: 0,
+      cashWithdrawalTotal: 0,
+    };
+    
+    vi.mocked(cashRegisterService.getActiveSession).mockResolvedValue(mockSession);
+
+    const { result } = renderHook(() => useRegisterStatus({ autoRefresh: false }));
+
+    await act(async () => {
+      await result.current.refresh();
+    });
+
+    expect(result.current.isOpen).toBe(true);
+    expect(result.current.session).toEqual(mockSession);
+  });
+
+  it('should handle errors during refresh', async () => {
+    const mockError = new Error('Test error');
+    const onError = vi.fn();
+    vi.mocked(cashRegisterService.getActiveSession).mockRejectedValue(mockError);
+
+    const { result } = renderHook(() => useRegisterStatus({ autoRefresh: false, onError }));
+
+    await act(async () => {
+      await result.current.refresh();
+    });
+
+    expect(result.current.error).toEqual(mockError);
+    expect(onError).toHaveBeenCalledWith(mockError);
   });
 });

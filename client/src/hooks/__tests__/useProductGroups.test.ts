@@ -1,49 +1,70 @@
 /**
  * useProductGroups Tests
- * Auto-generated test file for 100% coverage
  */
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as module from '../useProductGroups';
+import { useProductGroups } from '../useProductGroups';
+import { productService } from '../../services/productDB';
+
+vi.mock('../../services/productDB');
 
 describe('useProductGroups', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  // Test all exported functions
-  Object.keys(module).forEach(exportName => {
-    if (typeof module[exportName] === 'function') {
-      describe(exportName, () => {
-        it('should be defined', () => {
-          expect(module[exportName]).toBeDefined();
-        });
+  it('should load groups on mount', async () => {
+    const mockGroups = [
+      { id: 1, name: 'Group 1', isDefault: false },
+      { id: 2, name: 'Group 2', isDefault: false },
+    ];
+    
+    vi.mocked(productService.getProductGroups).mockResolvedValue(mockGroups);
+    vi.mocked(productService.getGroupProducts).mockResolvedValue([]);
 
-        it('should return expected result', () => {
-          const result = module[exportName]();
-          expect(result).toBeDefined();
-        });
+    const { result } = renderHook(() => useProductGroups());
 
-        it('should handle errors', () => {
-          // Test error handling
-          expect(() => module[exportName](null)).not.toThrow();
-        });
+    expect(result.current.loading).toBe(true);
 
-        it('should handle edge cases', () => {
-          // Test edge cases
-          expect(module[exportName](undefined)).toBeDefined();
-          expect(module[exportName]({})).toBeDefined();
-          expect(module[exportName]([])).toBeDefined();
-        });
-      });
-    }
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(result.current.groups).toHaveLength(2);
+    expect(result.current.error).toBeNull();
   });
 
-  // Test all exported constants
-  Object.keys(module).forEach(exportName => {
-    if (typeof module[exportName] !== 'function') {
-      it(`${exportName} should be defined`, () => {
-        expect(module[exportName]).toBeDefined();
-      });
-    }
+  it('should add a new group', async () => {
+    vi.mocked(productService.getProductGroups).mockResolvedValue([]);
+    vi.mocked(productService.getGroupProducts).mockResolvedValue([]);
+    
+    const mockNewGroup = { id: 3, name: 'New Group', isDefault: false };
+    vi.mocked(productService.addProductGroup).mockResolvedValue(mockNewGroup);
+
+    const { result } = renderHook(() => useProductGroups());
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.addGroup('New Group');
+    });
+
+    expect(result.current.groups).toHaveLength(1);
+    expect(result.current.groups[0].name).toBe('New Group');
+  });
+
+  it('should handle errors when loading groups', async () => {
+    const mockError = new Error('Load error');
+    vi.mocked(productService.getProductGroups).mockRejectedValue(mockError);
+
+    const { result } = renderHook(() => useProductGroups());
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(result.current.error).toEqual(mockError);
   });
 });

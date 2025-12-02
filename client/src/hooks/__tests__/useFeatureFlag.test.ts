@@ -1,49 +1,44 @@
 /**
  * useFeatureFlag Tests
- * Auto-generated test file for 100% coverage
  */
+import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as module from '../useFeatureFlag';
+import { useFeatureFlag } from '../useFeatureFlag';
+import * as featureFlags from '../../config/featureFlags';
+
+vi.mock('../../config/featureFlags', () => ({
+  getFlag: vi.fn(),
+  subscribe: vi.fn(() => vi.fn()),
+}));
 
 describe('useFeatureFlag', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  // Test all exported functions
-  Object.keys(module).forEach(exportName => {
-    if (typeof module[exportName] === 'function') {
-      describe(exportName, () => {
-        it('should be defined', () => {
-          expect(module[exportName]).toBeDefined();
-        });
+  it('should return feature flag value', () => {
+    vi.mocked(featureFlags.getFlag).mockReturnValue(true);
 
-        it('should return expected result', () => {
-          const result = module[exportName]();
-          expect(result).toBeDefined();
-        });
+    const { result } = renderHook(() => useFeatureFlag('experimentalBarcode'));
 
-        it('should handle errors', () => {
-          // Test error handling
-          expect(() => module[exportName](null)).not.toThrow();
-        });
-
-        it('should handle edge cases', () => {
-          // Test edge cases
-          expect(module[exportName](undefined)).toBeDefined();
-          expect(module[exportName]({})).toBeDefined();
-          expect(module[exportName]([])).toBeDefined();
-        });
-      });
-    }
+    expect(result.current).toBe(true);
   });
 
-  // Test all exported constants
-  Object.keys(module).forEach(exportName => {
-    if (typeof module[exportName] !== 'function') {
-      it(`${exportName} should be defined`, () => {
-        expect(module[exportName]).toBeDefined();
-      });
-    }
+  it('should return false when feature flag is disabled', () => {
+    vi.mocked(featureFlags.getFlag).mockReturnValue(false);
+
+    const { result } = renderHook(() => useFeatureFlag('experimentalBarcode'));
+
+    expect(result.current).toBe(false);
+  });
+
+  it('should subscribe to feature flag changes', () => {
+    vi.mocked(featureFlags.getFlag).mockReturnValue(true);
+    const mockSubscribe = vi.fn(() => vi.fn());
+    vi.mocked(featureFlags.subscribe).mockImplementation(mockSubscribe);
+
+    renderHook(() => useFeatureFlag('experimentalBarcode'));
+
+    expect(mockSubscribe).toHaveBeenCalled();
   });
 });

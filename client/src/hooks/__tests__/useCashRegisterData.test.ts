@@ -1,49 +1,77 @@
 /**
  * useCashRegisterData Tests
- * Auto-generated test file for 100% coverage
  */
+import { renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as module from '../useCashRegisterData';
+import { useCashRegisterData } from '../useCashRegisterData';
+import { cashRegisterService } from '../../services/cashRegisterDB';
+
+vi.mock('../../services/cashRegisterDB');
 
 describe('useCashRegisterData', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  // Test all exported functions
-  Object.keys(module).forEach(exportName => {
-    if (typeof module[exportName] === 'function') {
-      describe(exportName, () => {
-        it('should be defined', () => {
-          expect(module[exportName]).toBeDefined();
-        });
+  it('should initialize with default values', () => {
+    vi.mocked(cashRegisterService.getActiveSession).mockResolvedValue(null);
+    vi.mocked(cashRegisterService.getAllSessions).mockResolvedValue([]);
 
-        it('should return expected result', () => {
-          const result = module[exportName]();
-          expect(result).toBeDefined();
-        });
+    const startDate = new Date('2024-01-01');
+    const endDate = new Date('2024-01-31');
+    
+    const { result } = renderHook(() => useCashRegisterData(startDate, endDate));
 
-        it('should handle errors', () => {
-          // Test error handling
-          expect(() => module[exportName](null)).not.toThrow();
-        });
-
-        it('should handle edge cases', () => {
-          // Test edge cases
-          expect(module[exportName](undefined)).toBeDefined();
-          expect(module[exportName]({})).toBeDefined();
-          expect(module[exportName]([])).toBeDefined();
-        });
-      });
-    }
+    expect(result.current.loading).toBe(true);
+    expect(result.current.cashData.currentBalance).toBe(0);
   });
 
-  // Test all exported constants
-  Object.keys(module).forEach(exportName => {
-    if (typeof module[exportName] !== 'function') {
-      it(`${exportName} should be defined`, () => {
-        expect(module[exportName]).toBeDefined();
-      });
-    }
+  it('should load cash register data', async () => {
+    const mockSession = {
+      id: 1,
+      openingBalance: 100,
+      cashSalesTotal: 200,
+      cardSalesTotal: 150,
+      cashDepositTotal: 50,
+      cashWithdrawalTotal: 30,
+      openingDate: new Date('2024-01-15').toISOString(),
+      closingDate: null,
+    };
+
+    vi.mocked(cashRegisterService.getActiveSession).mockResolvedValue(mockSession);
+    vi.mocked(cashRegisterService.getAllSessions).mockResolvedValue([mockSession]);
+    vi.mocked(cashRegisterService.getSessionDetails).mockResolvedValue({
+      ...mockSession,
+      transactions: [],
+    });
+
+    const startDate = new Date('2024-01-01');
+    const endDate = new Date('2024-01-31');
+    
+    const { result } = renderHook(() => useCashRegisterData(startDate, endDate));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(result.current.cashData.isActive).toBe(true);
+    expect(result.current.cashData.openingBalance).toBe(100);
+    expect(result.current.cashData.cashSalesTotal).toBe(200);
+  });
+
+  it('should handle errors when loading data', async () => {
+    vi.mocked(cashRegisterService.getActiveSession).mockRejectedValue(new Error('Test error'));
+    vi.mocked(cashRegisterService.getAllSessions).mockResolvedValue([]);
+
+    const startDate = new Date('2024-01-01');
+    const endDate = new Date('2024-01-31');
+    
+    const { result } = renderHook(() => useCashRegisterData(startDate, endDate));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(result.current.cashData.currentBalance).toBe(0);
   });
 });
