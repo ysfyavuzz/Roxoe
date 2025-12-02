@@ -3,23 +3,30 @@ import type { Category } from '../types/product';
 
 import CategoryService from './categoryService';
 import { productService } from './productDB';
-import ProductFeatureExtractor from './productFeatureExtractor';
-
+import ProductFeatureExtractor, { type ProductFeatures } from './productFeatureExtractor';
 
 class AutoCategoryAssignment {
+  // Cache for default category ID (this is safe to cache as it's unlikely to change frequently)
+  private static defaultCategoryIdCache: number | null = null;
+  
+  // Clear cache when needed (e.g., when categories are modified)
+  static clearCache(): void {
+    this.defaultCategoryIdCache = null;
+  }
+
   static async assignCategory(productName: string): Promise<number> {
     try {
       // Özellik çıkarımı
-      const features = ProductFeatureExtractor.extractFeatures(productName);
+      const features: ProductFeatures = ProductFeatureExtractor.extractFeatures(productName);
 
       // Kategori önerisi
-      const suggestedPath = await ProductFeatureExtractor.suggestCategory(features);
+      const suggestedPath: string[] = await ProductFeatureExtractor.suggestCategory(features);
 
       // Kategori hiyerarşisini oluştur veya bul
       let parentId: number | undefined = undefined;
 
       for (const categoryName of suggestedPath) {
-        const category = await this.findOrCreateCategory(categoryName, parentId);
+        const category: Category = await this.findOrCreateCategory(categoryName, parentId);
         parentId = category.id;
       }
 
@@ -33,26 +40,35 @@ class AutoCategoryAssignment {
 
   private static async findOrCreateCategory(name: string, parentId?: number): Promise<Category> {
     // Önce kategoriyi bul
-    const categories = await productService.getCategories();
-    let category = categories.find((cat) => cat.name === name && (cat.parentId ?? undefined) === parentId);
+    const categories: Category[] = await productService.getCategories();
+    let category: Category | undefined = categories.find((cat) => cat.name === name && (cat.parentId ?? undefined) === parentId);
 
     // Bulamazsa oluştur
     if (!category) {
-      const payload = { name, icon: '🏷️', parentId } as Omit<Category, 'id'>;
-      const id = await productService.addCategory(payload);
-      category = { id, ...payload } as Category;
+      const payload: Omit<Category, 'id'> = { name, icon: '🏷️', parentId };
+      const id: number = await productService.addCategory(payload);
+      category = { id, ...payload };
     }
 
     return category;
   }
 
   private static async getDefaultCategoryId(): Promise<number> {
-    try {
-      const categories = await productService.getCategories();
-      const defaultCategory = categories.find((cat) => cat.name === 'Diğer') || categories.find((cat) => cat.name === 'Genel');
-      if (defaultCategory) {return defaultCategory.id;}
+    // Check cache first
+    if (this.defaultCategoryIdCache !== null) {
+      return this.defaultCategoryIdCache;
+    }
 
-      const id = await productService.addCategory({ name: 'Genel', icon: '📦' });
+    try {
+      const categories: Category[] = await productService.getCategories();
+      const defaultCategory: Category | undefined = categories.find((cat) => cat.name === 'Diğer') || categories.find((cat) => cat.name === 'Genel');
+      if (defaultCategory) {
+        this.defaultCategoryIdCache = defaultCategory.id;
+        return defaultCategory.id;
+      }
+
+      const id: number = await productService.addCategory({ name: 'Genel', icon: '📦' });
+      this.defaultCategoryIdCache = id;
       return id;
     } catch (error) {
       console.error('Varsayılan kategori bulunurken hata:', error);

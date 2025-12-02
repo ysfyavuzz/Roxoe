@@ -677,6 +677,9 @@ if (filter.minAmount !== null && filter.minAmount !== undefined) {
           totalColumns={{ total: "sum" }}
           totalData={filteredSales}
           onRowClick={(sale) => navigate(`/sales/${sale.id}`)}
+          // Enable virtualization for better performance with large datasets
+          enableVirtualization={true}
+          rowHeight={50}
         />
 
         {totalPages > 1 && (

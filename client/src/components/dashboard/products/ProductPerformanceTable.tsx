@@ -61,6 +61,9 @@ const ProductPerformanceTable: React.FC<ProductPerformanceTableProps> = ({
           totalColumns={{ quantity: "sum", revenue: "sum", profit: "sum" }}
           className="border-none rounded-none"
           totalData={allProducts}
+          // Enable virtualization for better performance with large datasets
+          enableVirtualization={true}
+          rowHeight={50}
         />
       </div>
 

@@ -1,5 +1,6 @@
 // services/productFeatureExtractor.ts
 import CategoryService from './categoryService';
+import type { Category } from '../types/product';
 
 export interface ProductFeatures {
   brand: string;
@@ -13,8 +14,25 @@ export interface ProductFeatures {
 export type CategoryPath = string[];
 
 class ProductFeatureExtractor {
+  // Cache for extracted features to avoid repeated processing
+  private static featuresCache: Map<string, ProductFeatures> = new Map<string, ProductFeatures>();
+  
+  // Cache for suggested categories
+  private static categorySuggestionsCache: Map<string, CategoryPath> = new Map<string, CategoryPath>();
+  
+  // Clear cache when needed
+  static clearCache(): void {
+    this.featuresCache.clear();
+    this.categorySuggestionsCache.clear();
+  }
+
   // Ürün adından özellik çıkarımı
   static extractFeatures(productName: string): ProductFeatures {
+    // Check cache first
+    if (this.featuresCache.has(productName)) {
+      return this.featuresCache.get(productName)!;
+    }
+
     const features: ProductFeatures = {
       brand: '',
       category: '',
@@ -25,7 +43,7 @@ class ProductFeatureExtractor {
     };
 
     // Marka tespiti
-    const brands = ['Efes', 'Tuborg', 'Bomonti', 'Arda', 'Çaykur'];
+    const brands: string[] = ['Efes', 'Tuborg', 'Bomonti', 'Arda', 'Çaykur'];
     for (const brand of brands) {
       if (productName.toLowerCase().includes(brand.toLowerCase())) {
         features.brand = brand;
@@ -69,9 +87,9 @@ class ProductFeatureExtractor {
     }
 
     // Hacim tespiti
-    const volumeRegex = /(\d+(?:[.,]\d+)?)\s*(cl|ml|lt|l)/i;
-    const volumeMatch = productName.match(volumeRegex);
-    if (volumeMatch) {
+    const volumeRegex: RegExp = /(\d+(?:[.,]\d+)?)\s*(cl|ml|lt|l)/i;
+    const volumeMatch: RegExpMatchArray | null = productName.match(volumeRegex);
+    if (volumeMatch && volumeMatch[1] && volumeMatch[2]) {
       features.volume = `${volumeMatch[1]} ${volumeMatch[2]}`;
     }
 
@@ -84,11 +102,22 @@ class ProductFeatureExtractor {
       features.packaging = 'PET';
     }
 
+    // Cache the result
+    this.featuresCache.set(productName, features);
+    
     return features;
   }
 
   // Özelliklere göre kategori önerisi
   static async suggestCategory(features: ProductFeatures): Promise<CategoryPath> {
+    // Create a cache key from the features
+    const cacheKey = `${features.brand}-${features.category}-${features.type}-${features.volume}-${features.packaging}-${features.alcohol}`;
+    
+    // Check cache first
+    if (this.categorySuggestionsCache.has(cacheKey)) {
+      return this.categorySuggestionsCache.get(cacheKey)!;
+    }
+
     const categoryPath: string[] = ['İçecek'];
     
     // Alkollü/alkolsüz kategori
@@ -103,6 +132,9 @@ class ProductFeatureExtractor {
     if (features.brand) {
       categoryPath.push(`${features.brand} Grubu`);
     }
+    
+    // Cache the result
+    this.categorySuggestionsCache.set(cacheKey, categoryPath);
     
     return categoryPath;
   }

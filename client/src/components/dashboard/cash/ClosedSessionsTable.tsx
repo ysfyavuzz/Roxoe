@@ -113,6 +113,9 @@ const ClosedSessionsTable: React.FC<ClosedSessionsTableProps> = ({ displaySessio
           totalColumns={totalColumns}
           totalData={allSessions}
           className="border-none rounded-none"
+          // Enable virtualization for better performance with large datasets
+          enableVirtualization={true}
+          rowHeight={50}
         />
       </div>
     </div>

@@ -1,31 +1,89 @@
 // components/CategoryTreeView.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 
-import CategoryService, { CategoryNode } from '../services/categoryService';
+import CategoryService from '../services/categoryService';
+import type { CategoryNode } from '../services/categoryService';
+import type { Category } from '../types/product';
 
 interface CategoryTreeViewProps {
   selectedCategory: string | undefined;
   onSelect: (categoryId: string) => void;
 }
 
+// Memoize the individual category node component for better performance
+const CategoryNodeComponent: React.FC<{
+  node: CategoryNode;
+  onSelect: (categoryId: string) => void;
+  selectedCategory: string | undefined;
+  onToggle: (nodePath: number[]) => void;
+  path: number[];
+}> = memo(({ node, onSelect, selectedCategory, onToggle, path }) => {
+  const isSelected: boolean = String(node.category.id) === selectedCategory;
+  const hasChildren: boolean = node.children.length > 0;
+  
+  return (
+    <div className="ml-4">
+      <div 
+        className={`flex items-center p-2 cursor-pointer rounded ${
+          isSelected ? 'bg-blue-100' : 'hover:bg-gray-100'
+        }`}
+        onClick={() => onSelect(String(node.category.id))}
+      >
+        {hasChildren && (
+          <button 
+            className="mr-2 w-5 h-5 flex items-center justify-center"
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.stopPropagation();
+              onToggle(path);
+            }}
+          >
+            {node.isOpen ? '−' : '+'}
+          </button>
+        )}
+        <span className="flex-1">{node.category.name}</span>
+        {hasChildren && (
+          <span className="text-xs text-gray-500 ml-2">
+            ({node.children.length})
+          </span>
+        )}
+      </div>
+      
+      {node.isOpen && hasChildren && (
+        <div className="border-l-2 border-gray-200 ml-2">
+          {node.children.map((childNode: CategoryNode, index: number) => (
+            <CategoryNodeComponent
+              key={childNode.category.id}
+              node={childNode}
+              onSelect={onSelect}
+              selectedCategory={selectedCategory}
+              onToggle={onToggle}
+              path={[...path, index]}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+});
+
 const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, onSelect }) => {
   const [tree, setTree] = useState<CategoryNode[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     loadCategoryTree();
   }, []);
 
-  const loadCategoryTree = async () => {
+  const loadCategoryTree = async (): Promise<void> => {
     setLoading(true);
     try {
       // Ana kategorileri yükle
-      const rootCategories = await CategoryService.getRootCategories();
+      const rootCategories: Category[] = await CategoryService.getRootCategories();
       
       // Her biri için alt kategorileri yükle
-      const treeNodes = await Promise.all(
-        rootCategories.map(async (category) => {
-          const children = await loadSubTree(String(category.id));
+      const treeNodes: CategoryNode[] = await Promise.all(
+        rootCategories.map(async (category: Category) => {
+          const children: CategoryNode[] = await loadSubTree(String(category.id));
           return {
             category,
             children,
@@ -43,36 +101,41 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
   };
 
   const loadSubTree = async (parentId: string): Promise<CategoryNode[]> => {
-    const subCategories = await CategoryService.getSubCategories(parentId);
-    
-    return Promise.all(
-      subCategories.map(async (category) => {
-        const children = await loadSubTree(String(category.id));
-        return {
-          category,
-          children,
-          isOpen: false
-        };
-      })
-    );
+    try {
+      const subCategories: Category[] = await CategoryService.getSubCategories(parentId);
+      
+      return Promise.all(
+        subCategories.map(async (category: Category) => {
+          const children: CategoryNode[] = await loadSubTree(String(category.id));
+          return {
+            category,
+            children,
+            isOpen: false
+          };
+        })
+      );
+    } catch (error) {
+      console.error('Alt kategori yüklenirken hata:', error);
+      return [];
+    }
   };
 
-  const toggleNode = (nodePath: number[]) => {
-    setTree(prev => {
+  const toggleNode = (nodePath: number[]): void => {
+    setTree((prev: CategoryNode[]) => {
       if (nodePath.length === 0) {return prev;}
-      const newTree = [...prev];
+      const newTree: CategoryNode[] = [...prev];
       let currentNodes: CategoryNode[] = newTree;
       
       // Node path'e göre ilgili node'u bul
       for (let i = 0; i < nodePath.length - 1; i++) {
-        const idx = nodePath[i]!;
-        const parent = currentNodes[idx];
+        const idx: number = nodePath[i]!;
+        const parent: CategoryNode | undefined = currentNodes[idx];
         if (!parent) { return prev; }
         currentNodes = parent.children;
       }
       
-      const lastIndex = nodePath[nodePath.length - 1]!;
-      const node = currentNodes[lastIndex];
+      const lastIndex: number = nodePath[nodePath.length - 1]!;
+      const node: CategoryNode | undefined = currentNodes[lastIndex];
       if (!node) { return prev; }
       currentNodes[lastIndex] = {
         ...node,
@@ -83,57 +146,25 @@ const CategoryTreeView: React.FC<CategoryTreeViewProps> = ({ selectedCategory, o
     });
   };
 
-  const renderTree = (nodes: CategoryNode[], path: number[] = []) => {
-    return nodes.map((node, index) => {
-      const currentPath = [...path, index];
-      const isSelected = String(node.category.id) === selectedCategory;
-      
-      return (
-        <div key={node.category.id} className="ml-4">
-          <div 
-            className={`flex items-center p-2 cursor-pointer rounded ${
-              isSelected ? 'bg-blue-100' : 'hover:bg-gray-100'
-            }`}
-            onClick={() => onSelect(String(node.category.id))}
-          >
-            {node.children.length > 0 && (
-              <button 
-                className="mr-2 w-5 h-5 flex items-center justify-center"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleNode(currentPath);
-                }}
-              >
-                {node.isOpen ? '−' : '+'}
-              </button>
-            )}
-            <span className="flex-1">{node.category.name}</span>
-            {node.children.length > 0 && (
-              <span className="text-xs text-gray-500 ml-2">
-                ({node.children.length})
-              </span>
-            )}
-          </div>
-          
-          {node.isOpen && node.children.length > 0 && (
-            <div className="border-l-2 border-gray-200 ml-2">
-              {renderTree(node.children, currentPath)}
-            </div>
-          )}
-        </div>
-      );
-    });
-  };
-
   if (loading) {
     return <div className="p-4">Kategoriler yükleniyor...</div>;
   }
 
   return (
-    <div className="category-tree">
-      {renderTree(tree)}
+    <div className="category-tree" data-testid="category-tree-view">
+      {tree.map((node: CategoryNode, index: number) => (
+        <CategoryNodeComponent
+          key={node.category.id}
+          node={node}
+          onSelect={onSelect}
+          selectedCategory={selectedCategory}
+          onToggle={toggleNode}
+          path={[index]}
+        />
+      ))}
     </div>
   );
 };
 
-export default CategoryTreeView;
+// Memoize the entire tree view component
+export default memo(CategoryTreeView);

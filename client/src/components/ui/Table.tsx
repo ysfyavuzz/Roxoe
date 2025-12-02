@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef } from "react";
+import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 
 import { Column, TableId } from "../../types/table";
 
@@ -30,6 +31,9 @@ interface TableProps<
   fontSize?: "sm" | "md" | "lg"; // Tablo yazı boyutu
   density?: "compact" | "normal" | "relaxed"; // Tablo yoğunluğu
   theme?: "light" | "striped"; // Tablo teması
+  // Virtualization support
+  enableVirtualization?: boolean;
+  rowHeight?: number;
 }
 
 export function Table<
@@ -59,6 +63,9 @@ export function Table<
   fontSize = "md",
   density = "normal",
   theme = "light",
+  // Virtualization props
+  enableVirtualization = false,
+  rowHeight = 50,
 }: TableProps<T, K>) {
   // Sütunların genişlik durumlarını izlemek için state
   const [columnWidths, setColumnWidths] = useState<Record<string, string>>({});
@@ -342,6 +349,249 @@ export function Table<
     );
   }
 
+  // Virtualized row component
+  const VirtualizedRow = ({ index, style }: ListChildComponentProps) => {
+    const item = sortedData[index];
+    return (
+      <tr
+        style={style}
+        onClick={() => onRowClick?.(item)}
+        className={`${
+          onRowClick ? "cursor-pointer hover:bg-gray-50" : ""
+        } transition duration-150 ease-in-out ${
+          theme === 'striped' && index % 2 === 1 
+            ? getStyleClasses.theme.altRow 
+            : getStyleClasses.theme.row
+        }`}
+      >
+        {selectable && (
+          <td className={`w-12 ${getStyleClasses.padding.cellPadding} sticky left-0 ${
+            theme === 'striped' && index % 2 === 1 
+              ? getStyleClasses.theme.altRow 
+              : getStyleClasses.theme.row
+          } whitespace-nowrap`}>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                checked={selected.includes(item[idField] as K)}
+                onChange={(e) =>
+                  handleSelectRow(item, e.target.checked)
+                }
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          </td>
+        )}
+
+        {columns.map((column) => {
+          const content = column.render
+            ? column.render(item)
+            : (item as Record<string, unknown>)[column.key as string];
+          // İçeriği JSX olarak render edildiyse truncate yapma
+          const isJSX = React.isValidElement(content);
+          const displayContent =
+            !isJSX && typeof content === "string"
+              ? truncateText(content)
+              : content;
+
+          return (
+            <td
+              key={`${index}-${column.key}`}
+              data-column-key={column.key}
+              className={`${getStyleClasses.padding.cellPadding} ${getStyleClasses.font.cell} ${
+                column.className || ""
+              } overflow-hidden text-ellipsis`}
+              style={{
+                width: columnWidths[column.key as string] || "auto",
+                maxWidth: columnWidths[column.key as string] || "300px",
+              }}
+              title={
+                !isJSX && typeof content === "string" ? content : ""
+              }
+            >
+              {displayContent as React.ReactNode}
+            </td>
+          );
+        })}
+      </tr>
+    );
+  };
+
+  // Virtualized table with header and footer
+  if (enableVirtualization) {
+    return (
+      <div className={`w-full ${className}`}>
+        <div className="overflow-auto border-gray-200 shadow-sm">
+          <table 
+            ref={tableRef} 
+            className="w-full divide-y divide-gray-200"
+          >
+            <thead className={getStyleClasses.theme.header}>
+              <tr>
+                {selectable && (
+                  <th
+                    className={`w-12 ${getStyleClasses.padding.headerPadding} text-left sticky left-0 ${getStyleClasses.theme.header} z-10`}
+                    scope="col"
+                  >
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        checked={allSelected}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                      />
+                    </div>
+                  </th>
+                )}
+
+                {columns.map((column) => {
+                  const isSorted = enableSorting && column.key === sortKey;
+                  return (
+                    <th
+                      key={column.key}
+                      scope="col"
+                      data-column-key={column.key}
+                      className={`${getStyleClasses.padding.headerPadding} text-left ${getStyleClasses.font.header} font-medium tracking-wider text-gray-600 uppercase 
+                        ${column.className || ""} 
+                        ${enableSorting ? "cursor-pointer" : ""} 
+                        relative group`}
+                      style={{
+                        width: columnWidths[column.key as string] || "auto",
+                        minWidth: "50px",
+                      }}
+                      onClick={(e) => handleHeaderClick(column.key as keyof T, e)}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>{column.title}</span>
+                        {enableSorting && (
+                          <span className="inline-flex flex-col ml-1">
+                            <svg
+                              className={`w-2 h-2 ${
+                                isSorted && sortDirection === "asc"
+                                  ? "text-indigo-600"
+                                  : "text-gray-400"
+                              }`}
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" />
+                            </svg>
+                            <svg
+                              className={`w-2 h-2 ${
+                                isSorted && sortDirection === "desc"
+                                  ? "text-indigo-600"
+                                  : "text-gray-400"
+                              }`}
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                            </svg>
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Sütun yeniden boyutlandırma tutamağı */}
+                      <div
+                        className="absolute top-0 right-0 h-full w-2 cursor-col-resize opacity-0 group-hover:opacity-100 bg-indigo-500 bg-opacity-10 hover:bg-opacity-20"
+                        onMouseDown={(e) =>
+                          startColumnResize(e, column.key as string)
+                        }
+                        title="Sütunu yeniden boyutlandırmak için sürükleyin (çift tıklama otomatik boyutlandırır)"
+                      />
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {/* Virtualized list for body rows */}
+              <List
+                height={Math.min(600, sortedData.length * rowHeight)}
+                itemCount={sortedData.length}
+                itemSize={rowHeight}
+                width="100%"
+              >
+                {VirtualizedRow}
+              </List>
+            </tbody>
+            
+            {/* Toplam satırı - Alt bilgi desteği ile */}
+            {showTotals && totals && (
+              <tfoot>
+                <tr className={`${getStyleClasses.theme.totals} border-t-2 border-gray-300 font-medium text-gray-700`}>
+                  {selectable && (
+                    <td className={`w-12 ${getStyleClasses.padding.cellPadding} sticky left-0 ${getStyleClasses.theme.totals} whitespace-nowrap font-bold ${getStyleClasses.font.totals}`}>
+                      Toplam
+                    </td>
+                  )}
+                  {columns.map((column, index) => {
+                    const columnKey = column.key as keyof T;
+const isTotal = Object.prototype.hasOwnProperty.call(totalColumns, columnKey as string);
+                    const totalValue = isTotal
+                      ? totals[column.key as string]
+                      : null;
+
+                    // İlk sütun ve seçilebilir değilse "Toplam" başlığını burada göster
+                    const isFirstColumn = index === 0 && !selectable;
+
+                    // Alt bilgi varsa hesapla
+const hasFooter = Object.prototype.hasOwnProperty.call(totalFooters, columnKey as string);
+                    const footerContent = hasFooter
+                      ? totalFooters[columnKey]?.(totalData || data)
+                      : null;
+
+                    return (
+                      <td
+                        key={`total-${column.key}`}
+                        data-column-key={column.key}
+                        className={`${getStyleClasses.padding.cellPadding} ${
+                          isTotal || isFirstColumn ? "font-bold" : ""
+                        } ${column.className || ""} ${getStyleClasses.font.totals}`}
+                        style={{
+                          width: columnWidths[column.key as string] || "auto",
+                          maxWidth: columnWidths[column.key as string] || "300px",
+                        }}
+                      >
+                        <div className="flex flex-col">
+                          {/* Ana toplam değeri */}
+                          {isFirstColumn && (
+                            <div className="font-bold">Toplam</div>
+                          )}
+                          
+                          {isTotal && !isFirstColumn && (
+                            <div>
+                              {column.render ? (
+                                column.render({
+                                  [column.key]: totalValue,
+                                } as unknown as T)
+                              ) : (
+                                totalValue as React.ReactNode
+                              )}
+                            </div>
+                          )}
+                          
+                          {/* Alt bilgi (footer) */}
+                          {hasFooter && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              {footerContent}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              </tfoot>
+            )}
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  // Regular table (non-virtualized)
   return (
     <div className={`w-full ${className}`}>
       <div className="overflow-auto border-gray-200 shadow-sm">

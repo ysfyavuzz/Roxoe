@@ -430,6 +430,9 @@ const CustomerList: React.FC<CustomerListProps> = ({
         totalColumns={{currentDebt: "sum", creditLimit: "sum"}}
         totalData={customers}
         showTotals={true}
+        // Enable virtualization for better performance with large datasets
+        enableVirtualization={true}
+        rowHeight={50}
       />
     </div>
   );

@@ -619,6 +619,9 @@ const ProductsPage: React.FC = () => {
             enableSorting={true}
             defaultSortKey="name"
             defaultSortDirection="asc"
+            // Enable virtualization for better performance with large datasets
+            enableVirtualization={true}
+            rowHeight={50}
           />
         </div>
 
