@@ -20,18 +20,18 @@ interface PosDBSchema extends DBSchema {
   productGroupRelations: { key: [number, string]; value: unknown; }; 
   cashRegisterSessions: { key: string; value: unknown; };
   cashTransactions: { key: string; value: unknown; };
-  // TODO: posDB için diğer store'ları buraya ekleyin (varsa)
+  // posDB için diğer store'ları buraya ekleyin (varsa)
 }
 
 interface SalesDBSchema extends DBSchema {
   sales: { key: string; value: unknown; }; // sales: { key: string; value: Sale; }; gibi
-  // TODO: salesDB için diğer store'ları buraya ekleyin (varsa)
+  // salesDB için diğer store'ları buraya ekleyin (varsa)
 }
 
 interface CreditDBSchema extends DBSchema {
   customers: { key: string; value: unknown; }; // customers: { key: string; value: Customer; }; gibi
   transactions: { key: string; value: unknown; }; // transactions: { key: string; value: CreditTransaction; }; gibi
-  // TODO: creditDB için diğer store'ları buraya ekleyin (varsa)
+  // creditDB için diğer store'ları buraya ekleyin (varsa)
 }
 
 // --- İçe Aktarma İçin Interface'ler ---
@@ -159,7 +159,7 @@ export class IndexedDBImporter {
           switch (dbName) {
             case 'posDB':
               // --- posDB Şeması ---
-              // TODO: Kendi şemanızla buradaki store ve keyPath'leri DOĞRULAYIN!
+              // Kendi şemanızla buradaki store ve keyPath'leri DOĞRULAYIN!
               if (!innerDb.objectStoreNames.contains('products')) {
                 innerDb.createObjectStore('products', { keyPath: 'id' });
                 console.log('  -> "products" store oluşturuldu (posDB).');
@@ -199,7 +199,7 @@ export class IndexedDBImporter {
 
             case 'creditDB':
               // --- creditDB Şeması ---
-               // TODO: Kendi şemanızla buradaki store ve keyPath'leri DOĞRULAYIN!
+               // Kendi şemanızla buradaki store ve keyPath'leri DOĞRULAYIN!
               if (!innerDb.objectStoreNames.contains('customers')) {
                 innerDb.createObjectStore('customers', { keyPath: 'id' });
                 console.log('  -> "customers" store oluşturuldu (creditDB).');

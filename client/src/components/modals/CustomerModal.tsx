@@ -8,13 +8,15 @@ interface CustomerModalProps {
   onClose: () => void;
   onSave: (customerData: Omit<Customer, 'id' | 'currentDebt' | 'createdAt'>) => void;
   customer?: Customer;
+  showArchiveInfo?: boolean;
 }
 
 const CustomerModal: React.FC<CustomerModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  customer
+  customer,
+  showArchiveInfo = false
 }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -171,18 +173,32 @@ const CustomerModal: React.FC<CustomerModalProps> = ({
               />
             </div>
 
-            {/* Not */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Not
-              </label>
-              <textarea
-                value={formData.note}
-                onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                rows={2}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
+           {/* Not */}
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">
+               Not
+             </label>
+             <textarea
+               value={formData.note}
+               onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+               rows={2}
+               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             />
+           </div>
+
+           {/* Arşiv Bilgisi */}
+           {showArchiveInfo && (
+             <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
+               <div className="flex items-center gap-2 text-purple-700 mb-2">
+                 <ExternalLink size={18} />
+                 <span className="font-medium">Arşiv Verileri</span>
+               </div>
+               <div className="text-sm text-purple-600">
+                 Bu müşterinin geçmiş verileri arşivde saklanmaktadır.
+                 Detaylı bilgi için müşteri detay sayfasını ziyaret edin.
+               </div>
+             </div>
+           )}
 
             {/* Hata Mesajı */}
             {error && (

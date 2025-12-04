@@ -25,6 +25,7 @@ interface CustomerDetailModalProps {
   transactions: CreditTransaction[];
   onAddDebt: (customer: Customer) => void;
   onAddPayment: (customer: Customer) => void;
+  onViewArchive: (customerId: number) => void;
 }
 
 const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
@@ -34,6 +35,7 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   transactions,
   onAddDebt,
   onAddPayment,
+  onViewArchive,
 }) => {
   const navigate = useNavigate();
   const [relatedSales, setRelatedSales] = useState<Record<string, Sale>>({});
@@ -439,31 +441,38 @@ const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
                 </div>
               )}
 
-            {/* Action Buttons */}
-            <div className="flex gap-2 mb-3">
-              <button
-                onClick={() => {
-                  onClose(); // Önce detay modalını kapat
-                  onAddDebt(customer); // Sonra borç ekleme modalını aç
-                }}
-                disabled={limitUsagePercent >= 100}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <DollarSign size={20} />
-                Borç Ekle
-              </button>
-              <button
-                onClick={() => {
-                  onClose(); // Önce detay modalını kapat
-                  onAddPayment(customer); // Sonra ödeme modalını aç
-                }}
-                disabled={customer.currentDebt === 0}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <DollarSign size={20} />
-                Ödeme Al
-              </button>
-            </div>
+           {/* Action Buttons */}
+           <div className="flex gap-2 mb-3">
+             <button
+               onClick={() => {
+                 onClose(); // Önce detay modalını kapat
+                 onAddDebt(customer); // Sonra borç ekleme modalını aç
+               }}
+               disabled={limitUsagePercent >= 100}
+               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+             >
+               <DollarSign size={20} />
+               Borç Ekle
+             </button>
+             <button
+               onClick={() => {
+                 onClose(); // Önce detay modalını kapat
+                 onAddPayment(customer); // Sonra ödeme modalını aç
+               }}
+               disabled={customer.currentDebt === 0}
+               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+             >
+               <DollarSign size={20} />
+               Ödeme Al
+             </button>
+             <button
+               onClick={() => onViewArchive(customer.id)}
+               className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+             >
+               <ExternalLink size={20} />
+               Arşiv Verileri
+             </button>
+           </div>
 
             {/* Transactions List */}
             <div className="border rounded-lg overflow-hidden">

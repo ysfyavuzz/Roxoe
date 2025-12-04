@@ -65,6 +65,20 @@ class CreditService {
     })) as Customer[];
   }
 
+  // Optimize edilmiş müşteri getirme - sadece gerekli alanları çek
+  async getCustomerSummaryForList(): Promise<Omit<Customer, 'note' | 'taxNumber' | 'address'>[]> {
+    const db = await this.dbPromise;
+    const customers = await db.getAll("customers");
+    return customers.map((customer) => ({
+      id: customer.id,
+      name: customer.name,
+      phone: customer.phone,
+      creditLimit: customer.creditLimit,
+      currentDebt: customer.currentDebt,
+      createdAt: new Date(customer.createdAt),
+    })) as Omit<Customer, 'note' | 'taxNumber' | 'address'>[];
+  }
+
   async getCustomerById(id: number): Promise<Customer | null> {
     const db = await this.dbPromise;
     const customer = await db.get("customers", id);
@@ -142,6 +156,81 @@ class CreditService {
       date: new Date(transaction.date),
       dueDate: transaction.dueDate ? new Date(transaction.dueDate) : undefined,
     })) as CreditTransaction[];
+  }
+
+  // Optimize edilmiş işlem getirme - sadece gerekli alanları çek
+  async getTransactionsSummary(customerId: number): Promise<{
+    totalDebt: number;
+    totalOverdue: number;
+    activeTransactions: number;
+    overdueTransactions: number;
+  }> {
+    const db = await this.dbPromise;
+    const tx = db.transaction('transactions', 'readonly');
+    const store = tx.objectStore('transactions');
+    const index = store.index('by_customer');
+    const transactions = await index.getAll(customerId);
+
+    const activeTransactions = transactions.filter(
+      (t) => t.status === "active" || t.status === "overdue"
+    );
+
+    return {
+      totalDebt: activeTransactions.reduce(
+        (sum, t) => sum + (t.type === "debt" ? t.amount : -t.amount),
+        0
+      ),
+      totalOverdue: activeTransactions
+        .filter((t) => t.status === "overdue")
+        .reduce((sum, t) => sum + t.amount, 0),
+      activeTransactions: activeTransactions.length,
+      overdueTransactions: activeTransactions.filter(
+        (t) => t.status === "overdue"
+      ).length,
+    };
+  }
+
+  // Lazy loading için sayfalama destekli işlem getirme
+  async getPaginatedTransactions(
+    customerId: number,
+    page: number = 1,
+    pageSize: number = 20
+  ): Promise<{
+    transactions: CreditTransaction[];
+    totalCount: number;
+    page: number;
+    pageSize: number;
+    hasMore: boolean;
+  }> {
+    const db = await this.dbPromise;
+    const tx = db.transaction('transactions', 'readonly');
+    const store = tx.objectStore('transactions');
+    const index = store.index('by_customer');
+    const allTransactions = await index.getAll(customerId);
+
+    // Sadece aktif ve vadesi geçmiş işlemleri filtrele
+    const filteredTransactions = allTransactions.filter(
+      (t) => t.status === "active" || t.status === "overdue"
+    );
+
+    // Sayfalama uygula
+    const startIndex = (page - 1) * pageSize;
+    const paginatedTransactions = filteredTransactions.slice(
+      startIndex,
+      startIndex + pageSize
+    );
+
+    return {
+      transactions: paginatedTransactions.map((transaction) => ({
+        ...transaction,
+        date: new Date(transaction.date),
+        dueDate: transaction.dueDate ? new Date(transaction.dueDate) : undefined,
+      })) as CreditTransaction[],
+      totalCount: filteredTransactions.length,
+      page,
+      pageSize,
+      hasMore: startIndex + pageSize < filteredTransactions.length
+    };
   }
 
   async getTransactionsByCustomerId(customerId: number): Promise<CreditTransaction[]> {
@@ -307,7 +396,7 @@ class CreditService {
     const discountedTransactions = transactions.filter(
       (t) => t.discountAmount && t.discountAmount > 0
     );
-    
+
     // Toplam indirim tutarı
     const totalDiscount = discountedTransactions.reduce(
       (sum, t) => sum + (t.discountAmount || 0), 0
@@ -336,6 +425,72 @@ class CreditService {
     }
 
     return summaryBase;
+  }
+
+  // Veri önbelleğe alma mekanizması
+  private transactionCache: Map<number, CreditTransaction[]> = new Map();
+  private customerCache: Map<number, Customer> = new Map();
+
+  // Önbellek süresi (ms)
+  private CACHE_TTL = 300000; // 5 dakika
+  private cacheTimestamps: Map<string, number> = new Map();
+
+  // Önbellek anahtarı oluştur
+  private getCacheKey(type: 'customer' | 'transactions', id: number): string {
+    return `${type}_${id}`;
+  }
+
+  // Önbellek geçerliliğini kontrol et
+  private isCacheValid(key: string): boolean {
+    const timestamp = this.cacheTimestamps.get(key);
+    if (!timestamp) return false;
+    return Date.now() - timestamp < this.CACHE_TTL;
+  }
+
+  // Önbelleğe alma mekanizması - müşteri verileri
+  async getCustomerWithCache(customerId: number): Promise<Customer | null> {
+    const cacheKey = this.getCacheKey('customer', customerId);
+
+    // Önbellekte var mı ve geçerli mi?
+    if (this.customerCache.has(customerId) && this.isCacheValid(cacheKey)) {
+      console.log(`📦 Customer ${customerId} önbellekten getirildi`);
+      return this.customerCache.get(customerId) || null;
+    }
+
+    // Önbellekte yoksa veritabanından çek
+    const customer = await this.getCustomerById(customerId);
+    if (customer) {
+      this.customerCache.set(customerId, customer);
+      this.cacheTimestamps.set(cacheKey, Date.now());
+    }
+
+    return customer;
+  }
+
+  // Önbelleğe alma mekanizması - işlem verileri
+  async getTransactionsByCustomerIdWithCache(customerId: number): Promise<CreditTransaction[]> {
+    const cacheKey = this.getCacheKey('transactions', customerId);
+
+    // Önbellekte var mı ve geçerli mi?
+    if (this.transactionCache.has(customerId) && this.isCacheValid(cacheKey)) {
+      console.log(`📦 Transactions for customer ${customerId} önbellekten getirildi`);
+      return this.transactionCache.get(customerId) || [];
+    }
+
+    // Önbellekte yoksa veritabanından çek
+    const transactions = await this.getTransactionsByCustomerId(customerId);
+    this.transactionCache.set(customerId, transactions);
+    this.cacheTimestamps.set(cacheKey, Date.now());
+
+    return transactions;
+  }
+
+  // Önbelleği temizle
+  clearCache(): void {
+    this.transactionCache.clear();
+    this.customerCache.clear();
+    this.cacheTimestamps.clear();
+    console.log('🧹 Tüm önbellek temizlendi');
   }
 }
 
