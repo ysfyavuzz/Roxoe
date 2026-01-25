@@ -154,7 +154,7 @@ export class CloudSyncManager {
     const stored = localStorage.getItem('deviceId');
     if (stored) {return stored;}
     
-    const deviceId = 'RoxoePOS_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
+    const deviceId = `RoxoePOS_${crypto.randomUUID()}`;
     localStorage.setItem('deviceId', deviceId);
     return deviceId;
   }

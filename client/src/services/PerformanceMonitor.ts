@@ -168,7 +168,7 @@ export class PerformanceMonitor {
 
     const fullMetric: PerformanceMetric = {
       ...metric,
-      id: `perf-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      id: `perf-${Date.now()}-${crypto.randomUUID().substring(0, 8)}`,
       timestamp: new Date()
     };
 
@@ -493,7 +493,7 @@ export class PerformanceMonitor {
   private createAlert(alert: Omit<PerformanceAlert, 'id' | 'timestamp' | 'resolved'>): void {
     const fullAlert: PerformanceAlert = {
       ...alert,
-      id: `alert-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      id: `alert-${Date.now()}-${crypto.randomUUID().substring(0, 8)}`,
       timestamp: new Date(),
       resolved: false
     };

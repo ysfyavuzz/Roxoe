@@ -118,7 +118,7 @@ const useSettingsPage = () => {
     setBackupLoading(true);
     setBackupProgress({ stage: "Veriler toplanıyor", progress: 100 });
 
-    const id = Math.random().toString(36).slice(2);
+    const id = crypto.randomUUID();
     const now = new Date().toISOString();
 
     const newBackup: BackupHistoryItem = {
@@ -127,7 +127,7 @@ const useSettingsPage = () => {
       description: "Tam yedek",
       createdAt: now,
       databases: ["products", "sales", "customers", "cash"],
-      totalRecords: Math.floor(Math.random() * 10000) + 500,
+      totalRecords: Math.floor(Math.random() * 10000) + 500, // Simulation data
     };
     setBackups((prev) => [newBackup, ...prev]);
     setBackupSchedule((prev) => ({ ...prev, lastBackup: now }));

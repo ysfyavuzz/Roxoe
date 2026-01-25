@@ -62,7 +62,7 @@ class SalesService {
 
       const newSale: Sale = {
         ...finalData,
-        id: `SALE-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        id: `SALE-${Date.now()}-${crypto.randomUUID().substring(0, 8)}`,
       };
 
       const request = store.add(newSale);
@@ -386,7 +386,7 @@ class SalesService {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    const random = Math.random().toString(36).substring(2, 9).toUpperCase();
+    const random = crypto.randomUUID().substring(0, 7).toUpperCase();
     return `F${year}${month}${day}-${random}`; // Fiş no formatı
   }
 }

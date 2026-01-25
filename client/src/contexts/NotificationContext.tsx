@@ -47,7 +47,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
           );
           if (!existingNotification) {
             const newNotification: StockNotification = {
-              id: Date.now() + Math.random(),
+              id: Date.now() + (crypto.getRandomValues(new Uint32Array(1))[0] ?? 0),
               productId: product.id,
               productName: product.name,
               currentStock: product.stock,
@@ -80,7 +80,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
             if (!existingNotification) {
               updated = [
                 {
-                  id: Date.now() + Math.random(),
+                  id: Date.now() + (crypto.getRandomValues(new Uint32Array(1))[0] ?? 0),
                   productId: product.id,
                   productName: product.name,
                   currentStock: product.stock,

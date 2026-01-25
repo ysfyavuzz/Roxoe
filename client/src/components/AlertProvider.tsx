@@ -228,7 +228,7 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
 
   const addAlert = useCallback(
     (message: string, type: AlertType = "info", duration = 5000) => {
-      const id = Math.random().toString(36).substring(7);
+      const id = crypto.randomUUID();
       setAlerts((prev) => [...prev, { id, message, type }]);
       if (duration) {setTimeout(() => removeAlert(id), duration);}
       return id;
