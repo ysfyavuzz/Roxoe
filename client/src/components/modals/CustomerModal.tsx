@@ -1,4 +1,4 @@
-import { X, AlertTriangle } from 'lucide-react';
+import { X, AlertTriangle, ExternalLink } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 import { Customer } from '../../types/credit';

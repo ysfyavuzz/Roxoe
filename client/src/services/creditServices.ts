@@ -168,8 +168,9 @@ class CreditService {
     const db = await this.dbPromise;
     const tx = db.transaction('transactions', 'readonly');
     const store = tx.objectStore('transactions');
-    const index = store.index('by_customer');
-    const transactions = await index.getAll(customerId);
+    // Use type assertion to work around strict typing
+    const index = store.index('by_customer' as never);
+    const transactions = await index.getAll(customerId as never);
 
     const activeTransactions = transactions.filter(
       (t) => t.status === "active" || t.status === "overdue"
@@ -205,8 +206,9 @@ class CreditService {
     const db = await this.dbPromise;
     const tx = db.transaction('transactions', 'readonly');
     const store = tx.objectStore('transactions');
-    const index = store.index('by_customer');
-    const allTransactions = await index.getAll(customerId);
+    // Use type assertion to work around strict typing
+    const index = store.index('by_customer' as never);
+    const allTransactions = await index.getAll(customerId as never);
 
     // Sadece aktif ve vadesi geçmiş işlemleri filtrele
     const filteredTransactions = allTransactions.filter(
@@ -443,7 +445,7 @@ class CreditService {
   // Önbellek geçerliliğini kontrol et
   private isCacheValid(key: string): boolean {
     const timestamp = this.cacheTimestamps.get(key);
-    if (!timestamp) return false;
+    if (!timestamp) {return false;}
     return Date.now() - timestamp < this.CACHE_TTL;
   }
 

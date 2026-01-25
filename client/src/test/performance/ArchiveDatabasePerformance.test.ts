@@ -3,6 +3,7 @@
  * Arşiv veritabanı işlemleri, sorgulama ve veri bütünlüğü testleri
  */
 import { test, expect } from '@playwright/test';
+
 import { creditService } from '../../services/creditServices';
 import { Customer, CreditTransaction } from '../../types/credit';
 
@@ -65,7 +66,7 @@ async function createTestCustomers(count: number): Promise<Customer[]> {
 async function createTestTransactions(customerId: number, count: number): Promise<CreditTransaction[]> {
   const transactions: CreditTransaction[] = [];
   const customer = await creditService.getCustomerById(customerId);
-  if (!customer) return transactions;
+  if (!customer) {return transactions;}
 
   for (let i = 0; i < count; i++) {
     const transaction: Omit<CreditTransaction, "id" | "status"> = {
@@ -102,7 +103,7 @@ test.describe('Archive Database Performance Tests', () => {
   test('50.000+ arşiv kayıt sorgulama performansı', async () => {
     // Test müşterileri oluştur
     const customers = await createTestCustomers(5);
-    if (customers.length === 0) {
+    if (customers.length === 0 || !customers[0]) {
       throw new Error("Test müşterisi oluşturulamadı");
     }
     const customerId = customers[0].id;
@@ -132,7 +133,7 @@ test.describe('Archive Database Performance Tests', () => {
   test('Arşiv verisi geri yükleme performansı', async () => {
     // Test müşterisi oluştur
     const customers = await createTestCustomers(1);
-    if (customers.length === 0) {
+    if (customers.length === 0 || !customers[0]) {
       throw new Error("Test müşterisi oluşturulamadı");
     }
     const customerId = customers[0].id;
@@ -162,16 +163,19 @@ test.describe('Archive Database Performance Tests', () => {
 
     // Her müşteri için farklı sayıda işlem oluştur
     for (let i = 0; i < customers.length; i++) {
-      if (customers[i]) {
-        await createTestTransactions(customers[i].id, (i + 1) * 100);
+      const customer = customers[i];
+      if (customer) {
+        await createTestTransactions(customer.id, (i + 1) * 100);
       }
     }
 
     // Toplam borç hesaplama
     let totalDebt = 0;
     for (const customer of customers) {
-      const summary = await creditService.getCustomerSummary(customer.id);
-      totalDebt += summary.totalDebt;
+      if (customer) {
+        const summary = await creditService.getCustomerSummary(customer.id);
+        totalDebt += summary.totalDebt;
+      }
     }
 
     // Veri bütünlüğü kontrolü

@@ -5,8 +5,10 @@
  */
 
 import { openDB } from 'idb';
+
 import DBVersionHelper from '../helpers/DBVersionHelper';
 import { Customer, CreditTransaction, CustomerSummary } from "../types/credit";
+
 import { creditService } from './creditServices';
 
 interface DataRotationConfig {
@@ -404,7 +406,11 @@ export class DataRotationService {
       }
 
       // Ana veritabanına geri yükle
-      const { rotationDate, ...txData } = archivedTransaction;
+      const txData = { ...archivedTransaction };
+      // Remove rotation metadata if present
+      if ('rotationDate' in txData) {
+        delete (txData as Record<string, unknown>).rotationDate;
+      }
       await creditService.addTransaction(txData as Omit<CreditTransaction, 'id' | 'status'>);
 
       // Arşivden sil

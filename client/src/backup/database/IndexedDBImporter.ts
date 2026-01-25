@@ -355,7 +355,7 @@ export class IndexedDBImporter {
     clearExisting: boolean,
     onProgress?: (processedCount: number) => void
   ): Promise<{ success: boolean; importedCount: number }> {
-    let tx: IDBPTransaction<unknown, string[], 'readwrite'> | null = null;
+    let tx: IDBPTransaction<unknown, string[], IDBTransactionMode> | null = null;
     let importedCount = 0; // Başarılı olanların sayısı
     let errorCount = 0;    // Hata alanların sayısı
     let processedCount = 0; // Döngüde işlenenlerin sayısı
@@ -374,7 +374,10 @@ export class IndexedDBImporter {
       }
 
       // 3. Yazma işlemi (transaction) başlat
-      tx = db.transaction(tableName, 'readwrite');
+      tx = db.transaction(tableName, 'readwrite') as IDBPTransaction<unknown, string[], IDBTransactionMode>;
+      if (!tx) {
+        throw new Error(`Failed to create transaction for ${tableName}`);
+      }
       const store = tx.objectStore(tableName) as unknown as { clear: () => Promise<unknown>; put: (value: unknown) => Promise<unknown> };
 
       // 4. Gerekirse mevcut tabloyu temizle

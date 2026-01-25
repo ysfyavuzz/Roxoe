@@ -3,6 +3,7 @@
  * Veri bütünlüğü, devir işlemleri ve tutarlılık testleri
  */
 import { test, expect } from '@playwright/test';
+
 import { creditService } from '../../services/creditServices';
 import { Customer, CreditTransaction } from '../../types/credit';
 
@@ -65,7 +66,7 @@ async function createTestCustomers(count: number): Promise<Customer[]> {
 async function createTestTransactions(customerId: number, count: number): Promise<CreditTransaction[]> {
   const transactions: CreditTransaction[] = [];
   const customer = await creditService.getCustomerById(customerId);
-  if (!customer) return transactions;
+  if (!customer) {return transactions;}
 
   for (let i = 0; i < count; i++) {
     const transaction: Omit<CreditTransaction, "id" | "status"> = {
@@ -152,7 +153,11 @@ test.describe('Data Integrity Performance Tests', () => {
     // Her müşteri için farklı sayıda işlem oluştur
     const transactionCounts = [50, 75, 100, 125, 150];
     for (let i = 0; i < customers.length; i++) {
-      await createTestTransactions(customers[i].id, transactionCounts[i]);
+      const customer = customers[i];
+      const count = transactionCounts[i];
+      if (customer && count !== undefined) {
+        await createTestTransactions(customer.id, count);
+      }
     }
 
     // Doğrudan veritabanından toplam borç hesaplama
@@ -164,8 +169,10 @@ test.describe('Data Integrity Performance Tests', () => {
     // Özet bilgilerinden toplam borç hesaplama
     let summaryTotalDebt = 0;
     for (const customer of customers) {
-      const summary = await creditService.getCustomerSummary(customer.id);
-      summaryTotalDebt += summary.totalDebt;
+      if (customer) {
+        const summary = await creditService.getCustomerSummary(customer.id);
+        summaryTotalDebt += summary.totalDebt;
+      }
     }
 
     console.log(`Doğrudan hesaplanan toplam borç: ${directTotalDebt}`);

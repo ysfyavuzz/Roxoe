@@ -3,6 +3,7 @@
  * Kullanıcı arayüzü yanıt süreleri, özet bilgi panelleri ve farklı cihaz performansı testleri
  */
 import { test, expect } from '@playwright/test';
+
 import { creditService } from '../../services/creditServices';
 import { Customer, CreditTransaction } from '../../types/credit';
 
@@ -65,7 +66,7 @@ async function createTestCustomers(count: number): Promise<Customer[]> {
 async function createTestTransactions(customerId: number, count: number): Promise<CreditTransaction[]> {
   const transactions: CreditTransaction[] = [];
   const customer = await creditService.getCustomerById(customerId);
-  if (!customer) return transactions;
+  if (!customer) {return transactions;}
 
   for (let i = 0; i < count; i++) {
     const transaction: Omit<CreditTransaction, "id" | "status"> = {
@@ -108,16 +109,17 @@ test.describe('UI Response Performance Tests', () => {
 
     // Her müşteri için farklı sayıda işlem oluştur
     for (let i = 0; i < customers.length; i++) {
-      if (customers[i]) {
-        await createTestTransactions(customers[i].id, (i + 1) * 50);
+      const customer = customers[i];
+      if (customer) {
+        await createTestTransactions(customer.id, (i + 1) * 50);
       }
     }
 
     // Özet bilgileri yükleme süresi
     const startTime = performance.now();
-    const summaryPromises = customers.map(customer =>
-      creditService.getCustomerSummary(customer.id)
-    );
+    const summaryPromises = customers
+      .filter((c): c is NonNullable<typeof c> => c !== null && c !== undefined)
+      .map(customer => creditService.getCustomerSummary(customer.id));
     const summaries = await Promise.all(summaryPromises);
     const endTime = performance.now();
 
@@ -132,7 +134,7 @@ test.describe('UI Response Performance Tests', () => {
   test('Arşiv verilerine erişim yanıt süresi', async () => {
     // Test müşterisi oluştur
     const customers = await createTestCustomers(1);
-    if (customers.length === 0) {
+    if (customers.length === 0 || !customers[0]) {
       throw new Error("Test müşterisi oluşturulamadı");
     }
     const customerId = customers[0].id;
@@ -168,7 +170,11 @@ test.describe('UI Response Performance Tests', () => {
     // Düşük performanslı cihaz simülasyonu (yapay gecikme)
     const lowPerfStart = performance.now();
     await new Promise(resolve => setTimeout(resolve, 100)); // 100ms gecikme
-    const summary = await creditService.getCustomerSummary(customers[0].id);
+    const firstCustomer = customers[0];
+    if (!firstCustomer) {
+      throw new Error("Test müşterisi bulunamadı");
+    }
+    const summary = await creditService.getCustomerSummary(firstCustomer.id);
     const lowPerfEnd = performance.now();
 
     const lowPerfTime = lowPerfEnd - lowPerfStart;
@@ -176,7 +182,7 @@ test.describe('UI Response Performance Tests', () => {
 
     // Yüksek performanslı cihaz simülasyonu
     const highPerfStart = performance.now();
-    const highPerfSummary = await creditService.getCustomerSummary(customers[0].id);
+    const highPerfSummary = await creditService.getCustomerSummary(firstCustomer.id);
     const highPerfEnd = performance.now();
 
     const highPerfTime = highPerfEnd - highPerfStart;

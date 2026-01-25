@@ -46,9 +46,9 @@ describe('[coverage] salesDB geniş kapsam', () => {
         } else {
           const store = (req.transaction as IDBTransaction).objectStore('sales')
           const idxNames = Array.from((store as any).indexNames || [])
-          if (!idxNames.includes('status')) store.createIndex('status', 'status')
-          if (!idxNames.includes('paymentMethod')) store.createIndex('paymentMethod', 'paymentMethod')
-          if (!idxNames.includes('date')) store.createIndex('date', 'date')
+          if (!idxNames.includes('status')) {store.createIndex('status', 'status')}
+          if (!idxNames.includes('paymentMethod')) {store.createIndex('paymentMethod', 'paymentMethod')}
+          if (!idxNames.includes('date')) {store.createIndex('date', 'date')}
         }
       }
       req.onsuccess = () => { req.result.close(); res() }

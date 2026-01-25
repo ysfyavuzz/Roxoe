@@ -3,6 +3,7 @@
  * Veri yükleme performansı, önbellekleme ve lazy loading testleri
  */
 import { test, expect } from '@playwright/test';
+
 import { creditService } from '../../services/creditServices';
 import { Customer, CreditTransaction } from '../../types/credit';
 
@@ -65,7 +66,7 @@ async function createTestCustomers(count: number): Promise<Customer[]> {
 async function createTestTransactions(customerId: number, count: number): Promise<CreditTransaction[]> {
   const transactions: CreditTransaction[] = [];
   const customer = await creditService.getCustomerById(customerId);
-  if (!customer) return transactions;
+  if (!customer) {return transactions;}
 
   for (let i = 0; i < count; i++) {
     const transaction: Omit<CreditTransaction, "id" | "status"> = {
@@ -124,7 +125,7 @@ test.describe('CreditPage Performance Tests', () => {
   test('Lazy loading performansı - 100 müşterinin işlemleri', async () => {
     // Önce test müşterileri oluştur
     const customers = await createTestCustomers(10);
-    if (customers.length === 0) {
+    if (customers.length === 0 || !customers[0]) {
       throw new Error("Test müşterisi oluşturulamadı");
     }
     const customerId = customers[0].id;
@@ -149,7 +150,7 @@ test.describe('CreditPage Performance Tests', () => {
   test('Önbellekleme mekanizması performansı', async () => {
     // Test müşterisi oluştur
     const customers = await createTestCustomers(1);
-    if (customers.length === 0) {
+    if (customers.length === 0 || !customers[0]) {
       throw new Error("Test müşterisi oluşturulamadı");
     }
     const customerId = customers[0].id;
@@ -180,7 +181,7 @@ test.describe('CreditPage Performance Tests', () => {
   test('Müşteri özet bilgileri yükleme performansı', async () => {
     // Test müşterileri oluştur
     const customers = await createTestCustomers(5);
-    if (customers.length === 0) {
+    if (customers.length === 0 || !customers[0]) {
       throw new Error("Test müşterisi oluşturulamadı");
     }
     const customerId = customers[0].id;

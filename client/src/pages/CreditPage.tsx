@@ -408,6 +408,13 @@ const CreditPage: React.FC = () => {
     setShowFilters(false);
   };
 
+  // Arşiv görüntüleme
+  const handleViewArchive = (customerId: number) => {
+    // TODO: Implement archive viewing functionality
+    console.log('Viewing archive for customer:', customerId);
+    showSuccess('Arşiv görüntüleme özelliği yakında eklenecek');
+  };
+
   return (
     <PageLayout>
       {/* İstatistik Kartları */}
@@ -672,6 +679,7 @@ const CreditPage: React.FC = () => {
           transactions={customerTransactions} // Yüklenen işlemleri gönder
           onAddDebt={handleAddDebt}
           onAddPayment={handleAddPayment}
+          onViewArchive={handleViewArchive}
         />
       )}
     </PageLayout>
