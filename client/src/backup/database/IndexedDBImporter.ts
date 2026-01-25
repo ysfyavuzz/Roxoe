@@ -374,6 +374,8 @@ export class IndexedDBImporter {
       }
 
       // 3. Yazma işlemi (transaction) başlat
+      // Type assertion needed: idb library returns a transaction with potentially undefined mode
+      // but we explicitly pass 'readwrite' so it's guaranteed to be defined
       tx = db.transaction(tableName, 'readwrite') as IDBPTransaction<unknown, string[], IDBTransactionMode>;
       if (!tx) {
         throw new Error(`Failed to create transaction for ${tableName}`);

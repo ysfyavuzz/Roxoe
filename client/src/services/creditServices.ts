@@ -168,7 +168,8 @@ class CreditService {
     const db = await this.dbPromise;
     const tx = db.transaction('transactions', 'readonly');
     const store = tx.objectStore('transactions');
-    // Use type assertion to work around strict typing
+    // Type assertion needed: idb library's strict typing doesn't recognize dynamically created indexes
+    // The 'by_customer' index is created in the upgrade handler and is guaranteed to exist
     const index = store.index('by_customer' as never);
     const transactions = await index.getAll(customerId as never);
 
@@ -206,7 +207,8 @@ class CreditService {
     const db = await this.dbPromise;
     const tx = db.transaction('transactions', 'readonly');
     const store = tx.objectStore('transactions');
-    // Use type assertion to work around strict typing
+    // Type assertion needed: idb library's strict typing doesn't recognize dynamically created indexes
+    // The 'by_customer' index is created in the upgrade handler and is guaranteed to exist
     const index = store.index('by_customer' as never);
     const allTransactions = await index.getAll(customerId as never);
 

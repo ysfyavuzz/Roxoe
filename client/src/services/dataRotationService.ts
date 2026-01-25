@@ -406,11 +406,8 @@ export class DataRotationService {
       }
 
       // Ana veritabanına geri yükle
-      const txData = { ...archivedTransaction };
-      // Remove rotation metadata if present
-      if ('rotationDate' in txData) {
-        delete (txData as Record<string, unknown>).rotationDate;
-      }
+      // Type-safe destructuring to remove rotation metadata
+      const { rotationDate, ...txData } = archivedTransaction as CreditTransaction & { rotationDate?: string };
       await creditService.addTransaction(txData as Omit<CreditTransaction, 'id' | 'status'>);
 
       // Arşivden sil

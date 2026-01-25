@@ -27,6 +27,7 @@ import {
 } from "../services/cashRegisterDB"; // Kasa entegrasyonu için
 import { creditService } from "../services/creditServices";
 import { Customer, CreditTransaction, CustomerSummary } from "../types/credit";
+import logger from "../utils/logger";
 import { normalizedSearch } from "../utils/turkishSearch";
 
 // Yaklaşan vade için gün sayısı (örn: 7 gün içinde vadesi dolacaklar)
@@ -411,7 +412,7 @@ const CreditPage: React.FC = () => {
   // Arşiv görüntüleme
   const handleViewArchive = (customerId: number) => {
     // TODO: Implement archive viewing functionality
-    console.log('Viewing archive for customer:', customerId);
+    logger.log('Viewing archive for customer:', customerId);
     showSuccess('Arşiv görüntüleme özelliği yakında eklenecek');
   };
 
